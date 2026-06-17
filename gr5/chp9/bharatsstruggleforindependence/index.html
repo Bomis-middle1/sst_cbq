@@ -1,1 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CBQ Engine - Black Theme</title>
 
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:#000;
+  color:#fff;
+  overflow:hidden;
+}
+
+/* SPLASH */
+#splash{
+  position:fixed;
+  inset:0;
+  background:#000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+}
+#splash img{
+  width:220px;
+}
+
+/* GAME */
+#game{
+  display:none;
+  padding:20px;
+  text-align:center;
+}
+
+.top{
+  display:flex;
+  justify-content:space-between;
+  font-size:20px;
+  font-weight:bold;
+  color:#fff;
+}
+
+.box{
+  max-width:900px;
+  margin:auto;
+  background:#111;
+  padding:25px;
+  border-radius:15px;
+  box-shadow:0 0 10px rgba(255,255,255,0.1);
+}
+
+#q{
+  font-size:22px;
+  font-weight:bold;
+  margin-bottom:10px;
+}
+
+/* TABLE */
+table{
+  margin:auto;
+  border-collapse:collapse;
+  margin-bottom:15px;
+  color:#fff;
+}
+th,td{
+  border:1px solid #444;
+  padding:10px;
+}
+th{
+  background:#222;
+}
+
+/* OPTIONS */
+.option{
+  display:block;
+  margin:10px 0;
+  padding:14px;
+  font-size:18px;
+  border-radius:10px;
+  background:#1a1a1a;
+  border:1px solid #333;
+  cursor:pointer;
+}
+.option:hover{
+  background:#333;
+}
+
+.correct{background:#1f6f3b !important;}
+.wrong{background:#7a1f1f !important;}
+
+#feedback{
+  margin-top:10px;
+  font-size:16px;
+  color:#fff;
+}
+
+/* RESULT */
+#result{
+  display:none;
+  padding:40px;
+  text-align:center;
+}
+
+button{
+  padding:12px 18px;
+  border:none;
+  border-radius:10px;
+  background:#fff;
+  color:#000;
+  font-size:16px;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <img src="assets/logo.png">
+</div>
+
+<!-- GAME -->
+<div id="game">
+
+<div class="top">
+  <div id="score">Score: 0</div>
+  <div id="timer">45</div>
+</div>
+
+<div class="box">
+  <div id="q"></div>
+  <div id="table"></div>
+  <div id="options"></div>
+  <div id="feedback"></div>
+</div>
+
+</div>
+
+<!-- RESULT -->
+<div id="result">
+  <h2>Great Job 👏</h2>
+  <p id="final"></p>
+  <button onclick="location.reload()">Play Again</button>
+</div>
+
+<!-- AUDIO -->
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<script>
+
+let i=0,score=0,time=45,attempt=0,lock=false,interval;
+
+/* TIMER */
+function timer(){
+clearInterval(interval);
+time=45;
+document.getElementById("timer").innerText=time;
+
+interval=setInterval(()=>{
+time--;
+document.getElementById("timer").innerText=time;
+if(time<=0) next();
+},1000);
+}
+
+/* QUESTIONS */
+let questions=[
+{
+q:"Which leader is associated with non-violence?",
+o:["Bhagat Singh","Mahatma Gandhi","Subhas Bose","Tilak"],
+a:1,
+e:"Gandhi promoted Ahimsa."
+},
+{
+type:"table",
+q:"Study the table:",
+table:{
+h:["Year","Event"],
+r:[
+["1919","Jallianwala Bagh"],
+["1930","Salt March"],
+["1942","Quit India"]
+]
+},
+o:["1919","1930","1942","All"],
+a:1,
+e:"Salt March happened in 1930."
+},
+{
+q:"Which movement promoted boycott of British goods?",
+o:["Swadeshi","Revolt 1857","Partition","Trade Act"],
+a:0,
+e:"Swadeshi encouraged local goods."
+},
+{
+q:"Which event increased anger against British?",
+o:["Peace meeting fired","Free food given","No protest","Festival"],
+a:0,
+e:"Jallianwala Bagh massacre."
+}
+];
+
+/* LOAD */
+function load(){
+lock=false;
+attempt=0;
+timer();
+
+let q=questions[i];
+
+document.getElementById("q").innerText=q.q;
+document.getElementById("options").innerHTML="";
+document.getElementById("feedback").innerText="";
+document.getElementById("table").innerHTML="";
+
+/* TABLE FIXED */
+if(q.type==="table"){
+let html="<table><tr>";
+q.table.h.forEach(h=>html+=`<th>${h}</th>`);
+html+="</tr>";
+
+q.table.r.forEach(r=>{
+html+="<tr>";
+r.forEach(c=>html+=`<td>${c}</td>`);
+html+="</tr>";
+});
+
+html+="</table>";
+document.getElementById("table").innerHTML=html;
+}
+
+/* OPTIONS */
+q.o.forEach((op,idx)=>{
+let d=document.createElement("div");
+d.className="option";
+d.innerText=op;
+d.onclick=()=>check(idx,d);
+document.getElementById("options").appendChild(d);
+});
+}
+
+/* CHECK */
+function check(ans,el){
+if(lock) return;
+
+let q=questions[i];
+
+if(ans===q.a){
+el.classList.add("correct");
+document.getElementById("correctSound").play();
+score++;
+document.getElementById("score").innerText="Score: "+score;
+lock=true;
+setTimeout(next,800);
+}
+else{
+attempt++;
+el.classList.add("wrong");
+document.getElementById("wrongSound").play();
+
+if(attempt==2){
+document.getElementById("feedback").innerText=
+"Correct Answer: "+q.o[q.a]+" → "+q.e;
+lock=true;
+setTimeout(next,2000);
+}
+}
+}
+
+/* NEXT */
+function next(){
+i++;
+if(i<questions.length){
+load();
+}else end();
+}
+
+/* END */
+function end(){
+clearInterval(interval);
+document.getElementById("game").style.display="none";
+document.getElementById("result").style.display="block";
+document.getElementById("clapSound").play();
+document.getElementById("final").innerText="Score: "+score+"/"+questions.length;
+}
+
+/* START */
+setTimeout(()=>{
+document.getElementById("splash").style.display="none";
+document.getElementById("game").style.display="block";
+load();
+},5000);
+
+</script>
+
+</body>
+</html>
