@@ -1,1 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 11 - Bharat Democracy</title>
 
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  overflow:hidden;
+  color:#000;
+}
+
+/* 🇮🇳 TRICOLOUR BACKGROUND */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background: linear-gradient(
+    to bottom,
+    #ff9933 0%,
+    #ffffff 35%,
+    #ffffff 65%,
+    #138808 100%
+  );
+  z-index:-1;
+}
+
+/* SPLASH */
+#splash{
+  position:fixed;
+  inset:0;
+  background:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+}
+#splash img{
+  width:240px;
+}
+
+/* GAME */
+#game{
+  display:none;
+  padding:20px;
+  text-align:center;
+}
+
+.top{
+  display:flex;
+  justify-content:space-between;
+  font-size:22px;
+  font-weight:bold;
+}
+
+.box{
+  max-width:900px;
+  margin:auto;
+  background:rgba(255,255,255,0.9);
+  padding:30px;
+  border-radius:15px;
+  box-shadow:0 0 10px rgba(0,0,0,0.2);
+}
+
+#q{
+  font-size:28px;
+  font-weight:bold;
+  margin-bottom:20px;
+}
+
+/* OPTIONS */
+.option{
+  display:block;
+  margin:10px 0;
+  padding:15px;
+  font-size:20px;
+  border-radius:10px;
+  background:#fff;
+  border:1px solid #ccc;
+  cursor:pointer;
+}
+
+.option:hover{
+  background:#f0f0f0;
+}
+
+.correct{background:#b8f7c6 !important;}
+.wrong{background:#ffb3b3 !important;}
+
+#feedback{
+  margin-top:10px;
+  font-size:18px;
+}
+
+/* RESULT */
+#result{
+  display:none;
+  text-align:center;
+  padding:40px;
+}
+
+button{
+  padding:12px 20px;
+  font-size:18px;
+  border:none;
+  border-radius:10px;
+  background:#000;
+  color:#fff;
+  cursor:pointer;
+}
+
+/* ⭐ CONFETTI */
+.confetti {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  background: gold;
+  top: -10px;
+  animation: fall 3s linear infinite;
+}
+@keyframes fall{
+  to{transform:translateY(110vh) rotate(360deg);}
+}
+</style>
+</head>
+
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <img src="assets/logo.png">
+</div>
+
+<!-- GAME -->
+<div id="game">
+
+<div class="top">
+  <div id="score">Score: 0</div>
+  <div id="timer">45</div>
+</div>
+
+<div class="box">
+  <div id="q"></div>
+  <div id="options"></div>
+  <div id="feedback"></div>
+</div>
+
+</div>
+
+<!-- RESULT -->
+<div id="result">
+  <h2>🇮🇳 Excellent Work!</h2>
+  <p id="final"></p>
+  <button onclick="location.reload()">Play Again</button>
+</div>
+
+<!-- AUDIO -->
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<script>
+
+let i=0,score=0,time=45,attempt=0,lock=false,interval;
+
+/* TIMER */
+function startTimer(){
+clearInterval(interval);
+time=45;
+document.getElementById("timer").innerText=time;
+
+interval=setInterval(()=>{
+time--;
+document.getElementById("timer").innerText=time;
+if(time<=0) next();
+},1000);
+}
+
+/* ⭐ CONFETTI */
+function confetti(){
+for(let i=0;i<30;i++){
+let d=document.createElement("div");
+d.className="confetti";
+d.style.left=Math.random()*100+"vw";
+d.style.background=["#ff9933","#ffffff","#138808"][Math.floor(Math.random()*3)];
+document.body.appendChild(d);
+setTimeout(()=>d.remove(),3000);
+}
+}
+
+/* CBQ QUESTIONS (NO TABLE) */
+const questions=[
+{
+q:"A class votes for monitor selection. What principle is shown?",
+o:["Rule of one leader","Participation of people","No decision system","Random choice"],
+a:1,
+e:"Democracy means participation."
+},
+{
+q:"Students celebrate all religions in school. What value is shown?",
+o:["Secularism","Dictatorship","Monarchy","Bias"],
+a:0,
+e:"India respects all religions."
+},
+{
+q:"Girls are not allowed in a club. What is violated?",
+o:["Right to Equality","Right to Trade","Right to Travel","Cultural Right"],
+a:0,
+e:"Equality is violated."
+},
+{
+q:"Government builds schools and hospitals. What does it show?",
+o:["Works for citizens","Works for rulers only","No responsibility","Random action"],
+a:0,
+e:"Government serves people."
+},
+{
+q:"Citizens can change government through elections. Why?",
+o:["People are powerful","Government is permanent","No elections exist","Random process"],
+a:0,
+e:"People hold power in democracy."
+},
+{
+q:"A student writes opinions in magazine. What right is used?",
+o:["Freedom of expression","Right to property","Right to vote","Right to transport"],
+a:0,
+e:"Freedom of speech is allowed."
+},
+{
+q:"Damaging public park shows what?",
+o:["Duty violation","Good citizenship","Equality","Respect"],
+a:0,
+e:"It is wrong civic behaviour."
+},
+{
+q:"Children forced to work instead of school. Which right?",
+o:["Right against exploitation","Right to education only","Right to travel","Right to vote"],
+a:0,
+e:"Child labour is banned."
+},
+{
+q:"Only some students get equal rights. What is wrong?",
+o:["Inequality","Fairness","Democracy","Unity"],
+a:0,
+e:"Equality is missing."
+},
+{
+q:"Different cultures live together peacefully. What is it?",
+o:["Unity in diversity","Single culture","No society","Conflict"],
+a:0,
+e:"India is diverse but united."
+},
+{
+q:"Class creates rules with everyone’s opinion. What is this?",
+o:["Democracy","Dictatorship","Monarchy","Control system"],
+a:0,
+e:"Everyone participates."
+}
+];
+
+/* LOAD */
+function load(){
+clearInterval(interval);
+lock=false;
+attempt=0;
+startTimer();
+
+let q=questions[i];
+document.getElementById("q").innerText=q.q;
+document.getElementById("options").innerHTML="";
+document.getElementById("feedback").innerText="";
+
+q.o.forEach((op,idx)=>{
+let div=document.createElement("div");
+div.className="option";
+div.innerText=op;
+div.onclick=()=>check(idx,div);
+document.getElementById("options").appendChild(div);
+});
+}
+
+/* CHECK */
+function check(ans,el){
+if(lock) return;
+
+let q=questions[i];
+
+if(ans===q.a){
+el.classList.add("correct");
+document.getElementById("correctSound").play();
+score++;
+document.getElementById("score").innerText="Score: "+score;
+confetti();
+lock=true;
+setTimeout(next,900);
+}
+else{
+attempt++;
+el.classList.add("wrong");
+document.getElementById("wrongSound").play();
+
+if(attempt===2){
+document.getElementById("feedback").innerText=
+"Correct Answer: "+q.o[q.a]+" → "+q.e;
+lock=true;
+setTimeout(next,2000);
+}
+}
+}
+
+/* NEXT */
+function next(){
+clearInterval(interval);
+i++;
+if(i<questions.length){
+load();
+}else end();
+}
+
+/* END */
+function end(){
+clearInterval(interval);
+document.getElementById("game").style.display="none";
+document.getElementById("result").style.display="block";
+document.getElementById("clapSound").play();
+document.getElementById("final").innerText=
+"Score: "+score+"/"+questions.length;
+}
+
+/* START */
+setTimeout(()=>{
+document.getElementById("splash").style.display="none";
+document.getElementById("game").style.display="block";
+load();
+},5000);
+
+</script>
+
+</body>
+</html>
