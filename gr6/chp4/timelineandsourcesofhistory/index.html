@@ -12,24 +12,12 @@ body{
   overflow:hidden;
 }
 
-/* floating stars */
+/* background */
 .bg{
   position:fixed;
   width:100%;
   height:100%;
   pointer-events:none;
-}
-.star{
-  position:absolute;
-  width:6px;
-  height:6px;
-  background:rgba(255,255,255,0.6);
-  border-radius:50%;
-  animation:fall 6s linear infinite;
-}
-@keyframes fall{
-  from{transform:translateY(-10vh);}
-  to{transform:translateY(110vh);}
 }
 
 /* splash */
@@ -42,7 +30,9 @@ body{
   justify-content:center;
   z-index:999;
 }
-#splash img{width:220px}
+#splash img{
+  width:220px;
+}
 
 /* game */
 #game{
@@ -69,7 +59,6 @@ body{
 #q{
   font-size:22px;
   font-weight:bold;
-  margin-bottom:10px;
 }
 
 /* options */
@@ -82,7 +71,9 @@ body{
   background:#f7f7f7;
   cursor:pointer;
 }
-.option:hover{background:#eef6ff;}
+.option:hover{
+  background:#eef6ff;
+}
 
 .correct{background:#bff5bf !important;}
 .wrong{background:#ffbdbd !important;}
@@ -110,11 +101,9 @@ button{
 
 <body>
 
-<div class="bg" id="bg"></div>
-
 <!-- SPLASH -->
 <div id="splash">
-  <img src="gr6/chp4/timelineandsourcesofhistory/assets/logo.png">
+  <img src="/sst_cbq/gr6/chp4/timelineandsourcesofhistory/assets/logo.png">
 </div>
 
 <!-- GAME -->
@@ -141,29 +130,18 @@ button{
 </div>
 
 <!-- AUDIO -->
-<audio id="correctSound" src="gr6/chp4/timelineandsourcesofhistory/assets/correct.mp3"></audio>
-<audio id="wrongSound" src="gr6/chp4/timelineandsourcesofhistory/assets/wrong.mp3"></audio>
-<audio id="clapSound" src="gr6/chp4/timelineandsourcesofhistory/assets/freesound_community-claps-44774.mp3"></audio>
+<audio id="correctSound" src="/sst_cbq/gr6/chp4/timelineandsourcesofhistory/assets/correct.mp3"></audio>
+<audio id="wrongSound" src="/sst_cbq/gr6/chp4/timelineandsourcesofhistory/assets/wrong.mp3"></audio>
+<audio id="clapSound" src="/sst_cbq/gr6/chp4/timelineandsourcesofhistory/assets/freesound_community-claps-44774.mp3"></audio>
 
 <script>
 
-/* background stars */
-for(let i=0;i<20;i++){
-  let s=document.createElement("div");
-  s.className="star";
-  s.style.left=Math.random()*100+"%";
-  s.style.animationDuration=(3+Math.random()*5)+"s";
-  document.getElementById("bg").appendChild(s);
-}
-
-/* splash */
 setTimeout(()=>{
   document.getElementById("splash").style.display="none";
   document.getElementById("game").style.display="block";
   loadQ();
 },5000);
 
-/* QUESTIONS (TABLE REMOVED) */
 let questions=[
 {
 q:"A museum label says 500 BCE. What does it mean?",
@@ -193,7 +171,7 @@ e:"Objects and ruins help reconstruct history."
 
 let i=0,score=0,time=45,attempt=0,lock=false,interval;
 
-/* TIMER */
+/* timer */
 function timer(){
 clearInterval(interval);
 time=45;
@@ -206,29 +184,29 @@ if(time==0) next();
 },1000);
 }
 
-/* LOAD QUESTION */
+/* load */
 function loadQ(){
 lock=false;
 attempt=0;
 timer();
 
 let q=questions[i];
-
 document.getElementById("q").innerText=q.q;
-document.getElementById("feedback").innerText="";
-document.getElementById("options").innerHTML="";
 
-/* OPTIONS */
+let box=document.getElementById("options");
+box.innerHTML="";
+document.getElementById("feedback").innerText="";
+
 q.o.forEach((op,idx)=>{
 let d=document.createElement("div");
 d.className="option";
 d.innerText=op;
 d.onclick=()=>check(idx,d);
-document.getElementById("options").appendChild(d);
+box.appendChild(d);
 });
 }
 
-/* CHECK */
+/* check */
 function check(ans,el){
 if(lock) return;
 
@@ -241,8 +219,7 @@ score++;
 document.getElementById("score").innerText="Score: "+score;
 lock=true;
 setTimeout(next,800);
-}
-else{
+}else{
 attempt++;
 el.classList.add("wrong");
 document.getElementById("wrongSound").play();
@@ -256,14 +233,14 @@ setTimeout(next,2000);
 }
 }
 
-/* NEXT */
+/* next */
 function next(){
 i++;
 if(i<questions.length) loadQ();
 else end();
 }
 
-/* END */
+/* end */
 function end(){
 document.getElementById("game").style.display="none";
 document.getElementById("result").style.display="block";
