@@ -1,1 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Great Empires - FIXED CBQ ENGINE</title>
 
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background: linear-gradient(135deg, #ffd6e8, #ffeaf4);
+  overflow:hidden;
+  color:#222;
+}
+
+/* STAR CONFETTI */
+#confetti{
+  position:fixed;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  overflow:hidden;
+  z-index:999;
+}
+.star{
+  position:absolute;
+  width:8px;
+  height:8px;
+  background:gold;
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  animation: fall 2s linear forwards;
+}
+@keyframes fall{
+  from{transform:translateY(-10vh) rotate(0);}
+  to{transform:translateY(110vh) rotate(360deg);}
+}
+
+/* SPLASH */
+#splash{
+  position:fixed;
+  inset:0;
+  background:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+}
+#splash img{width:220px}
+
+/* GAME */
+#game{
+  display:none;
+  padding:20px;
+  text-align:center;
+}
+
+.top{
+  display:flex;
+  justify-content:space-between;
+  font-size:20px;
+  font-weight:bold;
+}
+
+.box{
+  max-width:900px;
+  margin:auto;
+  background:white;
+  padding:25px;
+  border-radius:15px;
+  box-shadow:0 0 12px rgba(0,0,0,0.1);
+}
+
+#q{
+  font-size:22px;
+  font-weight:bold;
+  margin-bottom:10px;
+}
+
+/* TABLE */
+table{
+  margin:auto;
+  border-collapse:collapse;
+  margin-bottom:15px;
+}
+th,td{
+  border:1px solid #ccc;
+  padding:10px;
+}
+th{
+  background:#ffd1e6;
+}
+
+/* OPTIONS */
+.option{
+  display:block;
+  margin:10px 0;
+  padding:14px;
+  font-size:18px;
+  border-radius:10px;
+  background:#f7f7f7;
+  cursor:pointer;
+}
+.option:hover{background:#ffe3ef;}
+
+.correct{background:#bff5bf !important;}
+.wrong{background:#ffbdbd !important;}
+
+#feedback{
+  margin-top:10px;
+  font-size:16px;
+  color:#333;
+}
+
+/* RESULT */
+#result{
+  display:none;
+  padding:40px;
+}
+
+button{
+  padding:12px 20px;
+  border:none;
+  border-radius:10px;
+  background:#ff4d88;
+  color:white;
+}
+</style>
+</head>
+
+<body>
+
+<div id="confetti"></div>
+
+<!-- SPLASH -->
+<div id="splash">
+  <img src="assets/logo.png">
+</div>
+
+<!-- GAME -->
+<div id="game">
+
+<div class="top">
+  <div id="score">Score: 0</div>
+  <div id="timer">45</div>
+</div>
+
+<div class="box">
+  <div id="q"></div>
+  <div id="table"></div>
+  <div id="options"></div>
+  <div id="feedback"></div>
+</div>
+
+</div>
+
+<!-- RESULT -->
+<div id="result">
+  <h2>👑 Excellent Historian!</h2>
+  <p id="final"></p>
+  <button onclick="location.reload()">Play Again</button>
+</div>
+
+<!-- AUDIO -->
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<script>
+
+setTimeout(()=>{
+  document.getElementById("splash").style.display="none";
+  document.getElementById("game").style.display="block";
+  loadQ();
+},5000);
+
+/* CONFETTI */
+function starBurst(){
+for(let i=0;i<20;i++){
+let s=document.createElement("div");
+s.className="star";
+s.style.left=Math.random()*100+"%";
+s.style.top="-10px";
+s.style.animationDuration=(1+Math.random())+"s";
+document.getElementById("confetti").appendChild(s);
+
+setTimeout(()=>s.remove(),2000);
+}
+}
+
+/* QUESTIONS */
+let questions=[
+{
+type:"mcq",
+q:"A ruler needs structured governance system. Which text helps most?",
+o:["Stupa","Arthashastra","Chaitya","Edict"],
+a:1,
+e:"Arthashastra explains administration."
+},
+{
+type:"table",
+q:"Study the table and answer:",
+table:{
+h:["Empire","Contribution"],
+r:[
+["Mauryan","Ashokan Pillars"],
+["Gupta","Math & Science"],
+["Mughal","Taj Mahal"],
+["Gupta","Land Revenue System"]
+]
+},
+o:["Mauryan","Gupta","Mughal","Satavahana"],
+a:1,
+e:"Gupta entry is mismatched."
+},
+{
+type:"mcq",
+q:"Which empire is called Golden Age?",
+o:["Mauryan","Gupta","Mughal","Nanda"],
+a:1,
+e:"Gupta period was highly developed."
+},
+{
+type:"mcq",
+q:"Which is NOT part of Mauryan Empire?",
+o:["Ashokan Pillars","Chanakya","Arthashastra","Taj Mahal"],
+a:3,
+e:"Taj Mahal belongs to Mughal Empire."
+},
+{
+type:"mcq",
+q:"Which promotes peaceful society?",
+o:["Tolerance","War","Conflict","Tax division"],
+a:0,
+e:"Tolerance builds harmony."
+}
+];
+
+let i=0,score=0,time=45,attempt=0,lock=false,interval;
+
+/* TIMER FIXED */
+function timer(){
+clearInterval(interval);
+time=45;
+document.getElementById("timer").innerText=time;
+
+interval=setInterval(()=>{
+time--;
+document.getElementById("timer").innerText=time;
+if(time==0) next();
+},1000);
+}
+
+/* LOAD */
+function loadQ(){
+lock=false;
+attempt=0;
+timer();
+
+let q=questions[i];
+
+document.getElementById("q").innerText=q.q;
+document.getElementById("options").innerHTML="";
+document.getElementById("feedback").innerText="";
+document.getElementById("table").innerHTML="";
+
+/* TABLE FIXED */
+if(q.type==="table"){
+let html="<table><tr>";
+q.table.h.forEach(h=>html+=`<th>${h}</th>`);
+html+="</tr>";
+
+q.table.r.forEach(r=>{
+html+="<tr>";
+r.forEach(c=>html+=`<td>${c}</td>`);
+html+="</tr>";
+});
+
+html+="</table>";
+document.getElementById("table").innerHTML=html;
+}
+
+/* OPTIONS */
+q.o.forEach((op,idx)=>{
+let d=document.createElement("div");
+d.className="option";
+d.innerText=op;
+d.onclick=()=>check(idx,d);
+document.getElementById("options").appendChild(d);
+});
+}
+
+/* CHECK */
+function check(ans,el){
+if(lock) return;
+
+let q=questions[i];
+
+if(ans===q.a){
+el.classList.add("correct");
+document.getElementById("correctSound").play();
+starBurst(); // ⭐ CONFETTI FIX
+score++;
+document.getElementById("score").innerText="Score: "+score;
+lock=true;
+setTimeout(next,900);
+}
+else{
+attempt++;
+el.classList.add("wrong");
+document.getElementById("wrongSound").play();
+
+if(attempt==2){
+document.getElementById("feedback").innerText=
+"Correct Answer: "+q.o[q.a]+" → "+q.e;
+lock=true;
+setTimeout(next,2000);
+}
+}
+}
+
+/* NEXT */
+function next(){
+i++;
+if(i<questions.length){
+loadQ();
+}else end();
+}
+
+/* END FIXED */
+function end(){
+clearInterval(interval);
+document.getElementById("game").style.display="none";
+document.getElementById("result").style.display="block";
+document.getElementById("clapSound").play();
+document.getElementById("final").innerText="Final Score: "+score+"/"+questions.length;
+}
+
+</script>
+
+</body>
+</html>
