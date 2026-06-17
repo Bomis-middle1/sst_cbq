@@ -1,1 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Oceans & Continents - CBQ</title>
 
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  overflow:hidden;
+  background: linear-gradient(to bottom, #b3e5fc, #e1f5fe, #ffffff);
+}
+
+/* SPLASH */
+#splash{
+  position:fixed;
+  inset:0;
+  background:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+}
+
+#splash img{
+  width:220px;
+}
+
+/* GAME */
+#game{
+  display:none;
+  padding:15px;
+  text-align:center;
+}
+
+.top{
+  display:flex;
+  justify-content:space-between;
+  font-weight:bold;
+  padding:10px;
+}
+
+.box{
+  max-width:850px;
+  margin:auto;
+  background:white;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+.option{
+  display:block;
+  margin:10px 0;
+  padding:12px;
+  border:1px solid #ccc;
+  border-radius:8px;
+  cursor:pointer;
+  background:#f8f8f8;
+}
+
+.option:hover{
+  background:#dff6ff;
+}
+
+.correct{background:#a5d6a7 !important;}
+.wrong{background:#ef9a9a !important;}
+
+#feedback{
+  margin-top:10px;
+  font-size:14px;
+}
+
+#result{
+  display:none;
+  text-align:center;
+  padding:30px;
+}
+
+button{
+  padding:10px 20px;
+  border:none;
+  border-radius:8px;
+  background:#0288d1;
+  color:white;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <img src="gr6/chp2/oceansandcontinents/assets/logo.png">
+</div>
+
+<!-- GAME -->
+<div id="game">
+
+<div class="top">
+  <div id="score">Score: 0</div>
+  <div id="timer">45</div>
+</div>
+
+<div class="box">
+  <h3 id="q"></h3>
+  <div id="options"></div>
+  <div id="feedback"></div>
+</div>
+
+</div>
+
+<!-- RESULT -->
+<div id="result">
+  <h2>🌊 Great Explorer!</h2>
+  <p id="final"></p>
+  <button onclick="location.reload()">Play Again</button>
+</div>
+
+<!-- AUDIO -->
+<audio id="correctSound" src="gr6/chp2/oceansandcontinents/assets/correct.mp3"></audio>
+<audio id="wrongSound" src="gr6/chp2/oceansandcontinents/assets/wrong.mp3"></audio>
+<audio id="clapSound" src="gr6/chp2/oceansandcontinents/assets/freesound_community-claps-44774.mp3"></audio>
+
+<script>
+
+setTimeout(()=>{
+  document.getElementById("splash").style.display="none";
+  document.getElementById("game").style.display="block";
+  loadQ();
+},5000);
+
+let questions = [
+{q:"A satellite image shows Earth mostly blue. Why?",o:["More oceans","More clouds","More deserts","More forests"],a:0,e:"Oceans cover most of Earth."},
+{q:"Only small part of water is usable because?",o:["Freshwater is limited","All is salty","Water disappears","Oceans freeze"],a:0,e:"Freshwater is limited."},
+{q:"Why oceans are important?",o:["Climate + oxygen","Make land","Stop rain","Create mountains"],a:0,e:"They regulate climate."},
+{q:"Why coastal areas have mild climate?",o:["Water regulates heat","No wind","No sun","No land"],a:0,e:"Water heats slowly."},
+{q:"Which ocean is west of India?",o:["Pacific","Arabian Sea","Arctic","Atlantic"],a:1,e:"Arabian Sea."},
+{q:"Europe + Asia = ?",o:["Eurasia","America","Africa","Australia"],a:0,e:"Eurasia."},
+{q:"Why islands have unique species?",o:["Isolation","Pollution","Heat","Rain"],a:0,e:"Isolation causes evolution."},
+{q:"Oceans are called lungs because?",o:["Produce oxygen","Make land","Stop storms","Cool rocks"],a:0,e:"Marine plants produce oxygen."},
+{q:"Underwater quake causes?",o:["Tsunami","Rain","Snow","Wind"],a:0,e:"Tsunami."},
+{q:"Which is wrong?",o:["Pacific largest","Freshwater unlimited","Earth has continents","Oceans are salty"],a:1,e:"Freshwater is NOT unlimited."}
+];
+
+let i=0,score=0,time=45,lock=false,attempt=0,interval;
+
+function timer(){
+clearInterval(interval);
+time=45;
+document.getElementById("timer").innerText=time;
+
+interval=setInterval(()=>{
+time--;
+document.getElementById("timer").innerText=time;
+if(time==0) next();
+},1000);
+}
+
+function loadQ(){
+lock=false;
+attempt=0;
+timer();
+
+let q=questions[i];
+document.getElementById("q").innerText=q.q;
+
+let box=document.getElementById("options");
+box.innerHTML="";
+document.getElementById("feedback").innerText="";
+
+q.o.forEach((op,idx)=>{
+let d=document.createElement("div");
+d.className="option";
+d.innerText=op;
+d.onclick=()=>check(idx,d);
+box.appendChild(d);
+});
+}
+
+function check(ans,el){
+if(lock) return;
+
+let q=questions[i];
+
+if(ans===q.a){
+el.classList.add("correct");
+document.getElementById("correctSound").play();
+score++;
+document.getElementById("score").innerText="Score: "+score;
+lock=true;
+setTimeout(next,800);
+}else{
+attempt++;
+el.classList.add("wrong");
+document.getElementById("wrongSound").play();
+
+if(attempt==2){
+document.getElementById("feedback").innerText=
+"Correct Answer: "+q.o[q.a]+" → "+q.e;
+lock=true;
+setTimeout(next,2500);
+}
+}
+}
+
+function next(){
+i++;
+if(i<questions.length){
+loadQ();
+}else end();
+}
+
+function end(){
+document.getElementById("game").style.display="none";
+document.getElementById("result").style.display="block";
+document.getElementById("clapSound").play();
+document.getElementById("final").innerText=
+"Final Score: "+score+"/"+questions.length;
+}
+
+</script>
+
+</body>
+</html>
