@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>CBQ Engine v2 - Innovine</title>
+<title>Transport & Communication - HOTS CBQ</title>
 
 <style>
 body{
@@ -16,7 +16,7 @@ body{
 #splash{
   position:fixed;
   inset:0;
-  background:white;
+  background:#fff;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -24,17 +24,11 @@ body{
 }
 #splash img{width:220px;}
 
-/* MAIN */
+/* GAME */
 #game{
   display:none;
   padding:15px;
   text-align:center;
-  opacity:0;
-  transition:0.5s;
-}
-
-#game.show{
-  opacity:1;
 }
 
 .top{
@@ -51,7 +45,6 @@ body{
   padding:20px;
   border-radius:12px;
   box-shadow:0 0 10px rgba(0,0,0,0.1);
-  transition:0.3s;
 }
 
 .option{
@@ -70,9 +63,12 @@ body{
 .correct{background:#bff5bf !important;}
 .wrong{background:#ffbdbd !important;}
 
-.locked{
-  pointer-events:none;
-  opacity:0.7;
+.locked{pointer-events:none;}
+
+#feedback{
+  margin-top:10px;
+  font-size:14px;
+  color:#333;
 }
 
 /* RESULT */
@@ -108,7 +104,7 @@ button{
   <div id="timer">45</div>
 </div>
 
-<div class="box" id="box">
+<div class="box">
   <h3 id="q"></h3>
   <div id="options"></div>
   <div id="feedback"></div>
@@ -118,7 +114,7 @@ button{
 
 <!-- RESULT -->
 <div id="result">
-  <h2>🎉 Great Thinking!</h2>
+  <h2>🎉 Excellent Thinking!</h2>
   <p id="final"></p>
   <button onclick="location.reload()">Play Again</button>
 </div>
@@ -133,99 +129,158 @@ button{
 setTimeout(()=>{
   document.getElementById("splash").style.display="none";
   document.getElementById("game").style.display="block";
-  document.getElementById("game").classList.add("show");
   loadQ();
 },5000);
 
+let questions=[
+{
+q:"A farmer needs to send apples across India. What is the most efficient transport choice?",
+o:["Air transport for all","Rail freight wagons","Bicycle delivery","Walking delivery"],
+a:1,
+e:"Rail is best for bulk goods over long distances."
+},
+{
+q:"Neha travels 500m daily in a hilly town. What is the most sensible choice?",
+o:["Airplane","Ship","Bicycle","Train"],
+a:2,
+e:"Short distance travel suits cycling in such terrain."
+},
+{
+q:"A family must travel urgently from Mumbai to Delhi. Which reasoning is correct?",
+o:["Bus is cheapest so best","Train is slow but safe","Airplane is fastest for urgency","Ship is comfortable"],
+a:2,
+e:"Speed is most important in emergencies."
+},
+{
+q:"During floods, roads are blocked. Medicines must reach village immediately. What is best decision?",
+o:["Bullock cart","Bicycle","Air transport","Metro rail"],
+a:2,
+e:"Air transport bypasses blocked routes."
+},
+{
+q:"Which option improves communication rather than transport?",
+o:["Building highways","Expanding internet networks","Making bridges","Widening roads"],
+a:1,
+e:"Internet improves communication systems."
+},
+{
+q:"Oil must be transported between countries at lowest cost. Best choice?",
+o:["Air cargo","Water tankers","Bicycle","Metro train"],
+a:1,
+e:"Ships carry large quantities cheaply."
+},
+{
+q:"Digital communication works mainly because:",
+o:["Roads connect countries","Internet enables instant data transfer","Telephones work without wires","Letters travel fast physically"],
+a:1,
+e:"Internet enables global instant communication."
+},
+{
+q:"Which statement about communication is incorrect?",
+o:["Email uses internet","SMS sends short messages","Radio gives news","Video calls require meeting physically"],
+a:3,
+e:"Video calls do not need physical meeting."
+},
+{
+q:"A school wants to announce results to all students at once. Best method?",
+o:["One-to-one call","Personal letter","School broadcast system","Individual SMS"],
+a:2,
+e:"Broadcast reaches everyone simultaneously."
+},
+{
+q:"Best balanced transport for 2 km daily travel considering environment?",
+o:["Car","Cycle","Ship","Bullock cart"],
+a:1,
+e:"Cycle is eco-friendly and practical."
+},
+{
+q:"Best sustainable community investment?",
+o:["Decorative park only","Plant trees + rainwater harvesting","Street lighting only","One awareness event"],
+a:1,
+e:"Long-term environmental impact solution."
+},
+{
+q:"Transport choice with best balance of speed and efficiency for most cities?",
+o:["Airplane","Bicycle","Train network","Walking only"],
+a:2,
+e:"Trains balance cost, speed and capacity."
+}
+];
+
 let i=0,score=0,time=45,lock=false,attempt=0,interval;
 
-function startTimer(){
-  clearInterval(interval);
-  time=45;
-  document.getElementById("timer").innerText=time;
+function timer(){
+clearInterval(interval);
+time=45;
+document.getElementById("timer").innerText=time;
 
-  interval=setInterval(()=>{
-    time--;
-    document.getElementById("timer").innerText=time;
-
-    if(time<=0){
-      next();
-    }
-  },1000);
+interval=setInterval(()=>{
+time--;
+document.getElementById("timer").innerText=time;
+if(time==0) next();
+},1000);
 }
 
 function loadQ(){
-  lock=false;
-  attempt=0;
-  startTimer();
+lock=false;
+attempt=0;
+timer();
 
-  let q=questions[i];
-  document.getElementById("q").innerText=q.q;
+let q=questions[i];
+document.getElementById("q").innerText=q.q;
 
-  let box=document.getElementById("options");
-  box.classList.remove("locked");
-  box.innerHTML="";
-  document.getElementById("feedback").innerText="";
+let box=document.getElementById("options");
+box.innerHTML="";
+document.getElementById("feedback").innerText="";
 
-  q.o.forEach((op,idx)=>{
-    let div=document.createElement("div");
-    div.className="option";
-    div.innerText=op;
-    div.onclick=()=>check(idx,div);
-    box.appendChild(div);
-  });
+q.o.forEach((op,idx)=>{
+let d=document.createElement("div");
+d.className="option";
+d.innerText=op;
+d.onclick=()=>check(idx,d);
+box.appendChild(d);
+});
 }
 
 function check(ans,el){
-  if(lock) return;
+if(lock) return;
 
-  let q=questions[i];
+let q=questions[i];
 
-  if(ans===q.a){
-    lock=true;
-    el.classList.add("correct");
-    document.getElementById("correctSound").play();
-    score++;
-    document.getElementById("score").innerText="Score: "+score;
-
-    disableOptions();
-    setTimeout(next,800);
-  }
-  else{
-    attempt++;
-    el.classList.add("wrong");
-    document.getElementById("wrongSound").play();
-
-    if(attempt>=2){
-      lock=true;
-      disableOptions();
-      document.getElementById("feedback").innerText=
-      "Correct Answer: "+q.o[q.a]+" → "+q.e;
-      setTimeout(next,2500);
-    }
-  }
+if(ans===q.a){
+el.classList.add("correct");
+document.getElementById("correctSound").play();
+score++;
+document.getElementById("score").innerText="Score: "+score;
+lock=true;
+setTimeout(next,800);
 }
+else{
+attempt++;
+el.classList.add("wrong");
+document.getElementById("wrongSound").play();
 
-function disableOptions(){
-  document.querySelectorAll(".option").forEach(el=>{
-    el.classList.add("locked");
-  });
+if(attempt==2){
+document.getElementById("feedback").innerText="Correct Answer: "+q.o[q.a]+" → "+q.e;
+lock=true;
+setTimeout(next,2500);
+}
+}
 }
 
 function next(){
-  i++;
-  if(i<questions.length){
-    loadQ();
-  }else end();
+i++;
+if(i<questions.length){
+loadQ();
+}
+else end();
 }
 
 function end(){
-  clearInterval(interval);
-  document.getElementById("game").style.display="none";
-  document.getElementById("result").style.display="block";
-  document.getElementById("clapSound").play();
-  document.getElementById("final").innerText=
-  "Final Score: "+score+"/"+questions.length;
+document.getElementById("game").style.display="none";
+document.getElementById("result").style.display="block";
+document.getElementById("clapSound").play();
+document.getElementById("final").innerText="Final Score: "+score+"/"+questions.length;
 }
 
 </script>
