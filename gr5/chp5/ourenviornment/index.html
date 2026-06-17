@@ -1,1 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Our Environment - CBQ</title>
 
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:linear-gradient(120deg,#e8f7ff,#eaffea,#fff3d6);
+  overflow:hidden;
+}
+
+/* SPLASH */
+#splash{
+  position:fixed;
+  inset:0;
+  background:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+}
+#splash img{width:220px;}
+
+/* GAME */
+#game{
+  display:none;
+  padding:15px;
+  text-align:center;
+}
+
+.top{
+  display:flex;
+  justify-content:space-between;
+  font-weight:bold;
+  padding:10px;
+}
+
+.box{
+  max-width:800px;
+  margin:auto;
+  background:white;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+.option{
+  display:block;
+  margin:10px 0;
+  padding:12px;
+  border:1px solid #ccc;
+  border-radius:8px;
+  cursor:pointer;
+  background:#f9f9f9;
+  transition:0.2s;
+}
+
+.option:hover{background:#eef9ff;}
+
+.correct{background:#bff5bf !important;}
+.wrong{background:#ffbdbd !important;}
+
+.locked{
+  pointer-events:none;
+}
+
+/* RESULT */
+#result{
+  display:none;
+  text-align:center;
+  padding:30px;
+}
+
+button{
+  padding:10px 20px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  background:#4caf50;
+  color:white;
+}
+</style>
+</head>
+
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <img src="assets/logo.png">
+</div>
+
+<!-- GAME -->
+<div id="game">
+
+<div class="top">
+  <div id="score">Score: 0</div>
+  <div id="timer">45</div>
+</div>
+
+<div class="box">
+  <h3 id="q"></h3>
+  <div id="options"></div>
+  <div id="feedback"></div>
+</div>
+
+</div>
+
+<!-- RESULT -->
+<div id="result">
+  <h2>🎉 Great Job!</h2>
+  <p id="final"></p>
+  <button onclick="location.reload()">Play Again</button>
+</div>
+
+<!-- AUDIO -->
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<script>
+
+setTimeout(()=>{
+  document.getElementById("splash").style.display="none";
+  document.getElementById("game").style.display="block";
+  loadQ();
+},5000);
+
+let questions=[
+{
+q:"Rohan sees lights on. What should he do?",
+o:["Leave","Turn off","Open taps","More fans"],a:1,
+e:"Saving electricity reduces energy waste."
+},
+{
+q:"What pollution is from dirty river waste?",
+o:["Air","Water","Noise","Soil"],a:1,
+e:"Waste in water causes water pollution."
+},
+{
+q:"Which class planted most trees?",
+o:["5A","5B","5C","5D"],a:1,
+e:"15 is the highest value."
+},
+{
+q:"Why use cloth bags?",
+o:["Increase plastic","Save rivers","Reduce pollution","Noise"],a:2,
+e:"It reduces plastic waste."
+},
+{
+q:"Which is NOT renewable?",
+o:["Sun","Wind","Coal","Water"],a:2,
+e:"Coal is non-renewable."
+},
+{
+q:"Plants need most?",
+o:["Soil","Plastic","Glass","Metal"],a:0,
+e:"Soil supports plant growth."
+},
+{
+q:"Trees help by?",
+o:["Pollute","Oxygen","Noise","Heat"],a:1,
+e:"Trees release oxygen."
+},
+{
+q:"Wrong action?",
+o:["Plant","Reuse","Throw river","Save power"],a:2,
+e:"Polluting rivers is harmful."
+},
+{
+q:"Wind energy uses?",
+o:["Coal","Wind","Gold","Soil"],a:1,
+e:"Wind turbines use wind."
+},
+{
+q:"Waste after event?",
+o:["Leave","Burn","Dispose","Throw pond"],a:2,
+e:"Proper disposal is correct."
+},
+{
+q:"Family reduces pollution by?",
+o:["Car alone","Walk/cycle","Engine on","Burn waste"],a:1,
+e:"Walking reduces pollution."
+},
+{
+q:"Best project?",
+o:["Plastic use","Cut trees","Plant trees","Dump waste"],a:2,
+e:"Trees protect environment."
+}
+];
+
+let i=0,score=0,time=45,lock=false,attempt=0,interval;
+
+function timer(){
+clearInterval(interval);
+time=45;
+document.getElementById("timer").innerText=time;
+
+interval=setInterval(()=>{
+time--;
+document.getElementById("timer").innerText=time;
+if(time==0) next();
+},1000);
+}
+
+function loadQ(){
+lock=false;
+attempt=0;
+timer();
+
+let q=questions[i];
+document.getElementById("q").innerText=q.q;
+
+let box=document.getElementById("options");
+box.innerHTML="";
+
+q.o.forEach((opt,index)=>{
+let d=document.createElement("div");
+d.className="option";
+d.innerText=opt;
+d.onclick=()=>check(index,d);
+box.appendChild(d);
+});
+}
+
+function check(ans,el){
+if(lock) return;
+
+let q=questions[i];
+
+if(ans==q.a){
+el.classList.add("correct");
+document.getElementById("correctSound").play();
+score++;
+document.getElementById("score").innerText="Score: "+score;
+lock=true;
+setTimeout(next,800);
+}
+else{
+attempt++;
+el.classList.add("wrong");
+document.getElementById("wrongSound").play();
+
+if(attempt==2){
+document.getElementById("feedback").innerText="Correct: "+q.o[q.a]+" → "+q.e;
+lock=true;
+setTimeout(next,2000);
+}
+}
+}
+
+function next(){
+i++;
+if(i<questions.length){
+document.getElementById("feedback").innerText="";
+loadQ();
+}
+else end();
+}
+
+function end(){
+document.getElementById("game").style.display="none";
+document.getElementById("result").style.display="block";
+document.getElementById("clapSound").play();
+document.getElementById("final").innerText="Score: "+score+"/"+questions.length;
+}
+
+</script>
+
+</body>
+</html>
