@@ -1,1 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>My Bharat CBQ</title>
 
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  overflow:hidden;
+  color:#fff;
+  background:#000;
+}
+
+/* SPLASH */
+#splash{
+  position:fixed;
+  inset:0;
+  background:#000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+}
+#splash img{
+  width:220px;
+}
+
+/* GAME */
+#game{
+  display:none;
+  padding:20px;
+  text-align:center;
+}
+
+.top{
+  display:flex;
+  justify-content:space-between;
+  font-size:22px;
+  font-weight:bold;
+}
+
+.box{
+  max-width:900px;
+  margin:auto;
+  background:#111;
+  padding:25px;
+  border-radius:15px;
+  box-shadow:0 0 10px rgba(255,255,255,0.1);
+}
+
+#q{
+  font-size:26px;
+  font-weight:bold;
+  margin-bottom:15px;
+}
+
+.option{
+  display:block;
+  margin:10px 0;
+  padding:14px;
+  font-size:18px;
+  border-radius:10px;
+  background:#1a1a1a;
+  border:1px solid #333;
+  cursor:pointer;
+}
+
+.option:hover{background:#333;}
+
+.correct{background:#1f6f3b !important;}
+.wrong{background:#7a1f1f !important;}
+
+#feedback{
+  margin-top:10px;
+  font-size:16px;
+  color:#fff;
+}
+
+/* RESULT */
+#result{
+  display:none;
+  text-align:center;
+  padding:40px;
+}
+
+button{
+  padding:12px 18px;
+  border:none;
+  border-radius:10px;
+  background:#fff;
+  color:#000;
+  font-size:16px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <img src="assets/logo.png">
+</div>
+
+<!-- GAME -->
+<div id="game">
+
+<div class="top">
+  <div id="score">Score: 0</div>
+  <div id="timer">45</div>
+</div>
+
+<div class="box">
+  <div id="q"></div>
+  <div id="options"></div>
+  <div id="feedback"></div>
+</div>
+
+</div>
+
+<!-- RESULT -->
+<div id="result">
+  <h2>🇮🇳 Excellent!</h2>
+  <p id="final"></p>
+  <button onclick="location.reload()">Play Again</button>
+</div>
+
+<!-- AUDIO -->
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<script>
+
+let i=0;
+let score=0;
+let time=45;
+let attempt=0;
+let lock=false;
+let interval;
+
+/* TIMER FIXED */
+function startTimer(){
+clearInterval(interval);
+time=45;
+document.getElementById("timer").innerText=time;
+
+interval=setInterval(()=>{
+time--;
+document.getElementById("timer").innerText=time;
+if(time<=0) next();
+},1000);
+}
+
+/* 11 CBQ QUESTIONS (REASONING BASED) */
+const questions=[
+{
+q:"A student observes India has many languages but people still understand each other. What does this show?",
+o:["One language system","Linguistic diversity","No communication","Only English is used"],
+a:1,
+e:"India has many languages across regions."
+},
+{
+q:"Different states in India have deserts, mountains and plains. What does this indicate?",
+o:["Uniform geography","Diverse landforms","Only plains exist","No mountains"],
+a:1,
+e:"India has diverse physical features."
+},
+{
+q:"People prefer local products over imported goods in a movement. What idea is this linked to?",
+o:["Global trade","Swadeshi thinking","Foreign dependency","Industrial rejection"],
+a:1,
+e:"Swadeshi promotes local goods."
+},
+{
+q:"Different festivals are celebrated peacefully across India. What does this suggest?",
+o:["Cultural unity in diversity","Single religion","No culture","Same traditions everywhere"],
+a:0,
+e:"India celebrates diversity."
+},
+{
+q:"A traveler sees different clothing styles in different states. What can be inferred?",
+o:["Uniform culture","Regional diversity","No culture exists","Same clothing everywhere"],
+a:1,
+e:"India has regional diversity."
+},
+{
+q:"People with different religions live together peacefully. What does this show?",
+o:["Conflict","Unity in diversity","No society","Isolation"],
+a:1,
+e:"India shows unity in diversity."
+},
+{
+q:"A student sees a map showing islands with marine life. What can be inferred?",
+o:["Himalayan region","Island territory","Desert area","Plateau only"],
+a:1,
+e:"Island regions have marine ecosystems."
+},
+{
+q:"A cultural exchange shows people using gestures and translation to communicate. What does this show?",
+o:["Communication failure","Adaptation in diversity","No interaction","Language barrier only"],
+a:1,
+e:"People adapt to diversity."
+},
+{
+q:"A place has forts, deserts and palaces in same region. What does this suggest?",
+o:["Coastal city","Rajasthan-like heritage region","Forest area","Island zone"],
+a:1,
+e:"Rajasthan is known for forts and deserts."
+},
+{
+q:"Students notice unity despite many differences in India. What is the correct conclusion?",
+o:["Division","Unity in diversity","No identity","Confusion"],
+a:1,
+e:"India is unity in diversity."
+},
+{
+q:"A country has many traditions but still functions as one nation. What does this show?",
+o:["Breakdown of society","Cultural unity","No governance","Isolation"],
+a:1,
+e:"Diversity and unity coexist."
+}
+];
+
+/* LOAD QUESTION */
+function load(){
+clearInterval(interval);
+lock=false;
+attempt=0;
+startTimer();
+
+let q=questions[i];
+
+document.getElementById("q").innerText=q.q;
+document.getElementById("options").innerHTML="";
+document.getElementById("feedback").innerText="";
+
+q.o.forEach((op,idx)=>{
+let div=document.createElement("div");
+div.className="option";
+div.innerText=op;
+div.onclick=()=>check(idx,div);
+document.getElementById("options").appendChild(div);
+});
+}
+
+/* CHECK ANSWER */
+function check(ans,el){
+if(lock) return;
+
+let q=questions[i];
+
+if(ans===q.a){
+el.classList.add("correct");
+document.getElementById("correctSound").play();
+score++;
+document.getElementById("score").innerText="Score: "+score;
+lock=true;
+setTimeout(next,800);
+}
+else{
+attempt++;
+el.classList.add("wrong");
+document.getElementById("wrongSound").play();
+
+if(attempt===2){
+document.getElementById("feedback").innerText=
+"Correct Answer: "+q.o[q.a]+" → "+q.e;
+lock=true;
+setTimeout(next,2000);
+}
+}
+}
+
+/* NEXT */
+function next(){
+clearInterval(interval);
+i++;
+if(i<questions.length){
+load();
+}else end();
+}
+
+/* END */
+function end(){
+clearInterval(interval);
+document.getElementById("game").style.display="none";
+document.getElementById("result").style.display="block";
+document.getElementById("clapSound").play();
+document.getElementById("final").innerText=
+"Score: "+score+"/"+questions.length;
+}
+
+/* START */
+setTimeout(()=>{
+document.getElementById("splash").style.display="none";
+document.getElementById("game").style.display="block";
+load();
+},5000);
+
+</script>
+
+</body>
+</html>
