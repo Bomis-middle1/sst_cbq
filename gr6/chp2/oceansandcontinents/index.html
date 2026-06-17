@@ -24,7 +24,8 @@ body{
 }
 
 #splash img{
-  width:220px;
+  width:260px;
+  max-width:80%;
 }
 
 /* GAME */
@@ -93,7 +94,7 @@ button{
 
 <!-- SPLASH -->
 <div id="splash">
-  <img src="gr6/chp2/oceansandcontinents/assets/logo.png">
+  <img id="logo">
 </div>
 
 <!-- GAME -->
@@ -126,23 +127,83 @@ button{
 
 <script>
 
-setTimeout(()=>{
-  document.getElementById("splash").style.display="none";
-  document.getElementById("game").style.display="block";
-  loadQ();
-},5000);
+/* 🔥 FIXED BASE PATH */
+const BASE = "gr6/chp2/oceansandcontinents/assets/";
 
+/* 🌍 SPLASH FIX */
+window.onload = function(){
+
+  document.getElementById("logo").src = BASE + "logo.png";
+
+  setTimeout(()=>{
+    document.getElementById("splash").style.display="none";
+    document.getElementById("game").style.display="block";
+    loadQ();
+  },5000);
+};
+
+/* QUESTIONS */
 let questions = [
-{q:"A satellite image shows Earth mostly blue. Why?",o:["More oceans","More clouds","More deserts","More forests"],a:0,e:"Oceans cover most of Earth."},
-{q:"Only small part of water is usable because?",o:["Freshwater is limited","All is salty","Water disappears","Oceans freeze"],a:0,e:"Freshwater is limited."},
-{q:"Why oceans are important?",o:["Climate + oxygen","Make land","Stop rain","Create mountains"],a:0,e:"They regulate climate."},
-{q:"Why coastal areas have mild climate?",o:["Water regulates heat","No wind","No sun","No land"],a:0,e:"Water heats slowly."},
-{q:"Which ocean is west of India?",o:["Pacific","Arabian Sea","Arctic","Atlantic"],a:1,e:"Arabian Sea."},
-{q:"Europe + Asia = ?",o:["Eurasia","America","Africa","Australia"],a:0,e:"Eurasia."},
-{q:"Why islands have unique species?",o:["Isolation","Pollution","Heat","Rain"],a:0,e:"Isolation causes evolution."},
-{q:"Oceans are called lungs because?",o:["Produce oxygen","Make land","Stop storms","Cool rocks"],a:0,e:"Marine plants produce oxygen."},
-{q:"Underwater quake causes?",o:["Tsunami","Rain","Snow","Wind"],a:0,e:"Tsunami."},
-{q:"Which is wrong?",o:["Pacific largest","Freshwater unlimited","Earth has continents","Oceans are salty"],a:1,e:"Freshwater is NOT unlimited."}
+{
+q:"A satellite image shows Earth mostly blue. Why?",
+o:["More oceans","More clouds","More deserts","More forests"],
+a:0,
+e:"Oceans cover most of Earth."
+},
+{
+q:"Only small part of water is usable because?",
+o:["Freshwater is limited","All is salty","Water disappears","Oceans freeze"],
+a:0,
+e:"Freshwater is limited."
+},
+{
+q:"Why oceans are important?",
+o:["Climate + oxygen","Make land","Stop rain","Create mountains"],
+a:0,
+e:"They regulate climate."
+},
+{
+q:"Why coastal areas have mild climate?",
+o:["Water regulates heat","No wind","No sun","No land"],
+a:0,
+e:"Water heats slowly."
+},
+{
+q:"Which ocean is west of India?",
+o:["Pacific","Arabian Sea","Arctic","Atlantic"],
+a:1,
+e:"Arabian Sea."
+},
+{
+q:"Europe + Asia = ?",
+o:["Eurasia","America","Africa","Australia"],
+a:0,
+e:"Eurasia."
+},
+{
+q:"Why islands have unique species?",
+o:["Isolation","Pollution","Heat","Rain"],
+a:0,
+e:"Isolation causes evolution."
+},
+{
+q:"Oceans are called lungs because?",
+o:["Produce oxygen","Make land","Stop storms","Cool rocks"],
+a:0,
+e:"Marine plants produce oxygen."
+},
+{
+q:"Underwater quake causes?",
+o:["Tsunami","Rain","Snow","Wind"],
+a:0,
+e:"Tsunami."
+},
+{
+q:"Which is wrong?",
+o:["Pacific largest","Freshwater unlimited","Earth has continents","Oceans are salty"],
+a:1,
+e:"Freshwater is NOT unlimited."
+}
 ];
 
 let i=0,score=0,time=45,lock=false,attempt=0,interval;
