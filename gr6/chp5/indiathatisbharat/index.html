@@ -1,1 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CBQ Game - India Tricolour</title>
 
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  overflow:hidden;
+  color:#000;
+}
+
+/* 🇮🇳 TRICOLOUR BACKGROUND */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background: linear-gradient(
+    to bottom,
+    #ff9933 0%,
+    #ffffff 40%,
+    #ffffff 60%,
+    #138808 100%
+  );
+  z-index:-1;
+}
+
+/* SPLASH */
+#splash{
+  position:fixed;
+  inset:0;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+}
+#splash img{
+  width:220px;
+}
+
+/* GAME BOX */
+#game{
+  display:none;
+  padding:20px;
+  text-align:center;
+}
+
+.top{
+  display:flex;
+  justify-content:space-between;
+  font-size:22px;
+  font-weight:bold;
+  color:#000;
+}
+
+.box{
+  max-width:900px;
+  margin:auto;
+  background:rgba(255,255,255,0.95);
+  padding:25px;
+  border-radius:15px;
+  box-shadow:0 0 15px rgba(0,0,0,0.2);
+}
+
+#q{
+  font-size:26px;
+  font-weight:bold;
+  margin-bottom:20px;
+}
+
+.option{
+  display:block;
+  padding:14px;
+  margin:10px 0;
+  font-size:18px;
+  background:#f7f7f7;
+  border-radius:10px;
+  cursor:pointer;
+  border:1px solid #ccc;
+}
+
+.option:hover{
+  background:#eaeaea;
+}
+
+.correct{background:#b6f7c2 !important;}
+.wrong{background:#ffb3b3 !important;}
+
+/* RESULT */
+#result{
+  display:none;
+  text-align:center;
+  padding:40px;
+}
+
+button{
+  padding:12px 20px;
+  font-size:18px;
+  border:none;
+  border-radius:10px;
+  background:#000;
+  color:#fff;
+  cursor:pointer;
+}
+
+/* ⭐ CONFETTI */
+.confetti{
+  position:fixed;
+  width:8px;
+  height:8px;
+  background:gold;
+  top:-10px;
+  animation:fall 3s linear infinite;
+}
+
+@keyframes fall{
+  to{transform:translateY(110vh) rotate(360deg);}
+}
+</style>
+</head>
+
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <img src="assets/logo.png">
+</div>
+
+<!-- GAME -->
+<div id="game">
+
+<div class="top">
+  <div id="score">Score: 0</div>
+  <div id="timer">45</div>
+</div>
+
+<div class="box">
+  <div id="q"></div>
+  <div id="options"></div>
+</div>
+
+</div>
+
+<!-- RESULT -->
+<div id="result">
+  <h2>🇮🇳 Excellent Work!</h2>
+  <p id="final"></p>
+  <button onclick="location.reload()">Play Again</button>
+</div>
+
+<!-- AUDIO -->
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<script>
+
+let i=0;
+let score=0;
+let time=45;
+let lock=false;
+let interval;
+
+/* QUESTIONS (MODIFIED – NO TABLE TYPE) */
+const questions=[
+{
+q:"Ravi sends goods from Himachal to cities. Why is transport needed?",
+o:["To grow crops","To move goods","To build houses","To send letters only"],
+a:1
+},
+{
+q:"Which transport is best for very short distance?",
+o:["Airplane","Ship","Bicycle","Train"],
+a:2
+},
+{
+q:"Which transport is fastest for long distance travel?",
+o:["Bus","Train","Airplane","Cart"],
+a:2
+},
+{
+q:"Oil is sent between countries. Which transport is used?",
+o:["Air","Water tankers","Bicycle","Metro"],
+a:1
+},
+{
+q:"Why do floods affect transport routes?",
+o:["Roads get blocked","Cars fly","Trains become boats","Air becomes slow"],
+a:0
+},
+{
+q:"Which is communication method?",
+o:["Email","Bus","Train","Ship"],
+a:0
+},
+{
+q:"Which is NOT transport?",
+o:["Car","SMS","Bus","Train"],
+a:1
+},
+{
+q:"Why do we need communication?",
+o:["To share information","To build roads","To grow food","To paint walls"],
+a:0
+},
+{
+q:"Which helps mass communication?",
+o:["Television","Bicycle","Car","Boat"],
+a:0
+},
+{
+q:"What improves communication today?",
+o:["Internet","River","Road","Soil"],
+a:0
+},
+{
+q:"Transport helps mainly in:",
+o:["Movement of people and goods","Cooking food","Sleeping","Studying only"],
+a:0
+}
+];
+
+/* TIMER */
+function startTimer(){
+clearInterval(interval);
+time=45;
+document.getElementById("timer").innerText=time;
+
+interval=setInterval(()=>{
+time--;
+document.getElementById("timer").innerText=time;
+if(time<=0) next();
+},1000);
+}
+
+/* CONFETTI */
+function confetti(){
+for(let i=0;i<25;i++){
+let d=document.createElement("div");
+d.className="confetti";
+d.style.left=Math.random()*100+"vw";
+d.style.background=["#ff9933","#ffffff","#138808"][Math.floor(Math.random()*3)];
+document.body.appendChild(d);
+setTimeout(()=>d.remove(),3000);
+}
+}
+
+/* LOAD */
+function load(){
+clearInterval(interval);
+lock=false;
+startTimer();
+
+let q=questions[i];
+document.getElementById("q").innerText=q.q;
+document.getElementById("options").innerHTML="";
+
+q.o.forEach((op,idx)=>{
+let div=document.createElement("div");
+div.className="option";
+div.innerText=op;
+div.onclick=()=>check(idx,div);
+document.getElementById("options").appendChild(div);
+});
+}
+
+/* CHECK */
+function check(ans,el){
+if(lock) return;
+
+let q=questions[i];
+
+if(ans===q.a){
+el.classList.add("correct");
+document.getElementById("correctSound").play();
+score++;
+document.getElementById("score").innerText="Score: "+score;
+confetti();
+lock=true;
+setTimeout(next,800);
+}else{
+el.classList.add("wrong");
+document.getElementById("wrongSound").play();
+}
+}
+
+/* NEXT */
+function next(){
+i++;
+if(i<questions.length){
+load();
+}else end();
+}
+
+/* END */
+function end(){
+document.getElementById("game").style.display="none";
+document.getElementById("result").style.display="block";
+document.getElementById("clapSound").play();
+document.getElementById("final").innerText=
+"Score: "+score+"/"+questions.length;
+}
+
+/* START */
+setTimeout(()=>{
+document.getElementById("splash").style.display="none";
+document.getElementById("game").style.display="block";
+load();
+},4000);
+
+</script>
+
+</body>
+</html>
