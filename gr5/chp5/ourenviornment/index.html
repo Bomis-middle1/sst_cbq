@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Our Environment - CBQ</title>
+<title>Our Environment - HOTS CBQ</title>
 
 <style>
 body{
@@ -16,7 +16,7 @@ body{
 #splash{
   position:fixed;
   inset:0;
-  background:white;
+  background:#fff;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -39,7 +39,7 @@ body{
 }
 
 .box{
-  max-width:800px;
+  max-width:850px;
   margin:auto;
   background:white;
   padding:20px;
@@ -54,7 +54,7 @@ body{
   border:1px solid #ccc;
   border-radius:8px;
   cursor:pointer;
-  background:#f9f9f9;
+  background:#f8f8f8;
   transition:0.2s;
 }
 
@@ -63,8 +63,12 @@ body{
 .correct{background:#bff5bf !important;}
 .wrong{background:#ffbdbd !important;}
 
-.locked{
-  pointer-events:none;
+.locked{pointer-events:none;}
+
+#feedback{
+  margin-top:10px;
+  font-size:14px;
+  color:#333;
 }
 
 /* RESULT */
@@ -78,9 +82,9 @@ button{
   padding:10px 20px;
   border:none;
   border-radius:8px;
-  cursor:pointer;
   background:#4caf50;
   color:white;
+  cursor:pointer;
 }
 </style>
 </head>
@@ -110,7 +114,7 @@ button{
 
 <!-- RESULT -->
 <div id="result">
-  <h2>🎉 Great Job!</h2>
+  <h2>🎉 Excellent Thinking!</h2>
   <p id="final"></p>
   <button onclick="location.reload()">Play Again</button>
 </div>
@@ -130,64 +134,76 @@ setTimeout(()=>{
 
 let questions=[
 {
-q:"Rohan sees lights on. What should he do?",
-o:["Leave","Turn off","Open taps","More fans"],a:1,
-e:"Saving electricity reduces energy waste."
+q:"A school wants to reduce electricity waste. What is best balanced solution?",
+o:["Switch off all power","Use sensors in key areas","Increase bulbs","Ignore usage"],
+a:1,
+e:"Targeted automation reduces waste efficiently."
 },
 {
-q:"What pollution is from dirty river waste?",
-o:["Air","Water","Noise","Soil"],a:1,
-e:"Waste in water causes water pollution."
+q:"River pollution increases after festivals. Best reasoning?",
+o:["Fish migrate","Oxygen levels drop","Water cools","Noise increases"],
+a:1,
+e:"Pollutants reduce dissolved oxygen."
 },
 {
-q:"Which class planted most trees?",
-o:["5A","5B","5C","5D"],a:1,
-e:"15 is the highest value."
+q:"Waste increases across weekdays. What does it suggest?",
+o:["Random pattern","Activity-driven waste","Weather effect","No logic"],
+a:1,
+e:"More activity → more waste."
 },
 {
-q:"Why use cloth bags?",
-o:["Increase plastic","Save rivers","Reduce pollution","Noise"],a:2,
-e:"It reduces plastic waste."
+q:"Best sustainable habit for plastic reduction?",
+o:["Punish users","Ban cloth bags","Use reusable bags system-wide","Ignore issue"],
+a:2,
+e:"System-level change is effective."
 },
 {
-q:"Which is NOT renewable?",
-o:["Sun","Wind","Coal","Water"],a:2,
-e:"Coal is non-renewable."
+q:"Coal use harms villages. Best decision?",
+o:["Continue","Stop industry","Shift gradually to clean energy","Move factory randomly"],
+a:2,
+e:"Transition is realistic and sustainable."
 },
 {
-q:"Plants need most?",
-o:["Soil","Plastic","Glass","Metal"],a:0,
-e:"Soil supports plant growth."
+q:"Long-term soil fertility drops due to?",
+o:["Seeds weak","Sunlight low","Soil degradation","Rain stops"],
+a:2,
+e:"Chemical overload reduces soil quality."
 },
 {
-q:"Trees help by?",
-o:["Pollute","Oxygen","Noise","Heat"],a:1,
-e:"Trees release oxygen."
+q:"Trees near roads mainly improve?",
+o:["Traffic","Air quality","Noise increase","Heat rise"],
+a:1,
+e:"Trees absorb pollutants."
 },
 {
-q:"Wrong action?",
-o:["Plant","Reuse","Throw river","Save power"],a:2,
-e:"Polluting rivers is harmful."
+q:"Best waste management strategy?",
+o:["Landfill expansion","Segregation at source","No action","Burn waste"],
+a:1,
+e:"Prevention reduces processing load."
 },
 {
-q:"Wind energy uses?",
-o:["Coal","Wind","Gold","Soil"],a:1,
-e:"Wind turbines use wind."
+q:"Wind energy inconsistency means?",
+o:["Useless energy","Weather dependency","Diesel better","Low demand"],
+a:1,
+e:"Renewables depend on natural conditions."
 },
 {
-q:"Waste after event?",
-o:["Leave","Burn","Dispose","Throw pond"],a:2,
-e:"Proper disposal is correct."
+q:"Best school cleanliness approach?",
+o:["One-time cleaning","No segregation","Regular + awareness","Posters only"],
+a:2,
+e:"Sustained action works best."
 },
 {
-q:"Family reduces pollution by?",
-o:["Car alone","Walk/cycle","Engine on","Burn waste"],a:1,
-e:"Walking reduces pollution."
+q:"Best transport for 2 km travel?",
+o:["Car","Cycle","Electric scooter","None"],
+a:2,
+e:"Balanced efficiency + environment."
 },
 {
-q:"Best project?",
-o:["Plastic use","Cut trees","Plant trees","Dump waste"],a:2,
-e:"Trees protect environment."
+q:"Best community investment?",
+o:["Decoration","Tree + rainwater harvesting","Lighting only","Awareness only"],
+a:1,
+e:"Long-term impact solution."
 }
 ];
 
@@ -215,12 +231,13 @@ document.getElementById("q").innerText=q.q;
 
 let box=document.getElementById("options");
 box.innerHTML="";
+document.getElementById("feedback").innerText="";
 
-q.o.forEach((opt,index)=>{
+q.o.forEach((op,idx)=>{
 let d=document.createElement("div");
 d.className="option";
-d.innerText=opt;
-d.onclick=()=>check(index,d);
+d.innerText=op;
+d.onclick=()=>check(idx,d);
 box.appendChild(d);
 });
 }
@@ -230,7 +247,7 @@ if(lock) return;
 
 let q=questions[i];
 
-if(ans==q.a){
+if(ans===q.a){
 el.classList.add("correct");
 document.getElementById("correctSound").play();
 score++;
@@ -244,9 +261,9 @@ el.classList.add("wrong");
 document.getElementById("wrongSound").play();
 
 if(attempt==2){
-document.getElementById("feedback").innerText="Correct: "+q.o[q.a]+" → "+q.e;
+document.getElementById("feedback").innerText="Correct Answer: "+q.o[q.a]+" → "+q.e;
 lock=true;
-setTimeout(next,2000);
+setTimeout(next,2500);
 }
 }
 }
@@ -254,7 +271,6 @@ setTimeout(next,2000);
 function next(){
 i++;
 if(i<questions.length){
-document.getElementById("feedback").innerText="";
 loadQ();
 }
 else end();
@@ -264,7 +280,7 @@ function end(){
 document.getElementById("game").style.display="none";
 document.getElementById("result").style.display="block";
 document.getElementById("clapSound").play();
-document.getElementById("final").innerText="Score: "+score+"/"+questions.length;
+document.getElementById("final").innerText="Final Score: "+score+"/"+questions.length;
 }
 
 </script>
