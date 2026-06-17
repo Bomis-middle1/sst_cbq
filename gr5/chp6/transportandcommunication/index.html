@@ -1,1 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CBQ Engine v2 - Innovine</title>
 
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:linear-gradient(120deg,#e0f7ff,#e8ffe8,#fff4d6);
+  overflow:hidden;
+}
+
+/* SPLASH */
+#splash{
+  position:fixed;
+  inset:0;
+  background:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+}
+#splash img{width:220px;}
+
+/* MAIN */
+#game{
+  display:none;
+  padding:15px;
+  text-align:center;
+  opacity:0;
+  transition:0.5s;
+}
+
+#game.show{
+  opacity:1;
+}
+
+.top{
+  display:flex;
+  justify-content:space-between;
+  font-weight:bold;
+  padding:10px;
+}
+
+.box{
+  max-width:850px;
+  margin:auto;
+  background:white;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 0 10px rgba(0,0,0,0.1);
+  transition:0.3s;
+}
+
+.option{
+  display:block;
+  margin:10px 0;
+  padding:12px;
+  border:1px solid #ccc;
+  border-radius:8px;
+  cursor:pointer;
+  background:#f8f8f8;
+  transition:0.2s;
+}
+
+.option:hover{background:#eef9ff;}
+
+.correct{background:#bff5bf !important;}
+.wrong{background:#ffbdbd !important;}
+
+.locked{
+  pointer-events:none;
+  opacity:0.7;
+}
+
+/* RESULT */
+#result{
+  display:none;
+  text-align:center;
+  padding:30px;
+}
+
+button{
+  padding:10px 20px;
+  border:none;
+  border-radius:8px;
+  background:#4caf50;
+  color:white;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <img src="assets/logo.png">
+</div>
+
+<!-- GAME -->
+<div id="game">
+
+<div class="top">
+  <div id="score">Score: 0</div>
+  <div id="timer">45</div>
+</div>
+
+<div class="box" id="box">
+  <h3 id="q"></h3>
+  <div id="options"></div>
+  <div id="feedback"></div>
+</div>
+
+</div>
+
+<!-- RESULT -->
+<div id="result">
+  <h2>🎉 Great Thinking!</h2>
+  <p id="final"></p>
+  <button onclick="location.reload()">Play Again</button>
+</div>
+
+<!-- AUDIO -->
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<script>
+
+setTimeout(()=>{
+  document.getElementById("splash").style.display="none";
+  document.getElementById("game").style.display="block";
+  document.getElementById("game").classList.add("show");
+  loadQ();
+},5000);
+
+let i=0,score=0,time=45,lock=false,attempt=0,interval;
+
+function startTimer(){
+  clearInterval(interval);
+  time=45;
+  document.getElementById("timer").innerText=time;
+
+  interval=setInterval(()=>{
+    time--;
+    document.getElementById("timer").innerText=time;
+
+    if(time<=0){
+      next();
+    }
+  },1000);
+}
+
+function loadQ(){
+  lock=false;
+  attempt=0;
+  startTimer();
+
+  let q=questions[i];
+  document.getElementById("q").innerText=q.q;
+
+  let box=document.getElementById("options");
+  box.classList.remove("locked");
+  box.innerHTML="";
+  document.getElementById("feedback").innerText="";
+
+  q.o.forEach((op,idx)=>{
+    let div=document.createElement("div");
+    div.className="option";
+    div.innerText=op;
+    div.onclick=()=>check(idx,div);
+    box.appendChild(div);
+  });
+}
+
+function check(ans,el){
+  if(lock) return;
+
+  let q=questions[i];
+
+  if(ans===q.a){
+    lock=true;
+    el.classList.add("correct");
+    document.getElementById("correctSound").play();
+    score++;
+    document.getElementById("score").innerText="Score: "+score;
+
+    disableOptions();
+    setTimeout(next,800);
+  }
+  else{
+    attempt++;
+    el.classList.add("wrong");
+    document.getElementById("wrongSound").play();
+
+    if(attempt>=2){
+      lock=true;
+      disableOptions();
+      document.getElementById("feedback").innerText=
+      "Correct Answer: "+q.o[q.a]+" → "+q.e;
+      setTimeout(next,2500);
+    }
+  }
+}
+
+function disableOptions(){
+  document.querySelectorAll(".option").forEach(el=>{
+    el.classList.add("locked");
+  });
+}
+
+function next(){
+  i++;
+  if(i<questions.length){
+    loadQ();
+  }else end();
+}
+
+function end(){
+  clearInterval(interval);
+  document.getElementById("game").style.display="none";
+  document.getElementById("result").style.display="block";
+  document.getElementById("clapSound").play();
+  document.getElementById("final").innerText=
+  "Final Score: "+score+"/"+questions.length;
+}
+
+</script>
+
+</body>
+</html>
