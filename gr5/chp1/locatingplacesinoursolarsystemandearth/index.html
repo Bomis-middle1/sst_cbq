@@ -5,23 +5,13 @@
 <title>Solar System & Earth - CBQ</title>
 
 <style>
+
+/* CLEAN BACKGROUND FIX */
 body{
   margin:0;
   font-family:Arial;
-  background: radial-gradient(circle at top, #0b1d3a, #000);
-  color:white;
+  background: linear-gradient(to bottom, #f5f7fa, #c3cfe2);
   overflow:hidden;
-}
-
-/* STAR BACKGROUND */
-body::before{
-  content:"";
-  position:fixed;
-  width:100%;
-  height:100%;
-  background: url('https://i.imgur.com/3ZQ3Z9M.png');
-  opacity:0.15;
-  pointer-events:none;
 }
 
 /* SPLASH */
@@ -34,11 +24,12 @@ body::before{
   justify-content:center;
   z-index:999;
 }
+
 #splash img{
   width:220px;
 }
 
-/* GAME BOX */
+/* GAME */
 #game{
   display:none;
   padding:15px;
@@ -55,34 +46,34 @@ body::before{
 .box{
   max-width:850px;
   margin:auto;
-  background:rgba(255,255,255,0.1);
+  background:white;
   padding:20px;
   border-radius:12px;
-  backdrop-filter:blur(10px);
+  box-shadow:0 0 10px rgba(0,0,0,0.1);
 }
 
 .option{
   display:block;
   margin:10px 0;
   padding:12px;
-  border:1px solid rgba(255,255,255,0.3);
+  border:1px solid #ccc;
   border-radius:8px;
   cursor:pointer;
-  background:rgba(255,255,255,0.1);
+  background:#f8f8f8;
   transition:0.2s;
 }
 
 .option:hover{
-  background:rgba(255,255,255,0.2);
+  background:#eef9ff;
 }
 
-.correct{background:#2ecc71 !important;}
-.wrong{background:#e74c3c !important;}
+.correct{background:#bff5bf !important;}
+.wrong{background:#ffbdbd !important;}
 
 #feedback{
   margin-top:10px;
   font-size:14px;
-  color:#ffd;
+  color:#333;
 }
 
 /* RESULT */
@@ -100,6 +91,7 @@ button{
   color:white;
   cursor:pointer;
 }
+
 </style>
 </head>
 
@@ -146,6 +138,7 @@ setTimeout(()=>{
   loadQ();
 },5000);
 
+/* QUESTIONS (UNCHANGED HOTS VERSION) */
 let questions=[
 {
 q:"A model shows dust and gas forming planets. What does this explain?",
@@ -163,7 +156,7 @@ e:"Saturn is a gas giant in outer solar system."
 q:"What condition supports life on a planet?",
 o:["Extreme heat","Liquid water","No atmosphere","No sunlight"],
 a:1,
-e:"Water and atmosphere are essential for life."
+e:"Water and atmosphere are essential."
 },
 {
 q:"What helps interpret map symbols?",
@@ -187,7 +180,7 @@ e:"Equator divides both hemispheres."
 q:"30° East time is?",
 o:["Same","2 hours ahead","2 hours behind","4 hours behind"],
 a:1,
-e:"East = ahead in time."
+e:"East is ahead in time."
 },
 {
 q:"Why time changes westward?",
@@ -221,7 +214,7 @@ e:"Globe shows Earth’s true shape."
 }
 ];
 
-let i=0,score=0,time=45,attempt=0,lock=false,interval;
+let i=0,score=0,time=45,lock=false,attempt=0,interval;
 
 function timer(){
 clearInterval(interval);
@@ -275,7 +268,7 @@ el.classList.add("wrong");
 document.getElementById("wrongSound").play();
 
 if(attempt==2){
-document.getElementById("feedback").innerText="Correct: "+q.o[q.a]+" → "+q.e;
+document.getElementById("feedback").innerText="Correct Answer: "+q.o[q.a]+" → "+q.e;
 lock=true;
 setTimeout(next,2500);
 }
