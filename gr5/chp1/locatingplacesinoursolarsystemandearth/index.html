@@ -1,1 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Solar System & Earth - CBQ</title>
 
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background: radial-gradient(circle at top, #0b1d3a, #000);
+  color:white;
+  overflow:hidden;
+}
+
+/* STAR BACKGROUND */
+body::before{
+  content:"";
+  position:fixed;
+  width:100%;
+  height:100%;
+  background: url('https://i.imgur.com/3ZQ3Z9M.png');
+  opacity:0.15;
+  pointer-events:none;
+}
+
+/* SPLASH */
+#splash{
+  position:fixed;
+  inset:0;
+  background:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+}
+#splash img{
+  width:220px;
+}
+
+/* GAME BOX */
+#game{
+  display:none;
+  padding:15px;
+  text-align:center;
+}
+
+.top{
+  display:flex;
+  justify-content:space-between;
+  font-weight:bold;
+  padding:10px;
+}
+
+.box{
+  max-width:850px;
+  margin:auto;
+  background:rgba(255,255,255,0.1);
+  padding:20px;
+  border-radius:12px;
+  backdrop-filter:blur(10px);
+}
+
+.option{
+  display:block;
+  margin:10px 0;
+  padding:12px;
+  border:1px solid rgba(255,255,255,0.3);
+  border-radius:8px;
+  cursor:pointer;
+  background:rgba(255,255,255,0.1);
+  transition:0.2s;
+}
+
+.option:hover{
+  background:rgba(255,255,255,0.2);
+}
+
+.correct{background:#2ecc71 !important;}
+.wrong{background:#e74c3c !important;}
+
+#feedback{
+  margin-top:10px;
+  font-size:14px;
+  color:#ffd;
+}
+
+/* RESULT */
+#result{
+  display:none;
+  text-align:center;
+  padding:30px;
+}
+
+button{
+  padding:10px 20px;
+  border:none;
+  border-radius:8px;
+  background:#4caf50;
+  color:white;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <img src="assets/logo.png">
+</div>
+
+<!-- GAME -->
+<div id="game">
+
+<div class="top">
+  <div id="score">Score: 0</div>
+  <div id="timer">45</div>
+</div>
+
+<div class="box">
+  <h3 id="q"></h3>
+  <div id="options"></div>
+  <div id="feedback"></div>
+</div>
+
+</div>
+
+<!-- RESULT -->
+<div id="result">
+  <h2>🌍 Excellent Explorer!</h2>
+  <p id="final"></p>
+  <button onclick="location.reload()">Play Again</button>
+</div>
+
+<!-- AUDIO -->
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<script>
+
+setTimeout(()=>{
+  document.getElementById("splash").style.display="none";
+  document.getElementById("game").style.display="block";
+  loadQ();
+},5000);
+
+let questions=[
+{
+q:"A model shows dust and gas forming planets. What does this explain?",
+o:["Planets broke from Sun","Planets formed from gas cloud","Earth made all planets","Oceans created planets"],
+a:1,
+e:"Planets form from gas and dust clouds."
+},
+{
+q:"Why is Saturn classified as a gas giant?",
+o:["Rocky surface","Outer planet with gases","Inside asteroid belt","Moon of Jupiter"],
+a:1,
+e:"Saturn is a gas giant in outer solar system."
+},
+{
+q:"What condition supports life on a planet?",
+o:["Extreme heat","Liquid water","No atmosphere","No sunlight"],
+a:1,
+e:"Water and atmosphere are essential for life."
+},
+{
+q:"What helps interpret map symbols?",
+o:["Scale","Legend","Border","Compass only"],
+a:1,
+e:"Legend explains map symbols."
+},
+{
+q:"Map scale: 1cm=5km, 4cm distance equals?",
+o:["10km","15km","20km","25km"],
+a:2,
+e:"4×5 = 20 km."
+},
+{
+q:"A city on Equator belongs to?",
+o:["North only","South only","Both hemispheres","Polar zone"],
+a:2,
+e:"Equator divides both hemispheres."
+},
+{
+q:"30° East time is?",
+o:["Same","2 hours ahead","2 hours behind","4 hours behind"],
+a:1,
+e:"East = ahead in time."
+},
+{
+q:"Why time changes westward?",
+o:["Sun moves west","Earth rotation & longitude","Maps change time","Weather change"],
+a:1,
+e:"Longitude affects time zones."
+},
+{
+q:"Hot region near equator is?",
+o:["Frigid","Torrid","Temperate","Polar"],
+a:1,
+e:"Torrid zone is hottest."
+},
+{
+q:"Wrong statement?",
+o:["Latitudes parallel","Longitudes pole to pole","Prime meridian 0°","Equator divides east-west"],
+a:3,
+e:"Equator divides north-south."
+},
+{
+q:"Which is NOT space body?",
+o:["Asteroid","Comet","Moon","Mountain"],
+a:3,
+e:"Mountain is not celestial body."
+},
+{
+q:"Why globe is better than map?",
+o:["Easier carry","More colorful","Shows real shape","Cheaper"],
+a:2,
+e:"Globe shows Earth’s true shape."
+}
+];
+
+let i=0,score=0,time=45,attempt=0,lock=false,interval;
+
+function timer(){
+clearInterval(interval);
+time=45;
+document.getElementById("timer").innerText=time;
+
+interval=setInterval(()=>{
+time--;
+document.getElementById("timer").innerText=time;
+if(time==0) next();
+},1000);
+}
+
+function loadQ(){
+lock=false;
+attempt=0;
+timer();
+
+let q=questions[i];
+document.getElementById("q").innerText=q.q;
+
+let box=document.getElementById("options");
+box.innerHTML="";
+document.getElementById("feedback").innerText="";
+
+q.o.forEach((op,idx)=>{
+let d=document.createElement("div");
+d.className="option";
+d.innerText=op;
+d.onclick=()=>check(idx,d);
+box.appendChild(d);
+});
+}
+
+function check(ans,el){
+if(lock) return;
+
+let q=questions[i];
+
+if(ans===q.a){
+el.classList.add("correct");
+document.getElementById("correctSound").play();
+score++;
+document.getElementById("score").innerText="Score: "+score;
+lock=true;
+setTimeout(next,800);
+}
+else{
+attempt++;
+el.classList.add("wrong");
+document.getElementById("wrongSound").play();
+
+if(attempt==2){
+document.getElementById("feedback").innerText="Correct: "+q.o[q.a]+" → "+q.e;
+lock=true;
+setTimeout(next,2500);
+}
+}
+}
+
+function next(){
+i++;
+if(i<questions.length){
+loadQ();
+}
+else end();
+}
+
+function end(){
+document.getElementById("game").style.display="none";
+document.getElementById("result").style.display="block";
+document.getElementById("clapSound").play();
+document.getElementById("final").innerText="Final Score: "+score+"/"+questions.length;
+}
+
+</script>
+
+</body>
+</html>
