@@ -1,1 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Solar System & Earth - CBQ</title>
 
+<style>
+
+/* 🌍 EARTH THEME BACKGROUND */
+body{
+  margin:0;
+  font-family:Arial;
+  overflow:hidden;
+  background: linear-gradient(to bottom right, #0b3d91, #2ecc71);
+}
+
+/* SPLASH */
+#splash{
+  position:fixed;
+  inset:0;
+  background:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+}
+
+#splash img{
+  width:240px;
+}
+
+/* GAME */
+#game{
+  display:none;
+  padding:15px;
+  text-align:center;
+  color:white;
+}
+
+.top{
+  display:flex;
+  justify-content:space-between;
+  font-weight:bold;
+  padding:10px;
+  color:white;
+}
+
+.box{
+  max-width:850px;
+  margin:auto;
+  background:rgba(255,255,255,0.95);
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 0 20px rgba(0,0,0,0.3);
+  color:#222;
+}
+
+.option{
+  display:block;
+  margin:10px 0;
+  padding:12px;
+  border-radius:10px;
+  cursor:pointer;
+  background:#f1f1f1;
+  transition:0.2s;
+}
+
+.option:hover{
+  background:#dff6ff;
+}
+
+.correct{background:#7bed9f !important;}
+.wrong{background:#ff6b6b !important;}
+
+#feedback{
+  margin-top:10px;
+  font-size:14px;
+}
+
+/* RESULT */
+#result{
+  display:none;
+  text-align:center;
+  padding:30px;
+  color:white;
+}
+
+button{
+  padding:12px 22px;
+  border:none;
+  border-radius:10px;
+  background:#1abc9c;
+  color:white;
+  cursor:pointer;
+  font-size:16px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- 🌍 SPLASH -->
+<div id="splash">
+  <img src="assets/logo.png">
+</div>
+
+<!-- GAME -->
+<div id="game">
+
+<div class="top">
+  <div id="score">Score: 0</div>
+  <div id="timer">45</div>
+</div>
+
+<div class="box">
+  <h3 id="q"></h3>
+  <div id="options"></div>
+  <div id="feedback"></div>
+</div>
+
+</div>
+
+<!-- RESULT -->
+<div id="result">
+  <h2>🌍 Excellent Earth Explorer!</h2>
+  <p id="final"></p>
+  <button onclick="location.reload()">Play Again</button>
+</div>
+
+<!-- AUDIO -->
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<script>
+
+setTimeout(()=>{
+  document.getElementById("splash").style.display="none";
+  document.getElementById("game").style.display="block";
+  loadQ();
+},5000);
+
+/* 🌍 QUESTIONS */
+let questions=[
+{
+q:"A model shows dust and gas forming planets. What does this explain?",
+o:["Planets broke from Sun","Planets formed from gas cloud","Earth made all planets","Oceans created planets"],
+a:1,
+e:"Planets form from gas and dust clouds."
+},
+{
+q:"Why is Saturn classified as a gas giant?",
+o:["Rocky surface","Outer planet with gases","Inside asteroid belt","Moon of Jupiter"],
+a:1,
+e:"Saturn is a gas giant."
+},
+{
+q:"What condition supports life on Earth?",
+o:["Extreme heat","Liquid water","No atmosphere","No sunlight"],
+a:1,
+e:"Water and atmosphere support life."
+},
+{
+q:"What helps read maps?",
+o:["Scale","Legend","Border","Compass only"],
+a:1,
+e:"Legend explains symbols."
+},
+{
+q:"Map scale: 1cm=5km, 4cm equals?",
+o:["10km","15km","20km","25km"],
+a:2,
+e:"4 × 5 = 20 km"
+},
+{
+q:"A city on Equator belongs to?",
+o:["North only","South only","Both hemispheres","Polar zone"],
+a:2,
+e:"Equator divides both hemispheres."
+},
+{
+q:"30° East time is?",
+o:["Same","2 hours ahead","2 hours behind","4 hours behind"],
+a:1,
+e:"East is ahead in time."
+},
+{
+q:"Why time changes westward?",
+o:["Sun moves west","Earth rotation","Maps change time","Weather change"],
+a:1,
+e:"Earth rotation causes time difference."
+},
+{
+q:"Hot region near equator is?",
+o:["Frigid","Torrid","Temperate","Polar"],
+a:1,
+e:"Torrid zone is hottest."
+},
+{
+q:"Which is NOT a space object?",
+o:["Asteroid","Comet","Moon","Mountain"],
+a:3,
+e:"Mountain is not space object."
+}
+];
+
+let i=0,score=0,time=45,lock=false,attempt=0,interval;
+
+function timer(){
+clearInterval(interval);
+time=45;
+document.getElementById("timer").innerText=time;
+
+interval=setInterval(()=>{
+time--;
+document.getElementById("timer").innerText=time;
+if(time==0) next();
+},1000);
+}
+
+function loadQ(){
+lock=false;
+attempt=0;
+timer();
+
+let q=questions[i];
+document.getElementById("q").innerText=q.q;
+
+let box=document.getElementById("options");
+box.innerHTML="";
+document.getElementById("feedback").innerText="";
+
+q.o.forEach((op,idx)=>{
+let d=document.createElement("div");
+d.className="option";
+d.innerText=op;
+d.onclick=()=>check(idx,d);
+box.appendChild(d);
+});
+}
+
+function check(ans,el){
+if(lock) return;
+
+let q=questions[i];
+
+if(ans===q.a){
+el.classList.add("correct");
+document.getElementById("correctSound").play();
+score++;
+document.getElementById("score").innerText="Score: "+score;
+lock=true;
+setTimeout(next,800);
+}
+else{
+attempt++;
+el.classList.add("wrong");
+document.getElementById("wrongSound").play();
+
+if(attempt==2){
+document.getElementById("feedback").innerText=
+"Correct Answer: "+q.o[q.a]+" → "+q.e;
+lock=true;
+setTimeout(next,2500);
+}
+}
+}
+
+function next(){
+i++;
+if(i<questions.length){
+loadQ();
+}else end();
+}
+
+function end(){
+document.getElementById("game").style.display="none";
+document.getElementById("result").style.display="block";
+document.getElementById("clapSound").play();
+document.getElementById("final").innerText=
+"Final Score: "+score+"/"+questions.length;
+}
+
+</script>
+
+</body>
+</html>
