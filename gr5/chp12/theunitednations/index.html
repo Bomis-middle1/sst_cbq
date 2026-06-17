@@ -1,1 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 12 - United Nations</title>
 
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  overflow:hidden;
+  color:#fff;
+}
+
+/* 🌐 UN THEME BACKGROUND */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background: linear-gradient(135deg,#0a3d91,#ffffff,#d62828);
+  z-index:-1;
+}
+
+/* SPLASH */
+#splash{
+  position:fixed;
+  inset:0;
+  background:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:999;
+}
+#splash img{
+  width:220px;
+}
+
+/* GAME BOX */
+#game{
+  display:none;
+  padding:20px;
+  text-align:center;
+}
+
+.top{
+  display:flex;
+  justify-content:space-between;
+  font-size:22px;
+  font-weight:bold;
+  color:#0a3d91;
+}
+
+.box{
+  max-width:900px;
+  margin:auto;
+  background:rgba(255,255,255,0.95);
+  color:#000;
+  padding:25px;
+  border-radius:15px;
+  box-shadow:0 0 15px rgba(0,0,0,0.2);
+}
+
+#q{
+  font-size:26px;
+  font-weight:bold;
+  margin-bottom:20px;
+}
+
+/* OPTIONS */
+.option{
+  display:block;
+  padding:14px;
+  margin:10px 0;
+  border-radius:10px;
+  background:#f4f4f4;
+  cursor:pointer;
+  font-size:18px;
+  border:1px solid #ccc;
+}
+
+.option:hover{
+  background:#e8f0ff;
+}
+
+.correct{background:#b7f7c1 !important;}
+.wrong{background:#ffb3b3 !important;}
+
+/* RESULT */
+#result{
+  display:none;
+  text-align:center;
+  padding:40px;
+  color:#0a3d91;
+}
+
+button{
+  padding:12px 20px;
+  font-size:18px;
+  border:none;
+  background:#0a3d91;
+  color:#fff;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+/* 🎉 CONFETTI */
+.confetti{
+  position:fixed;
+  width:8px;
+  height:8px;
+  background:red;
+  top:-10px;
+  animation:fall 3s linear infinite;
+}
+@keyframes fall{
+  to{transform:translateY(110vh) rotate(360deg);}
+}
+</style>
+</head>
+
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <img src="assets/logo.png">
+</div>
+
+<!-- GAME -->
+<div id="game">
+
+<div class="top">
+  <div id="score">Score: 0</div>
+  <div id="timer">45</div>
+</div>
+
+<div class="box">
+  <div id="q"></div>
+  <div id="options"></div>
+</div>
+
+</div>
+
+<!-- RESULT -->
+<div id="result">
+  <h2>🌍 Excellent Work!</h2>
+  <p id="final"></p>
+  <button onclick="location.reload()">Play Again</button>
+</div>
+
+<!-- AUDIO -->
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<script>
+
+let i=0,score=0,time=45,lock=false,interval;
+
+/* QUESTIONS (MODIFIED CBSE LEVEL) */
+const questions=[
+{
+q:"Two countries want peaceful settlement of border conflict. Which UN body helps?",
+o:["UNESCO","International Court of Justice","WHO","UNICEF"],
+a:1
+},
+{
+q:"Which UN agency helps children during floods and disasters?",
+o:["WHO","UNICEF","IMF","Security Council"],
+a:1
+},
+{
+q:"Model UN helps students mainly to...",
+o:["Play sports","Discuss global issues","Run businesses","Learn coding"],
+a:1
+},
+{
+q:"Which agency supports education and culture?",
+o:["WHO","UNESCO","WFP","ICJ"],
+a:1
+},
+{
+q:"UN Day is celebrated on...",
+o:["15 August","24 October","2 October","1 January"],
+a:1
+},
+{
+q:"Which agency handles health emergencies?",
+o:["WHO","UNICEF","UNESCO","NASA"],
+a:0
+},
+{
+q:"Odd one out: Which is NOT a UN body?",
+o:["General Assembly","Security Council","UNICEF","Cricket Board"],
+a:3
+},
+{
+q:"Security Council mainly works for...",
+o:["Trade","Peace and security","Education","Sports"],
+a:1
+},
+{
+q:"Peacekeeping missions are sent to...",
+o:["War zones","Schools","Markets","Hospitals only"],
+a:0
+},
+{
+q:"NAM means countries that want...",
+o:["Military alliance","Independence and peace","War support","Trade monopoly"],
+a:1
+},
+{
+q:"Countries discussing climate issues meet in...",
+o:["WHO","General Assembly","UNICEF","ICJ"],
+a:1
+}
+];
+
+/* TIMER */
+function startTimer(){
+clearInterval(interval);
+time=45;
+document.getElementById("timer").innerText=time;
+
+interval=setInterval(()=>{
+time--;
+document.getElementById("timer").innerText=time;
+if(time<=0) next();
+},1000);
+}
+
+/* CONFETTI */
+function confetti(){
+for(let i=0;i<25;i++){
+let d=document.createElement("div");
+d.className="confetti";
+d.style.left=Math.random()*100+"vw";
+d.style.background=["#0a3d91","#d62828","#ffffff"][Math.floor(Math.random()*3)];
+document.body.appendChild(d);
+setTimeout(()=>d.remove(),3000);
+}
+}
+
+/* LOAD */
+function load(){
+clearInterval(interval);
+lock=false;
+startTimer();
+
+let q=questions[i];
+document.getElementById("q").innerText=q.q;
+document.getElementById("options").innerHTML="";
+
+q.o.forEach((op,idx)=>{
+let div=document.createElement("div");
+div.className="option";
+div.innerText=op;
+div.onclick=()=>check(idx,div);
+document.getElementById("options").appendChild(div);
+});
+}
+
+/* CHECK */
+function check(ans,el){
+if(lock) return;
+
+let q=questions[i];
+
+if(ans===q.a){
+el.classList.add("correct");
+document.getElementById("correctSound").play();
+score++;
+document.getElementById("score").innerText="Score: "+score;
+confetti();
+lock=true;
+setTimeout(next,800);
+}else{
+el.classList.add("wrong");
+document.getElementById("wrongSound").play();
+}
+}
+
+/* NEXT */
+function next(){
+clearInterval(interval);
+i++;
+if(i<questions.length){
+load();
+}else end();
+}
+
+/* END */
+function end(){
+document.getElementById("game").style.display="none";
+document.getElementById("result").style.display="block";
+document.getElementById("clapSound").play();
+document.getElementById("final").innerText=
+"Score: "+score+"/"+questions.length;
+}
+
+/* START */
+setTimeout(()=>{
+document.getElementById("splash").style.display="none";
+document.getElementById("game").style.display="block";
+load();
+},4000);
+
+</script>
+
+</body>
+</html>
