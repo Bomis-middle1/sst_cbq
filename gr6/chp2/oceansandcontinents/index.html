@@ -94,7 +94,7 @@ button{
 
 <!-- SPLASH -->
 <div id="splash">
-  <img id="logo">
+  <img src="assets/logo.png">
 </div>
 
 <!-- GAME -->
@@ -121,89 +121,23 @@ button{
 </div>
 
 <!-- AUDIO -->
-<audio id="correctSound" src="gr6/chp2/oceansandcontinents/assets/correct.mp3"></audio>
-<audio id="wrongSound" src="gr6/chp2/oceansandcontinents/assets/wrong.mp3"></audio>
-<audio id="clapSound" src="gr6/chp2/oceansandcontinents/assets/freesound_community-claps-44774.mp3"></audio>
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
 
 <script>
 
-/* 🔥 FIXED BASE PATH */
-const BASE = "gr6/chp2/oceansandcontinents/assets/";
+setTimeout(()=>{
+  document.getElementById("splash").style.display="none";
+  document.getElementById("game").style.display="block";
+  loadQ();
+},5000);
 
-/* 🌍 SPLASH FIX */
-window.onload = function(){
-
-  document.getElementById("logo").src = BASE + "logo.png";
-
-  setTimeout(()=>{
-    document.getElementById("splash").style.display="none";
-    document.getElementById("game").style.display="block";
-    loadQ();
-  },5000);
-};
-
-/* QUESTIONS */
 let questions = [
-{
-q:"A satellite image shows Earth mostly blue. Why?",
-o:["More oceans","More clouds","More deserts","More forests"],
-a:0,
-e:"Oceans cover most of Earth."
-},
-{
-q:"Only small part of water is usable because?",
-o:["Freshwater is limited","All is salty","Water disappears","Oceans freeze"],
-a:0,
-e:"Freshwater is limited."
-},
-{
-q:"Why oceans are important?",
-o:["Climate + oxygen","Make land","Stop rain","Create mountains"],
-a:0,
-e:"They regulate climate."
-},
-{
-q:"Why coastal areas have mild climate?",
-o:["Water regulates heat","No wind","No sun","No land"],
-a:0,
-e:"Water heats slowly."
-},
-{
-q:"Which ocean is west of India?",
-o:["Pacific","Arabian Sea","Arctic","Atlantic"],
-a:1,
-e:"Arabian Sea."
-},
-{
-q:"Europe + Asia = ?",
-o:["Eurasia","America","Africa","Australia"],
-a:0,
-e:"Eurasia."
-},
-{
-q:"Why islands have unique species?",
-o:["Isolation","Pollution","Heat","Rain"],
-a:0,
-e:"Isolation causes evolution."
-},
-{
-q:"Oceans are called lungs because?",
-o:["Produce oxygen","Make land","Stop storms","Cool rocks"],
-a:0,
-e:"Marine plants produce oxygen."
-},
-{
-q:"Underwater quake causes?",
-o:["Tsunami","Rain","Snow","Wind"],
-a:0,
-e:"Tsunami."
-},
-{
-q:"Which is wrong?",
-o:["Pacific largest","Freshwater unlimited","Earth has continents","Oceans are salty"],
-a:1,
-e:"Freshwater is NOT unlimited."
-}
+{q:"Earth is mostly blue because?",o:["Oceans","Clouds","Mountains","Deserts"],a:0,e:"Oceans cover Earth."},
+{q:"Freshwater is?",o:["Unlimited","Limited","Salty","Invisible"],a:1,e:"Freshwater is limited."},
+{q:"Oceans help in?",o:["Climate control","Making rocks","Stopping sun","Creating cities"],a:0,e:"They regulate climate."},
+{q:"Coastal climate is mild because?",o:["Water heats slowly","No air","No sun","No land"],a:0,e:"Water regulates temperature."}
 ];
 
 let i=0,score=0,time=45,lock=false,attempt=0,interval;
