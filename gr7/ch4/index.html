@@ -23,11 +23,10 @@
 body{background:radial-gradient(circle at 20% 20%,#7a3a1d,#3d2113 70%);min-height:100vh;overflow-x:hidden;color:var(--ink)}
 
 /* ---- Splash ---- */
-#splash{position:fixed;inset:0;background:var(--iron);display:flex;justify-content:center;align-items:center;z-index:9999}
-.splash-content{text-align:center;color:var(--parchment)}
-.splash-seal{width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,var(--gold),var(--clay) 70%);display:flex;align-items:center;justify-content:center;font-size:56px;margin:0 auto 18px;border:5px solid var(--parchment-dark);box-shadow:0 0 40px rgba(199,154,62,.5);animation:seal-spin 3s ease-in-out infinite}
-@keyframes seal-spin{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
-.splash-content h2{font-family:'Trebuchet MS',sans-serif;letter-spacing:2px;font-weight:600;text-transform:uppercase;font-size:15px;color:var(--gold)}
+#splash{position:fixed;inset:0;background:#ffffff;display:flex;justify-content:center;align-items:center;z-index:9999}
+.splash-content{text-align:center}
+.splash-logo{width:220px;display:flex;align-items:center;justify-content:center;margin:0 auto}
+.splash-logo img{width:100%;height:auto;object-fit:contain}
 
 .hidden{display:none!important}
 .container{max-width:760px;margin:auto;padding:24px}
@@ -85,8 +84,8 @@ button:hover{background:var(--clay-dark)}
 
 <div id="splash">
  <div class="splash-content">
-  <div class="splash-seal">🪙</div>
-  <h2>Innovine Learning Adventure</h2>
+  <div class="splash-logo"><img src="sst_cbq/gr7
+/assets/innovine-logo.png"></div>
  </div>
 </div>
 
@@ -191,3 +190,7 @@ function confetti(){const sym=['🪙','✨','🏺'];for(let i=0;i<10;i++){let s=
 </script>
 </body>
 </html>
+
+
+
+
