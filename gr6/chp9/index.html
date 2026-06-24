@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CBQ Interactive - Grade 6 - Chapter 9: Family and Community</title>
+
+<style>
+body{
+    margin:0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg,#e8d9b5,#f7f3e9,#d6b36a);
+    overflow-x:hidden;
+}
+
+/* Splash Screen */
+#splash{
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    z-index:10;
+}
+
+#splash img{
+    width:220px;
+    animation:zoom 2s ease-in-out;
+}
+
+@keyframes zoom{
+    from{transform:scale(0.6); opacity:0;}
+    to{transform:scale(1); opacity:1;}
+}
+
+/* Game Container */
+#game{
+    display:none;
+    padding:20px;
+    text-align:center;
+}
+
+/* Header (Grade + Chapter) */
+#header{
+    margin-bottom:15px;
+    font-size:22px;
+    font-weight:bold;
+    color:#3b2a1f;
+}
+
+/* Score */
+#score{
+    font-size:20px;
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
+/* Question Box */
+.question-box{
+    background:rgba(59,42,31,0.85);
+    color:#fff;
+    padding:20px;
+    border-radius:15px;
+    max-width:700px;
+    margin:auto;
+    box-shadow:0 0 15px rgba(0,0,0,0.3);
+    font-size:22px;
+}
+
+/* Options */
+.option{
+    display:block;
+    margin:12px auto;
+    padding:14px;
+    width:80%;
+    max-width:500px;
+    background:#f7f3e9;
+    border:2px solid #6b4f3a;
+    border-radius:12px;
+    font-size:18px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.option:hover{
+    transform:scale(1.03);
+    background:#fff;
+}
+
+/* Correct / Wrong */
+.correct{
+    background:#b6f7b6 !important;
+    border-color:green;
+}
+
+.wrong{
+    background:#f7b6b6 !important;
+    border-color:red;
+}
+
+/* Confetti */
+.confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background: gold;
+    top: -10px;
+    animation: fall 3s linear forwards;
+}
+
+@keyframes fall{
+    to{
+        transform:translateY(100vh) rotate(360deg);
+        opacity:0;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- SPLASH with Innovine logo -->
+<div id="splash">
+    <img src="assets/logo.png" alt="Innovine Logo">
+</div>
+
+<!-- GAME -->
+<div id="game">
+    <div id="header">Grade 6 - Chapter 9: Family and Community</div>
+    <div id="score">Score: 0</div>
+
+    <div class="question-box" id="question">Loading...</div>
+    <div id="options"></div>
+</div>
+
+<!-- AUDIO -->
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<script>
+// QUESTIONS (will be shuffled once at start)
+let questions = [
+{
+    q:"Aman lives with his parents and sister in one house. His grandparents live in another city. What type of family does Aman belong to?",
+    o:[
+        "Joint family",
+        "Nuclear family",
+        "Community",
+        "Extended family"
+    ],
+    a:1
+},
+{
+    q:"Riya finishes her homework and then helps her younger brother understand a difficult lesson. What value is Riya showing?",
+    o:[
+        "Laziness",
+        "Responsibility",
+        "Competition",
+        "Carelessness"
+    ],
+    a:1
+},
+{
+    q:"Rahul's mother is unwell. His father cooks dinner, his sister cleans the house, and Rahul helps with small chores. What does this situation show?",
+    o:[
+        "Family members should work alone.",
+        "Family support helps during difficult times.",
+        "Only parents should do household work.",
+        "Children should not help at home."
+    ],
+    a:1
+},
+{
+    q:"Statement: Family meetings can help solve problems.\nReason: Everyone gets a chance to share their ideas.\n\nChoose the correct option:",
+    o:[
+        "Both statement and reason are true, and the reason explains the statement.",
+        "Both are true, but the reason does not explain the statement.",
+        "Statement is true, reason is false.",
+        "Statement is false, reason is true."
+    ],
+    a:0
+},
+{
+    q:"During a festival, Meena's grandmother teaches her how to prepare a traditional sweet that has been made in the family for many years. What is being passed on?",
+    o:[
+        "Competition",
+        "Cultural heritage",
+        "Homework",
+        "Sports skills"
+    ],
+    a:1
+},
+{
+    q:"A locality has the following places:\n\nPlace / Purpose\nSchool – Education\nPark – Recreation\nHospital – Healthcare\nMall – Shopping\n\nWhich place mainly helps children learn and develop knowledge?",
+    o:[
+        "Park",
+        "Hospital",
+        "School",
+        "Mall"
+    ],
+    a:2
+},
+{
+    q:"A farmer falls sick during the harvest season. Other villagers help harvest his crops. Why are the villagers helping?",
+    o:[
+        "To earn extra money",
+        "To show community cooperation",
+        "To take over his farm",
+        "To avoid their own work"
+    ],
+    a:1
+},
+{
+    q:"Residents of an apartment complex meet every month to discuss waste management and cleanliness. Which group is most likely organizing these meetings?",
+    o:[
+        "School Committee",
+        "Sports Club",
+        "Residents' Welfare Association (RWA)",
+        "Library Group"
+    ],
+    a:2
+},
+{
+    q:"Which of these does NOT mainly represent a community activity?",
+    o:[
+        "Cleaning a neighbourhood park",
+        "Organizing a recycling drive",
+        "Helping neighbours during floods",
+        "Packing your own school bag"
+    ],
+    a:3
+},
+{
+    q:"A school organizes a tree-planting event. Parents, teachers, and students all participate together. What does this activity show?",
+    o:[
+        "Families and communities can work together.",
+        "Only schools should care for the environment.",
+        "Students do not need family support.",
+        "Communities are separate from families."
+    ],
+    a:0
+},
+{
+    q:"A new playground is being built in a neighbourhood. Families suggest ideas, children share what they would like, and community leaders arrange the work. What is helping the project succeed?",
+    o:[
+        "One person making all decisions",
+        "Cooperation and teamwork",
+        "Competition between families",
+        "Ignoring children's ideas"
+    ],
+    a:1
+},
+{
+    q:"Your neighbour's house is affected by flooding after heavy rain. What is the best way for the community to help?",
+    o:[
+        "Ignore the problem",
+        "Wait for someone else to help",
+        "Work together to provide food, shelter, and support",
+        "Move away from the area"
+    ],
+    a:2
+},
+{
+    q:"Which action would strengthen both a family and a community?",
+    o:[
+        "Refusing to help others",
+        "Keeping problems secret from everyone",
+        "Listening respectfully and helping when needed",
+        "Working only for personal benefit"
+    ],
+    a:2
+}
+];
+
+let current = 0;
+let score = 0;
+
+// Fisher–Yates shuffle to randomise question order
+function shuffleQuestions(arr){
+    for(let i = arr.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+}
+
+setTimeout(()=>{
+    document.getElementById("splash").style.display="none";
+    document.getElementById("game").style.display="block";
+    shuffleQuestions(questions);
+    loadQuestion();
+},3000);
+
+function loadQuestion(){
+    if(current >= questions.length){
+        document.getElementById("question").innerHTML = "🎉 Game Completed!";
+        document.getElementById("options").innerHTML = "";
+        document.getElementById("clapSound").play();
+        return;
+    }
+
+    let q = questions[current];
+    document.getElementById("question").innerHTML = q.q.replace(/\n/g,"<br>");
+
+    let optHTML = "";
+    q.o.forEach((opt,i)=>{
+        optHTML += `<div class='option' onclick='checkAnswer(this,${i})'>${opt}</div>`;
+    });
+
+    document.getElementById("options").innerHTML = optHTML;
+}
+
+function checkAnswer(el,i){
+    let q = questions[current];
+
+    if(i === q.a){
+        el.classList.add("correct");
+        document.getElementById("correctSound").play();
+        score++;
+        document.getElementById("score").innerText = "Score: " + score;
+        createConfetti();
+        setTimeout(()=>{ current++; loadQuestion(); },1200);
+    }else{
+        el.classList.add("wrong");
+        document.getElementById("wrongSound").play();
+    }
+}
+
+function createConfetti(){
+    for(let i=0;i<25;i++){
+        let c = document.createElement("div");
+        c.className = "confetti";
+        c.style.left = Math.random()*100 + "vw";
+        c.style.background = ["gold","orange","#fff","#d6b36a"][Math.floor(Math.random()*4)];
+        document.body.appendChild(c);
+        setTimeout(()=>c.remove(),3000);
+    }
+}
+</script>
+
+</body>
+</html>
