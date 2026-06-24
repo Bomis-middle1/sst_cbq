@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Nature's Daily Drama - CBQ</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:linear-gradient(to bottom right,#d6f0ff,#ffffff,#dff5e1);
+  overflow:hidden;
+}
+
+/* SPLASH */
+#splash{
+  position:fixed;
+  inset:0;
+  background:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+}
+
+#splash img{
+  width:240px;
+  max-width:80%;
+}
+
+/* GAME */
+#game{
+  display:none;
+  padding:20px;
+  text-align:center;
+}
+
+.top{
+  display:flex;
+  justify-content:space-between;
+  font-weight:bold;
+  font-size:20px;
+  padding:10px;
+}
+
+.box{
+  max-width:900px;
+  margin:auto;
+  background:white;
+  padding:25px;
+  border-radius:15px;
+  box-shadow:0 0 12px rgba(0,0,0,0.1);
+}
+
+#q{
+  font-size:22px;
+  font-weight:bold;
+  margin-bottom:20px;
+}
+
+.option{
+  display:block;
+  margin:12px 0;
+  padding:15px;
+  font-size:18px;
+  border:1px solid #ccc;
+  border-radius:10px;
+  cursor:pointer;
+  background:#f8f8f8;
+  transition:0.2s;
+}
+
+.option:hover{
+  background:#eaf7ff;
+}
+
+.correct{
+  background:#bff5bf !important;
+}
+
+.wrong{
+  background:#ffbdbd !important;
+}
+
+#feedback{
+  margin-top:15px;
+  font-size:16px;
+  color:#333;
+}
+
+/* RESULT */
+#result{
+  display:none;
+  text-align:center;
+  padding:40px;
+}
+
+button{
+  padding:12px 25px;
+  font-size:16px;
+  border:none;
+  border-radius:10px;
+  background:#4caf50;
+  color:white;
+  cursor:pointer;
+}
+</style>
+
+</head>
+
+<body>
+
+<!-- SPLASH -->
+
+<div id="splash">
+  <img
+    src="/sst_cbq/gr7/chp2/naturesdailydrama/assets/logo.png"
+    onerror="this.outerHTML='<h2>Innovine</h2>'">
+</div>
+
+<!-- GAME -->
+
+<div id="game">
+
+<div class="top">
+  <div id="score">Score: 0</div>
+  <div id="timer">45</div>
+</div>
+
+<div class="box">
+  <div id="q"></div>
+  <div id="options"></div>
+  <div id="feedback"></div>
+</div>
+
+</div>
+
+<!-- RESULT -->
+
+<div id="result">
+  <h2>🌦️ Weather Wizard!</h2>
+  <p id="final"></p>
+  <button onclick="location.reload()">Play Again</button>
+</div>
+
+<!-- AUDIO -->
+
+<audio id="correctSound" src="/sst_cbq/gr7/chp2/naturesdailydrama/assets/correct.mp3"></audio> <audio id="wrongSound" src="/sst_cbq/gr7/chp2/naturesdailydrama/assets/wrong.mp3"></audio> <audio id="clapSound" src="/sst_cbq/gr7/chp2/naturesdailydrama/assets/freesound_community-claps-44774.mp3"></audio>
+
+<script>
+
+/* SPLASH SCREEN */
+setTimeout(()=>{
+  document.getElementById("splash").style.display="none";
+  document.getElementById("game").style.display="block";
+  loadQ();
+},5000);
+
+/* QUESTIONS */
+
+let questions = [
+
+{
+q:"Riya video-calls her cousin in another city and hears that it is 'chilly' there. Why is it important to use standard units like °C instead of words such as 'chilly' or 'hot'?",
+o:[
+"Standard units allow accurate comparison between places with different climates",
+"Words like 'chilly' are always wrong",
+"Only scientists are allowed to use temperature words",
+"Standard units make the weather change faster"
+],
+a:0,
+e:"Degrees Celsius provides a precise and common way to compare temperatures."
+},
+
+{
+q:"A pilot wants to avoid the layer of the atmosphere where most storms, rain, and clouds occur. Which layer should the pilot fly above?",
+o:[
+"Stratosphere",
+"Troposphere",
+"Mesosphere",
+"Exosphere"
+],
+a:1,
+e:"Most weather activities take place in the troposphere."
+},
+
+{
+q:"Ooty and Srinagar are both hill stations, yet Ooty stays much milder in winter. What does this tell us about climate?",
+o:[
+"All hill stations have identical climates",
+"Climate depends on factors like location and altitude, not just being in the hills",
+"Only northern hill stations experience cold weather",
+"Temperature has nothing to do with location"
+],
+a:1,
+e:"Climate is influenced by latitude, altitude, and regional conditions."
+},
+
+{
+q:"A farmer notices birds flying very low and sunflowers drooping in the afternoon. Based on traditional weather signs, what may happen next?",
+o:[
+"A heatwave is approaching",
+"A storm or rain may be coming soon",
+"A drought is starting",
+"Humidity will decrease sharply"
+],
+a:1,
+e:"Low-flying birds and drooping flowers can indicate approaching rain or storms."
+},
+
+{
+q:"A news report says Kolkata received 41 mm of rainfall in June. What does this measurement mean?",
+o:[
+"It rained continuously for 41 minutes",
+"The ground would be covered with water about 4.1 cm deep if it did not run off or soak in",
+"41 mm refers to wind speed",
+"It means 41% of the city got flooded"
+],
+a:1,
+e:"Rainfall in millimetres indicates the depth of water collected on a flat surface."
+},
+
+{
+q:"Anagha in Kochi and Zara in Jaipur hang identical wet clothes outside. Zara's clothes dry much faster. Why?",
+o:[
+"Jaipur has higher humidity",
+"Kochi has more sunlight",
+"Jaipur has lower humidity, allowing faster evaporation",
+"Kochi's air pressure is too low for evaporation"
+],
+a:2,
+e:"Lower humidity helps water evaporate more quickly."
+},
+
+{
+q:"Assertion: A sudden drop in air pressure recorded by a barometer often signals an approaching storm. Reason: Lower air pressure is linked with changing weather conditions like storms.",
+o:[
+"Both A and R are true, and R correctly explains A",
+"Both A and R are true, but R does not explain A",
+"A is true, but R is false",
+"A is false, but R is true"
+],
+a:0,
+e:"Falling air pressure is commonly associated with stormy weather."
+},
+
+{
+q:"The IMD used satellites and Automated Weather Stations to track a cyclone and issue red alerts. What does this demonstrate?",
+o:[
+"Cyclones cannot be predicted in advance",
+"Technology and early forecasting can help reduce damage and save lives",
+"Weather stations only measure temperature",
+"Red alerts are issued after damage occurs"
+],
+a:1,
+e:"Modern forecasting systems help people prepare and stay safe."
+},
+
+{
+q:"A traveller moves from Chennai's coast to the mountains of Ladakh and feels dizzy and short of breath. Why?",
+o:[
+"Ladakh has higher humidity",
+"Air pressure and oxygen levels are lower at high altitude",
+"Ladakh is much hotter",
+"The traveller is experiencing higher air pressure"
+],
+a:1,
+e:"Higher altitudes have thinner air with less oxygen available."
+},
+
+{
+q:"A student wrote notes on weather instruments. Which statement is incorrect?",
+o:[
+"A thermometer measures temperature",
+"A rain gauge measures precipitation",
+"An anemometer measures humidity",
+"A barometer measures air pressure"
+],
+a:2,
+e:"An anemometer measures wind speed. Humidity is measured using a hygrometer."
+}
+
+];
+
+/* VARIABLES */
+
+let i=0;
+let score=0;
+let time=45;
+let attempt=0;
+let lock=false;
+let interval;
+
+/* TIMER */
+
+function timer(){
+
+clearInterval(interval);
+
+time=45;
+document.getElementById("timer").innerText=time;
+
+interval=setInterval(()=>{
+
+time--;
+
+document.getElementById("timer").innerText=time;
+
+if(time===0){
+next();
+}
+
+},1000);
+
+}
+
+/* LOAD QUESTION */
+
+function loadQ(){
+
+lock=false;
+attempt=0;
+
+timer();
+
+let q=questions[i];
+
+document.getElementById("q").innerText=q.q;
+
+let box=document.getElementById("options");
+box.innerHTML="";
+
+document.getElementById("feedback").innerText="";
+
+q.o.forEach((op,idx)=>{
+
+let d=document.createElement("div");
+
+d.className="option";
+d.innerText=op;
+
+d.onclick=()=>check(idx,d);
+
+box.appendChild(d);
+
+});
+
+}
+
+/* CHECK ANSWER */
+
+function check(ans,el){
+
+if(lock) return;
+
+let q=questions[i];
+
+if(ans===q.a){
+
+el.classList.add("correct");
+
+document.getElementById("correctSound").play();
+
+score++;
+
+document.getElementById("score").innerText="Score: "+score;
+
+lock=true;
+
+setTimeout(next,800);
+
+}
+else{
+
+attempt++;
+
+el.classList.add("wrong");
+
+document.getElementById("wrongSound").play();
+
+if(attempt===2){
+
+document.getElementById("feedback").innerText=
+"Correct Answer: " + q.o[q.a] + " → " + q.e;
+
+lock=true;
+
+setTimeout(next,2500);
+
+}
+
+}
+
+}
+
+/* NEXT QUESTION */
+
+function next(){
+
+i++;
+
+if(i<questions.length){
+
+loadQ();
+
+}
+else{
+
+end();
+
+}
+
+}
+
+/* END GAME */
+
+function end(){
+
+clearInterval(interval);
+
+document.getElementById("game").style.display="none";
+
+document.getElementById("result").style.display="block";
+
+document.getElementById("clapSound").play();
+
+document.getElementById("final").innerText=
+"Final Score: " + score + " / " + questions.length;
+
+}
+
+</script>
+
+</body>
+</html>
