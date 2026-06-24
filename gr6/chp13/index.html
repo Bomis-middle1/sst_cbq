@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CBQ Interactive - Grade 6 - Chapter 13: The Value of Work</title>
+
+<style>
+body{
+    margin:0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg,#e8d9b5,#f7f3e9,#d6b36a);
+    overflow-x:hidden;
+}
+
+/* Splash Screen */
+#splash{
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    z-index:10;
+}
+
+#splash img{
+    width:220px;
+    animation:zoom 2s ease-in-out;
+}
+
+@keyframes zoom{
+    from{transform:scale(0.6); opacity:0;}
+    to{transform:scale(1); opacity:1;}
+}
+
+/* Game Container */
+#game{
+    display:none;
+    padding:20px;
+    text-align:center;
+}
+
+/* Header (Grade + Chapter) */
+#header{
+    margin-bottom:15px;
+    font-size:22px;
+    font-weight:bold;
+    color:#3b2a1f;
+}
+
+/* Score */
+#score{
+    font-size:20px;
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
+/* Question Box */
+.question-box{
+    background:rgba(59,42,31,0.85);
+    color:#fff;
+    padding:20px;
+    border-radius:15px;
+    max-width:800px;
+    margin:auto;
+    box-shadow:0 0 15px rgba(0,0,0,0.3);
+    font-size:22px;
+}
+
+/* Options */
+.option{
+    display:block;
+    margin:12px auto;
+    padding:14px;
+    width:80%;
+    max-width:550px;
+    background:#f7f3e9;
+    border:2px solid #6b4f3a;
+    border-radius:12px;
+    font-size:18px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.option:hover{
+    transform:scale(1.03);
+    background:#fff;
+}
+
+/* Correct / Wrong */
+.correct{
+    background:#b6f7b6 !important;
+    border-color:green;
+}
+
+.wrong{
+    background:#f7b6b6 !important;
+    border-color:red;
+}
+
+/* Confetti */
+.confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background: gold;
+    top: -10px;
+    animation: fall 3s linear forwards;
+}
+
+@keyframes fall{
+    to{
+        transform:translateY(100vh) rotate(360deg);
+        opacity:0;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- SPLASH with Innovine logo -->
+<div id="splash">
+    <img src="assets/logo.png" alt="Innovine Logo">
+</div>
+
+<!-- GAME -->
+<div id="game">
+    <div id="header">Grade 6 - Chapter 13: The Value of Work</div>
+    <div id="score">Score: 0</div>
+
+    <div class="question-box" id="question">Loading...</div>
+    <div id="options"></div>
+</div>
+
+<!-- AUDIO -->
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<script>
+// QUESTIONS (shuffled once at start)
+let questions = [
+{
+    q:"Riya's mother grows vegetables and sells them in the market. With the money earned, she buys food and pays school fees. Why is selling vegetables an economic activity?",
+    o:[
+        "It helps people relax",
+        "It earns money to meet needs",
+        "It is done only for fun",
+        "It helps pass free time"
+    ],
+    a:1
+},
+{
+    q:"After school, Arjun spends an hour helping his younger brother with homework without taking any payment. This activity is best described as:",
+    o:[
+        "Economic activity",
+        "Business activity",
+        "Non-economic activity",
+        "Trading activity"
+    ],
+    a:2
+},
+{
+    q:"A group of children spend Sunday planting trees in their neighbourhood park. They do not receive any money, but they want cleaner air and a greener area. Why is this activity valuable?",
+    o:[
+        "It increases their salary",
+        "It helps the environment and community",
+        "It creates a new business",
+        "It reduces the need for trees"
+    ],
+    a:1
+},
+{
+    q:"Look at the activities done by Meena in one day:\n\nActivity / Earns Money?\nTeaching students – Yes\nVisiting grandparents – No\nSelling handmade bags – Yes\nHelping a neighbour – No\n\nHow many of Meena's activities are economic activities?",
+    o:[
+        "1",
+        "2",
+        "3",
+        "4"
+    ],
+    a:1
+},
+{
+    q:"A farmer sells fresh mangoes. Later, he makes mango jam and sells it at a higher price. This is an example of:",
+    o:[
+        "Conservation",
+        "Recycling",
+        "Value addition",
+        "Volunteering"
+    ],
+    a:2
+},
+{
+    q:"Which activity does NOT belong with the others?",
+    o:[
+        "Volunteering at a cleanliness drive",
+        "Feeding stray animals",
+        "Teaching children for free",
+        "Running a shop to earn money"
+    ],
+    a:3
+},
+{
+    q:"Assertion: Helping elderly neighbours can strengthen a community.\nReason: People support and care for one another through such actions.\n\nChoose the correct option:",
+    o:[
+        "Both are true and the reason explains the assertion.",
+        "Both are true but the reason does not explain the assertion.",
+        "Assertion is true but reason is false.",
+        "Assertion is false but reason is true."
+    ],
+    a:0
+},
+{
+    q:"A student wrote these examples of economic activities:\n1. Selling books in a shop\n2. Farming vegetables for sale\n3. Playing with friends in the evening\n4. Teaching students for a salary\nWhich activity is wrongly included?",
+    o:[
+        "Activity 1",
+        "Activity 2",
+        "Activity 3",
+        "Activity 4"
+    ],
+    a:2
+},
+{
+    q:"Rahul spends all his time earning money and never spends time with family or friends. After some time, he feels unhappy and stressed. What lesson does this situation teach?",
+    o:[
+        "People should only do economic activities",
+        "Money is the only important thing in life",
+        "A balance between economic and non-economic activities is important",
+        "Family activities are a waste of time"
+    ],
+    a:2
+},
+{
+    q:"A group of volunteers teaches basic computer skills to children in their village free of cost. What is the main contribution of this activity?",
+    o:[
+        "It helps increase knowledge and skills in society",
+        "It increases the price of products",
+        "It creates pollution",
+        "It reduces education opportunities"
+    ],
+    a:0
+},
+{
+    q:"Basant earns money by selling vegetables. He also helps organize a tree plantation drive in his village. Which statement is correct?",
+    o:[
+        "Both activities are economic activities",
+        "Both activities are non-economic activities",
+        "Selling vegetables is economic, while planting trees is non-economic",
+        "Planting trees is economic, while selling vegetables is non-economic"
+    ],
+    a:2
+},
+{
+    q:"A family wants to improve their community and also earn a living. Which option shows a good balance?",
+    o:[
+        "Work all day and never help others",
+        "Help others all day and never earn money",
+        "Earn money through work and spend some time helping the community",
+        "Avoid both work and community activities"
+    ],
+    a:2
+}
+];
+
+let current = 0;
+let score = 0;
+
+// Fisher–Yates shuffle to randomise question order
+function shuffleQuestions(arr){
+    for(let i = arr.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+}
+
+setTimeout(()=>{
+    document.getElementById("splash").style.display="none";
+    document.getElementById("game").style.display="block";
+    shuffleQuestions(questions);
+    loadQuestion();
+},3000);
+
+function loadQuestion(){
+    if(current >= questions.length){
+        document.getElementById("question").innerHTML = "🎉 Game Completed!";
+        document.getElementById("options").innerHTML = "";
+        document.getElementById("clapSound").play();
+        return;
+    }
+
+    let q = questions[current];
+    document.getElementById("question").innerHTML = q.q.replace(/\n/g,"<br>");
+
+    let optHTML = "";
+    q.o.forEach((opt,i)=>{
+        optHTML += `<div class='option' onclick='checkAnswer(this,${i})'>${opt}</div>`;
+    });
+
+    document.getElementById("options").innerHTML = optHTML;
+}
+
+function checkAnswer(el,i){
+    let q = questions[current];
+
+    if(i === q.a){
+        el.classList.add("correct");
+        document.getElementById("correctSound").play();
+        score++;
+        document.getElementById("score").innerText = "Score: " + score;
+        createConfetti();
+        setTimeout(()=>{ current++; loadQuestion(); },1200);
+    }else{
+        el.classList.add("wrong");
+        document.getElementById("wrongSound").play();
+    }
+}
+
+function createConfetti(){
+    for(let i=0;i<25;i++){
+        let c = document.createElement("div");
+        c.className = "confetti";
+        c.style.left = Math.random()*100 + "vw";
+        c.style.background = ["gold","orange","#fff","#d6b36a"][Math.floor(Math.random()*4)];
+        document.body.appendChild(c);
+        setTimeout(()=>c.remove(),3000);
+    }
+}
+</script>
+
+</body>
+</html>
