@@ -6,6 +6,7 @@
 <title>Nature's Daily Drama - CBQ</title>
 
 <style>
+
 body{
   margin:0;
   font-family:Arial, sans-serif;
@@ -13,7 +14,8 @@ body{
   overflow:hidden;
 }
 
-/* SPLASH */
+/* SPLASH SCREEN */
+
 #splash{
   position:fixed;
   inset:0;
@@ -25,11 +27,12 @@ body{
 }
 
 #splash img{
-  width:240px;
+  width:260px;
   max-width:80%;
 }
 
-/* GAME */
+/* GAME AREA */
+
 #game{
   display:none;
   padding:20px;
@@ -89,7 +92,8 @@ body{
   color:#333;
 }
 
-/* RESULT */
+/* RESULT SCREEN */
+
 #result{
   display:none;
   text-align:center;
@@ -105,18 +109,17 @@ button{
   color:white;
   cursor:pointer;
 }
+
 </style>
 
 </head>
 
 <body>
 
-<!-- SPLASH -->
+<!-- SPLASH SCREEN -->
 
 <div id="splash">
-  <img
-    src="/sst_cbq/gr7/chp2/naturesdailydrama/assets/logo.png"
-    onerror="this.outerHTML='<h2>Innovine</h2>'">
+  <img src="../assets/innovine-logo.png" alt="Innovine Logo">
 </div>
 
 <!-- GAME -->
@@ -144,18 +147,22 @@ button{
   <button onclick="location.reload()">Play Again</button>
 </div>
 
-<!-- AUDIO -->
+<!-- AUDIO FILES -->
 
-<audio id="correctSound" src="/sst_cbq/gr7/chp2/naturesdailydrama/assets/correct.mp3"></audio> <audio id="wrongSound" src="/sst_cbq/gr7/chp2/naturesdailydrama/assets/wrong.mp3"></audio> <audio id="clapSound" src="/sst_cbq/gr7/chp2/naturesdailydrama/assets/freesound_community-claps-44774.mp3"></audio>
+<audio id="correctSound" src="../assets/correct.mp3"></audio> <audio id="wrongSound" src="../assets/wrong.mp3"></audio> <audio id="clapSound" src="../assets/freesound_community-claps-44774.mp3"></audio>
 
 <script>
 
 /* SPLASH SCREEN */
-setTimeout(()=>{
-  document.getElementById("splash").style.display="none";
-  document.getElementById("game").style.display="block";
-  loadQ();
-},5000);
+
+setTimeout(() => {
+
+document.getElementById("splash").style.display = "none";
+document.getElementById("game").style.display = "block";
+
+loadQ();
+
+}, 5000);
 
 /* QUESTIONS */
 
@@ -283,13 +290,11 @@ e:"An anemometer measures wind speed. Humidity is measured using a hygrometer."
 
 ];
 
-/* VARIABLES */
-
-let i=0;
-let score=0;
-let time=45;
-let attempt=0;
-let lock=false;
+let i = 0;
+let score = 0;
+let time = 45;
+let attempt = 0;
+let lock = false;
 let interval;
 
 /* TIMER */
@@ -298,16 +303,17 @@ function timer(){
 
 clearInterval(interval);
 
-time=45;
-document.getElementById("timer").innerText=time;
+time = 45;
 
-interval=setInterval(()=>{
+document.getElementById("timer").innerText = time;
+
+interval = setInterval(() => {
 
 time--;
 
-document.getElementById("timer").innerText=time;
+document.getElementById("timer").innerText = time;
 
-if(time===0){
+if(time === 0){
 next();
 }
 
@@ -319,28 +325,29 @@ next();
 
 function loadQ(){
 
-lock=false;
-attempt=0;
+lock = false;
+attempt = 0;
 
 timer();
 
-let q=questions[i];
+let q = questions[i];
 
-document.getElementById("q").innerText=q.q;
+document.getElementById("q").innerText = q.q;
 
-let box=document.getElementById("options");
-box.innerHTML="";
+let box = document.getElementById("options");
 
-document.getElementById("feedback").innerText="";
+box.innerHTML = "";
+
+document.getElementById("feedback").innerText = "";
 
 q.o.forEach((op,idx)=>{
 
-let d=document.createElement("div");
+let d = document.createElement("div");
 
-d.className="option";
-d.innerText=op;
+d.className = "option";
+d.innerText = op;
 
-d.onclick=()=>check(idx,d);
+d.onclick = ()=>check(idx,d);
 
 box.appendChild(d);
 
@@ -354,9 +361,9 @@ function check(ans,el){
 
 if(lock) return;
 
-let q=questions[i];
+let q = questions[i];
 
-if(ans===q.a){
+if(ans === q.a){
 
 el.classList.add("correct");
 
@@ -364,9 +371,9 @@ document.getElementById("correctSound").play();
 
 score++;
 
-document.getElementById("score").innerText="Score: "+score;
+document.getElementById("score").innerText = "Score: " + score;
 
-lock=true;
+lock = true;
 
 setTimeout(next,800);
 
@@ -379,12 +386,12 @@ el.classList.add("wrong");
 
 document.getElementById("wrongSound").play();
 
-if(attempt===2){
+if(attempt === 2){
 
-document.getElementById("feedback").innerText=
+document.getElementById("feedback").innerText =
 "Correct Answer: " + q.o[q.a] + " → " + q.e;
 
-lock=true;
+lock = true;
 
 setTimeout(next,2500);
 
@@ -394,13 +401,13 @@ setTimeout(next,2500);
 
 }
 
-/* NEXT QUESTION */
+/* NEXT */
 
 function next(){
 
 i++;
 
-if(i<questions.length){
+if(i < questions.length){
 
 loadQ();
 
@@ -413,19 +420,18 @@ end();
 
 }
 
-/* END GAME */
+/* END */
 
 function end(){
 
 clearInterval(interval);
 
-document.getElementById("game").style.display="none";
-
-document.getElementById("result").style.display="block";
+document.getElementById("game").style.display = "none";
+document.getElementById("result").style.display = "block";
 
 document.getElementById("clapSound").play();
 
-document.getElementById("final").innerText=
+document.getElementById("final").innerText =
 "Final Score: " + score + " / " + questions.length;
 
 }
