@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Module: The Era of Rebuilding</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow: hidden;
+  background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #333;
+}
+
+/* SPLASH SCREEN */
+#splash {
+  position: fixed;
+  inset: 0;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  transition: opacity 0.5s ease;
+}
+
+#splash img {
+  width: 240px;
+  max-width: 80%;
+  margin-bottom: 20px;
+  animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.95); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(0.95); }
+}
+
+/* GAME CONTAINER */
+#game {
+  display: none;
+  width: 100%;
+  max-width: 700px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(5px);
+  border-radius: 30px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  font-size: 16px;
+  color: #bf360c;
+}
+
+.box {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+#q {
+  font-size: 19px;
+  margin-top: 0;
+  margin-bottom: 25px;
+  color: #4e342e;
+  line-height: 1.5;
+  text-align: left;
+}
+
+/* OPTIONS */
+.option {
+  display: block;
+  margin: 12px 0;
+  padding: 14px 20px;
+  border: 2px solid #f5eae6;
+  border-radius: 12px;
+  cursor: pointer;
+  background: #ffffff;
+  font-size: 15px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  color: #5d4037;
+  text-align: left;
+}
+
+.option:hover {
+  background: #fff3e0;
+  border-color: #ffb74d;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(255,183,77,0.15);
+}
+
+/* STATE STYLES */
+.correct {
+  background: #e8f5e9 !important;
+  border-color: #81c784 !important;
+  color: #2e7d32 !important;
+  font-weight: bold;
+}
+
+.wrong {
+  background: #ffebee !important;
+  border-color: #e57373 !important;
+  color: #c62828 !important;
+}
+
+#feedback {
+  margin-top: 20px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #2e7d32;
+  padding: 15px;
+  border-radius: 12px;
+  background: #e8f5e9;
+  text-align: left;
+  line-height: 1.4;
+  animation: fadeIn 0.3s ease;
+}
+
+.incorrect-feed {
+  background: #fbe9e7 !important;
+  color: #d84315 !important;
+}
+
+/* BUTTONS */
+button {
+  padding: 12px 30px;
+  border: none;
+  border-radius: 25px;
+  background: linear-gradient(135deg, #ff7043, #ff5722);
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 5px 15px rgba(255,87,34,0.3);
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255,87,34,0.4);
+}
+
+#btn-next {
+  margin-top: 20px;
+  background: linear-gradient(135deg, #4caf50, #2e7d32);
+  box-shadow: 0 5px 15px rgba(76,175,80,0.3);
+}
+
+#btn-next:hover {
+  box-shadow: 0 8px 20px rgba(76,175,80,0.4);
+}
+
+/* RESULT SCREEN */
+#result {
+  display: none;
+  text-align: center;
+  background: white;
+  padding: 40px;
+  border-radius: 24px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+  max-width: 550px;
+  width: 90%;
+  animation: scaleUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+#result h2 {
+  font-size: 26px;
+  color: #d84315;
+  margin-top: 0;
+}
+
+#badge {
+  font-size: 22px;
+  color: #2e7d32;
+  font-weight: bold;
+  margin: 15px 0;
+}
+
+#final {
+  font-size: 16px;
+  margin: 15px 0 30px 0;
+  line-height: 1.5;
+  color: #5d4037;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; } to { opacity: 1; }
+}
+
+@keyframes scaleUp {
+  from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <img src="assets/innovine-logo.png" alt="Loading...">
+  <button id="btn-start" onclick="startGame()">Start Learning Module</button>
+</div>
+
+<!-- GAME -->
+<div id="game">
+  <div class="top">
+    <div id="score">⭐ Score: 0</div>
+    <div id="timer">⏳ 45s</div>
+  </div>
+
+  <div class="box">
+    <h3 id="q"></h3>
+    <div id="options"></div>
+    <div id="feedback" style="display: none;"></div>
+    <button id="btn-next" style="display: none;" onclick="next()">Next Question ➡️</button>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="result">
+  <h2>✨ Module Completed! ✨</h2>
+  <div id="badge"></div>
+  <p id="final"></p>
+  <button onclick="location.reload()">Play Again</button>
+</div>
+
+<!-- AUDIO -->
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<script>
+// Prevent splash auto-removal to unlock browser audio policies safely on click
+function startGame() {
+  document.getElementById("splash").style.opacity = 0;
+  setTimeout(() => {
+    document.getElementById("splash").style.display = "none";
+    document.getElementById("game").style.display = "block";
+    loadQ();
+  }, 500);
+}
+
+let questions = [
+  {
+    q: "Q1. Imagine you are a political analyst in 185 BCE watching Puṣhyamitra Śhunga publicly perform the grand aśhvamedha yajña right after overthrowing the Maurya dynasty. What was the primary political purpose behind this ritual?",
+    o: [
+      "A. To increase regional agricultural output and crop yields.",
+      "B. To legitimise his new rule and assert supreme kingly sovereignty.",
+      "C. To sign a formal maritime trade agreement with the Roman Empire.",
+      "D. To force the entire population to convert to a brand new religion."
+    ],
+    a: 1,
+    e: "The aśhvamedha yajña was an ancient horse-sacrifice ritual used by rising rulers as a powerful political statement to assert their royal legitimacy and establish sovereignty after an empire's collapse."
+  },
+  {
+    q: "Q2. Archaeologists discover a hoard of ancient Sātavāhana coins near a coastal site. If these coins explicitly feature detailed engravings of ships, which historical conclusion does this find best support?",
+    o: [
+      "A. The Sātavāhana people worshipped sea deities exclusively.",
+      "B. The Sātavāhanas maintained active maritime trade with West Asia and Rome.",
+      "C. The empire built massive war navies solely to conquer distant oceanic islands.",
+      "D. The dynasty strictly controlled inland trade routes and banned coastal travel."
+    ],
+    a: 1,
+    e: "The depiction of ships on Sātavāhana coins serves as clear historical evidence of their thriving maritime trade and strong seafaring connections across the western seas and the Roman world."
+  },
+  {
+    q: "Q3. You are examining a newly unearthed Kuṣhāṇa gold coin issued under King Kaṇiṣhka. On one side you see an image of the Buddha, and on the reverse side, you see the Hindu god Śhiva. What does this reveal about his administration?",
+    o: [
+      "A. The king forced his subjects to follow exactly two state religions at all times.",
+      "B. The empire actively promoted religious inclusivity to appeal to diverse subjects.",
+      "C. Buddhist philosophies completely replaced all ancient Brahmanical faiths.",
+      "D. The state prohibited the use of currency for any regular economic marketplace trade."
+    ],
+    a: 1,
+    e: "Featuring deities from different traditions (Greek, Persian, Buddhist, and Hindu) on gold coins highlights Kaṇiṣhka's global outlook and his use of religious pluralism to unite a diverse empire."
+  },
+  {
+    q: "Q4. The famous Hāthīgumphā inscription records King Khāravela building extensive canals, public gardens, and civic institutions. From this record, what can we confidently conclude about his philosophy of kingship?",
+    o: [
+      "A. He avoided public works entirely to focus resources on isolated temple complexes.",
+      "B. He balanced his military campaigns with a strong emphasis on public welfare and infrastructure.",
+      "C. He was a ruthless conqueror who used state infrastructure solely for religious conversions.",
+      "D. He abolished traditional agriculture throughout Kalinga to promote urban industrial centers."
+    ],
+    a: 1,
+    e: "Despite being a powerful warrior, King Khāravela's inscriptions prove he prioritized public welfare, using state resources to build critical infrastructure like water canals for his people."
+  },
+  {
+    q: "Q5. Suppose you are a farmer living in the Kaveri delta during the 2nd century CE. What immediate, long-term impact would you experience following Karikāla Chola’s construction of the Kallaṇai (Grand Anicut)?",
+    o: [
+      "A. A severe drop in local agricultural production due to unexpected seasonal flooding.",
+      "B. Improved irrigation, greater crop yields, and a stable food supply supporting urban growth.",
+      "C. The rapid desertification of the Kaveri delta due to completely blocked water channels.",
+      "D. A total collapse of regional market trade as river transport networks were closed off."
+    ],
+    a: 1,
+    e: "The Grand Anicut diverted river water efficiently for farm irrigation, converting the Kaveri delta into a highly productive agricultural zone known as the 'rice bowl of South India.'"
+  },
+  {
+    q: "Q6. Consider this statement pair regarding the architectural materials used in ancient art schools:\n\nAssertion (A): The Gāndhāra school of art used red sandstone as its primary sculpting material.\nReason (R): Gāndhāra art shows heavy Hellenistic (Greek-Roman) sculptural influence in features like wavy hair and realistic robes.",
+    o: [
+      "A. Both A and R are true, and R is the correct explanation of A.",
+      "B. Both A and R are true, but R is not the correct explanation of A.",
+      "C. A is true, but R is false.",
+      "D. A is false, but R is true."
+    ],
+    a: 3,
+    e: "Assertion A is false because the Gāndhāra school of art primarily used grey schist stone, whereas the Mathurā school used red sandstone. Reason R is historically true."
+  },
+  {
+    q: "Q7. Consider this statement pair regarding the emergence of historic Indian calendar systems:\n\nAssertion (A): The Śhaka Samvat calendar officially begins in the year 78 CE and is still used in Indian government documents.\nReason (R): The Śhaka calendar era was originally introduced to the subcontinent by early Indo-Greek kings.",
+    o: [
+      "A. Both A and R are true, and R is the correct explanation of A.",
+      "B. Both A and R are true, but R is not the correct explanation of A.",
+      "C. A is true, but R is false.",
+      "D. A is false, but R is true."
+    ],
+    a: 2,
+    e: "Assertion A is true, but Reason R is false because the Śhaka Samvat was introduced by the Indo-Scythians (the Śhakas), not by the Indo-Greeks."
+  },
+  {
+    q: "Q8. An inscription found at the Naneghat caves near Pune describes a Sātavāhana queen performing Vedic sacrifices, donating valuable gifts, and overseeing trade through the mountain pass. What does this reveal about the social status of royal women in this era?",
+    o: [
+      "A. Royal women were kept completely isolated from political, economic, or religious life.",
+      "B. Women had zero financial autonomy and could not hold property or issue public records.",
+      "C. Royal women held high social regard, exercised considerable power, and acted as active patrons of religion and charity.",
+      "D. Only foreign Greek women were allowed to oversee financial donations and mountain toll posts."
+    ],
+    a: 2,
+    e: "The prominent Naneghat and Nāśik cave inscriptions show that royal Sātavāhana women held high social status, managed substantial resources, and independently backed diverse religious and public welfare acts."
+  },
+  {
+    q: "Q9. Consider this statement pair regarding Sātavāhana economic activity:\n\nAssertion (A): Sātavāhana coins depicting detailed ships indicate active maritime trade with overseas markets.\nReason (R): The presence of ship imagery on these coins proves that the Sātavāhanas never engaged in inland trade networks.",
+    o: [
+      "A. Both A and R are true, and R is the correct explanation of A.",
+      "B. Both A and R are true, but R is not the correct explanation of A.",
+      "C. A is true, but R is false.",
+      "D. A is false, but R is true."
+    ],
+    a: 2,
+    e: "The assertion is perfectly true as the coins show overseas seafaring links, but the reason is completely false because they maintained massive inland trade networks through mountain passes like Naneghat."
+  },
+  {
+    q: "Q10. During an archaeological excavation at an ancient southern port, team members discover Roman amphora fragments, local South Indian pottery, and Sātavāhana ship coins together. How should a historian reconstruct this trade network?",
+    o: [
+      "A. The port was entirely isolated and only traded with small, nearby farming villages.",
+      "B. Inland producers transported goods through mountain passes to coastal ports, connecting local crafts directly to global Roman markets.",
+      "C. Roman merchants completely conquered South India and prohibited local pottery production.",
+      "D. The items arrived purely by accident via shipwrecks, as no organized land routes existed."
+    ],
+    a: 1,
+    e: "Finding inland toll records, regional coins, and imported Roman pottery together indicates a highly organized supply chain linking domestic inland producers to international maritime trade routes."
+  }
+];
+
+let i = 0, score = 0, time = 45, lock = false, attempt = 0, interval;
+
+function timer() {
+  clearInterval(interval);
+  time = 45;
+  document.getElementById("timer").innerText = "⏳ " + time + "s";
+
+  interval = setInterval(() => {
+    time--;
+    document.getElementById("timer").innerText = "⏳ " + time + "s";
+    if (time == 0) {
+      lock = true;
+      showExplanation();
+    }
+  }, 1000);
+}
+
+function loadQ() {
+  lock = false;
+  attempt = 0;
+  document.getElementById("btn-next").style.display = "none";
+  timer();
+
+  let q = questions[i];
+  document.getElementById("q").innerHTML = q.q.replace(/\n/g, "<br>");
+
+  let box = document.getElementById("options");
+  box.innerHTML = "";
+  
+  let feed = document.getElementById("feedback");
+  feed.innerText = "";
+  feed.style.display = "none";
+  feed.classList.remove("incorrect-feed");
+
+  q.o.forEach((op, idx) => {
+    let d = document.createElement("div");
+    d.className = "option";
+    d.innerText = op;
+    d.onclick = () => check(idx, d);
+    box.appendChild(d);
+  });
+}
+
+function check(ans, el) {
+  if (lock) return;
+
+  let q = questions[i];
+
+  if (ans === q.a) {
+    el.classList.add("correct");
+    try { document.getElementById("correctSound").play(); } catch(e){}
+    if (attempt === 0) {
+      score++;
+      document.getElementById("score").innerText = "⭐ Score: " + score;
+    }
+    lock = true;
+    showExplanation(true);
+  } else {
+    attempt++;
+    el.classList.add("wrong");
+    try { document.getElementById("wrongSound").play(); } catch(e){}
+
+    if (attempt >= 2) {
+      lock = true;
+      // Highlight correct answer automatically
+      let optionsList = document.getElementById("options").children;
+      optionsList[q.a].classList.add("correct");
+      showExplanation(false);
+    }
+  }
+}
+
+function showExplanation(isCorrect) {
+  clearInterval(interval);
+  let q = questions[i];
+  let feed = document.getElementById("feedback");
+  
+  if (isCorrect) {
+    feed.innerText = "✨ Correct!\n\n" + q.e;
+    feed.classList.remove("incorrect-feed");
+  } else {
+    feed.innerText = "🔍 Reviewing Details:\n\n" + q.e;
+    feed.classList.add("incorrect-feed");
+  }
+  
+  feed.style.display = "block";
+  document.getElementById("btn-next").style.display = "inline-block";
+}
+
+function next() {
+  i++;
+  if (i < questions.length) {
+    loadQ();
+  } else end();
+}
+
+function end() {
+  clearInterval(interval);
+  document.getElementById("game").style.display = "none";
+  document.getElementById("result").style.display = "block";
+  try { document.getElementById("clapSound").play(); } catch(e){}
+  
+  let badgeEl = document.getElementById("badge");
+  let finalEl = document.getElementById("final");
+  
+  if (score >= 9) {
+    badgeEl.innerText = "👑 Master of Reorganisation!";
+    finalEl.innerText = "Flawless strategic insight! You fully comprehend the shifts from the Mauryan collapse to regional powers. You parsed complex inscriptions, calendar metrics, and trade dynamics flawlessly.\n\nFinal Score: " + score + " / " + questions.length;
+  } else if (score >= 6) {
+    badgeEl.innerText = "🛡️ Imperial Border Governor!";
+    finalEl.innerText = "Great job! You have a solid command over the trade routes and royal lines of the era, though a subtle review of architectural schools and specialized inscriptions will help expand your realm.\n\nFinal Score: " + score + " / " + questions.length;
+  } else {
+    badgeEl.innerText = "🏺 Guild Apprentice!";
+    finalEl.innerText = "A good start to your historical journey! Review the differences between Gāndhāra and Mathurā art systems and trace the coastal ports once more.\n\nFinal Score: " + score + " / " + questions.length;
+  }
+}
+</script>
+
+</body>
+</html>
