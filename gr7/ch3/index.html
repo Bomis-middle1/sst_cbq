@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Module: Decoding India's Climate</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow: hidden;
+  background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #333;
+}
+
+/* SPLASH SCREEN */
+#splash {
+  position: fixed;
+  inset: 0;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  transition: opacity 0.5s ease;
+}
+
+#splash img {
+  width: 240px;
+  max-width: 80%;
+  animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.95); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(0.95); }
+}
+
+/* GAME CONTAINER */
+#game {
+  display: none;
+  width: 100%;
+  max-width: 700px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(5px);
+  border-radius: 30px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  font-size: 16px;
+  color: #bf360c;
+}
+
+.box {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+#q {
+  font-size: 20px;
+  margin-top: 0;
+  margin-bottom: 25px;
+  color: #4e342e;
+  line-height: 1.5;
+  text-align: left;
+}
+
+/* OPTIONS */
+.option {
+  display: block;
+  margin: 12px 0;
+  padding: 14px 20px;
+  border: 2px solid #f5eae6;
+  border-radius: 12px;
+  cursor: pointer;
+  background: #ffffff;
+  font-size: 15px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  color: #5d4037;
+  text-align: left;
+}
+
+.option:hover {
+  background: #fff3e0;
+  border-color: #ffb74d;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(255,183,77,0.15);
+}
+
+/* STATE STYLES */
+.correct {
+  background: #e8f5e9 !important;
+  border-color: #81c784 !important;
+  color: #2e7d32 !important;
+  font-weight: bold;
+}
+
+.wrong {
+  background: #ffebee !important;
+  border-color: #e57373 !important;
+  color: #c62828 !important;
+}
+
+#feedback {
+  margin-top: 20px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #d84315;
+  padding: 12px;
+  border-radius: 8px;
+  background: #fbe9e7;
+  text-align: left;
+  line-height: 1.4;
+  animation: fadeIn 0.3s ease;
+}
+
+/* RESULT SCREEN */
+#result {
+  display: none;
+  text-align: center;
+  background: white;
+  padding: 40px;
+  border-radius: 24px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+  max-width: 550px;
+  width: 90%;
+  animation: scaleUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+#result h2 {
+  font-size: 26px;
+  color: #d84315;
+  margin-top: 0;
+}
+
+#badge {
+  font-size: 22px;
+  color: #2e7d32;
+  font-weight: bold;
+  margin: 15px 0;
+}
+
+#final {
+  font-size: 16px;
+  margin: 15px 0 30px 0;
+  line-height: 1.5;
+  color: #5d4037;
+}
+
+button {
+  padding: 12px 30px;
+  border: none;
+  border-radius: 25px;
+  background: linear-gradient(135deg, #ff7043, #ff5722);
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 5px 15px rgba(255,87,34,0.3);
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255,87,34,0.4);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; } to { opacity: 1; }
+}
+
+@keyframes scaleUp {
+  from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; }
+}
+</style>
+</head>
+
+<body>
+
+<div id="splash">
+  <img src="assets/logo.png" alt="Loading...">
+</div>
+
+<div id="game">
+  <div class="top">
+    <div id="score">⭐ Score: 0</div>
+    <div id="timer">⏳ 45s</div>
+  </div>
+
+  <div class="box">
+    <h3 id="q"></h3>
+    <div id="options"></div>
+    <div id="feedback" style="display: none;"></div>
+  </div>
+</div>
+
+<div id="result">
+  <h2>✨ Module Completed! ✨</h2>
+  <div id="badge"></div>
+  <p id="final"></p>
+  <button onclick="location.reload()">Play Again</button>
+</div>
+
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<script>
+// Keep splash for 5 seconds as requested in your base template
+setTimeout(() => {
+  document.getElementById("splash").style.opacity = 0;
+  setTimeout(() => {
+    document.getElementById("splash").style.display = "none";
+    document.getElementById("game").style.display = "block";
+    loadQ();
+  }, 500);
+}, 5000);
+
+let questions = [
+  {
+    q: "Q1. An urban planner in North India is reviewing a 35-year dataset of average rainfall and temperature to design a city's storm-water drainage system. Simultaneously, a school principal looks out the window to check if it will rain during the afternoon sports hour.\n\nWhich atmospheric concepts are the planner and the principal looking at, respectively?",
+    o: [
+      "A. The planner is looking at weather; the principal is looking at climate.",
+      "B. Both are analyzing daily weather changes.",
+      "C. The planner is looking at climate; the principal is looking at weather.",
+      "D. Both are analyzing long-term climate trends."
+    ],
+    a: 2,
+    e: "Climate refers to long-term atmospheric patterns tracked over 30+ years, while weather is the immediate daily condition of the atmosphere."
+  },
+  {
+    q: "Q2. Look at the diagram of the mountain range above. A town located on the dry, brown side (sheltered from rain-bearing winds) is experiencing water scarcity.\n\nWhat geographic term best describes the location of this town?",
+    o: [
+      "A. The windward side",
+      "B. The alpine zone",
+      "C. The leeward side",
+      "D. The coastal zone"
+    ],
+    a: 2,
+    e: "The leeward side is the protected, dry side of a mountain range that receives very little rainfall because the mountain blocks the moisture-carrying winds."
+  },
+  {
+    q: "Q3. Consider the following average temperature data recorded for two cities during May:\n\n• City X (Coastal, 10 km from sea): Daytime 33°C, Nighttime 27°C\n• City Y (Inland, 800 km from sea): Daytime 44°C, Nighttime 22°C\n\nWhich statement accurately explains the data shown?",
+    o: [
+      "A. City X has extreme temperatures because it is closer to the sea.",
+      "B. City Y has a moderate climate because it is far away from the sea.",
+      "C. City X has a balanced temperature range due to the moderating effect of the sea breeze.",
+      "D. City Y has a low temperature range because land heats up slower than water."
+    ],
+    a: 2,
+    e: "Oceans heat up and cool down slower than land, giving coastal cities like City X balanced, moderate temperatures throughout the year."
+  },
+  {
+    q: "Q4. Statement: Hill stations like Shimla and Ooty remain cool and pleasant even during peak summer months.\nReason: As the height above sea level (altitude) increases, the temperature of the atmosphere drops.\n\nChoose the correct option:",
+    o: [
+      "A. The statement is true, and the reason correctly explains it.",
+      "B. The statement is true, but the reason does not explain it.",
+      "C. The statement is true, but the reason is entirely false.",
+      "D. Both the statement and the reason are false."
+    ],
+    a: 0,
+    e: "Altitude plays a direct role in temperature; higher elevations experience cooler climates regardless of their latitude."
+  },
+  {
+    q: "Q5. During the peak of summer, a science student sets up an experiment with two boxes: Box 1 (representing the hot land of Central India) and Box 2 (representing the cooler Indian Ocean). The student creates a small passage between them.\n\nBased on how monsoon winds behave, how will the air travel between the boxes?",
+    o: [
+      "A. High-pressure air from the hot Box 1 will rush into the cool Box 2.",
+      "B. High-pressure air from the cool Box 2 will rush into the hot, low-pressure Box 1.",
+      "C. The air will remain still because temperature does not affect air movement.",
+      "D. Air will circulate only if both boxes reach the exact same temperature."
+    ],
+    a: 1,
+    e: "Heating of the land creates a low-pressure zone, causing cooler, high-pressure air from the ocean to rush toward the land, bringing the monsoon."
+  },
+  {
+    q: "Q6. A farmer in coastal Tamil Nadu wants to plant a specific variety of rice that requires steady rainfall during October and November. He ignores the summer southwest monsoon and waits for the wind direction to reverse later in the year.\n\nWhich specific climatic phenomenon is this farmer relying on for his crop?",
+    o: [
+      "A. The Southwest Monsoon",
+      "B. The Alpine Wind System",
+      "C. The Northeast Monsoon",
+      "D. The Central Asian Cold Wave"
+    ],
+    a: 2,
+    e: "The northeast monsoon blows during winter, picking up moisture from the Bay of Bengal to bring rainfall to parts of Tamil Nadu and Andhra Pradesh in October and November."
+  },
+  {
+    q: "Q7. A geography student creates a summary chart of India's climatic zones but makes one error. Identify the incorrect combination from the options below:",
+    o: [
+      "A. Alpine Zone → Ladakh → Snowy, glaciers, and very cold winters.",
+      "B. Arid Zone → Thar Desert → Thick mud walls used in housing to block extreme heat.",
+      "C. Tropical Wet Zone → Western Ghats → Dense green forests growing crops like cardamom and pepper.",
+      "D. Subtropical Zone → Kerala Coast → Uniform mild temperatures ranging between 5°C and 15°C all year."
+    ],
+    a: 3,
+    e: "The Kerala coast belongs to the Tropical Wet zone, not the Subtropical zone, and it experiences hot, humid conditions rather than cool 5°C winters."
+  },
+  {
+    q: "Q8. A town wants to take active steps to fight local global warming and reduce the impact of climate change. Which of the following actions does not belong to a list of sustainable climate solutions?",
+    o: [
+      "A. Setting up community solar panels to generate clean electricity.",
+      "B. Clearing local wetlands and grasslands to build open asphalt parking spaces.",
+      "C. Starting a rainwater harvesting drive to recharge groundwater levels.",
+      "D. Hosting tree-planting drives along roadsides and barren school fields."
+    ],
+    a: 1,
+    e: "Clearing natural vegetation and replacing it with concrete or asphalt increases heat absorption, contributing to global warming rather than solving it."
+  },
+  {
+    q: "Q9. In May 2020, Super Cyclone Amphan formed over the Bay of Bengal. Recognizing the rapid drop in air pressure and dangerous wind patterns, the Indian Meteorological Department (IMD) issued early alerts. This enabled regional authorities to evacuate nearly 500,000 people from coastal villages to inland shelters before landfall.\n\nWhat is the main lesson highlighted by this event regarding climate disasters?",
+    o: [
+      "A. Human communities can easily stop a cyclone from making landfall using technology.",
+      "B. Early warning systems and satellite data are critical to saving lives during extreme weather events.",
+      "C. Coastal areas are completely safe from cyclones as long as they have thick mud walls.",
+      "D. Cyclones only cause major infrastructure damage when they hit inland desert regions."
+    ],
+    a: 1,
+    e: "While natural disasters cannot be prevented, accurate monitoring and timely warnings significantly reduce human casualties by allowing safe evacuations."
+  },
+  {
+    q: "Q10. A modern neighborhood in a major Indian city experiences severe street flooding after just 30 minutes of heavy summer rain. An investigation reveals that the area has completely covered its soil surfaces with concrete, and the local storm drains are choked with plastic waste.\n\nAs a community leader, which practical step would solve the root cause of this problem?",
+    o: [
+      "A. Clearing the clogged drains and installing porous pavements that let water soak into the ground.",
+      "B. Relocating the entire neighborhood to an alpine climatic zone like Ladakh.",
+      "C. Building higher boundary walls around individual homes to block out the water.",
+      "D. Requesting the weather department to alter the track of the monsoon winds."
+    ],
+    a: 0,
+    e: "Urban flooding is worsened by concrete surfaces blocking natural drainage and garbage choking infrastructure. Restoring flow paths and soil absorption resolves the core issue."
+  }
+];
+
+let i = 0, score = 0, time = 45, lock = false, attempt = 0, interval;
+
+function timer() {
+  clearInterval(interval);
+  time = 45;
+  document.getElementById("timer").innerText = "⏳ " + time + "s";
+
+  interval = setInterval(() => {
+    time--;
+    document.getElementById("timer").innerText = "⏳ " + time + "s";
+    if (time == 0) next();
+  }, 1000);
+}
+
+function loadQ() {
+  lock = false;
+  attempt = 0;
+  timer();
+
+  let q = questions[i];
+  
+  // Replace newlines with HTML line breaks for proper presentation
+  document.getElementById("q").innerHTML = q.q.replace(/\n/g, "<br>");
+
+  let box = document.getElementById("options");
+  box.innerHTML = "";
+  
+  let feed = document.getElementById("feedback");
+  feed.innerText = "";
+  feed.style.display = "none";
+
+  q.o.forEach((op, idx) => {
+    let d = document.createElement("div");
+    d.className = "option";
+    d.innerText = op;
+    d.onclick = () => check(idx, d);
+    box.appendChild(d);
+  });
+}
+
+function check(ans, el) {
+  if (lock) return;
+
+  let q = questions[i];
+
+  if (ans === q.a) {
+    el.classList.add("correct");
+    try { document.getElementById("correctSound").play(); } catch(e){}
+    score++;
+    document.getElementById("score").innerText = "⭐ Score: " + score;
+    lock = true;
+    setTimeout(next, 800);
+  } else {
+    attempt++;
+    el.classList.add("wrong");
+    try { document.getElementById("wrongSound").play(); } catch(e){}
+
+    if (attempt == 2) {
+      let feed = document.getElementById("feedback");
+      feed.innerText = "Correct Answer: " + q.o[q.a] + "\n\n" + q.e;
+      feed.style.display = "block";
+      lock = true;
+      setTimeout(next, 4000); // 4 seconds to read long climate explanations
+    }
+  }
+}
+
+function next() {
+  i++;
+  if (i < questions.length) {
+    loadQ();
+  } else end();
+}
+
+function end() {
+  clearInterval(interval);
+  document.getElementById("game").style.display = "none";
+  document.getElementById("result").style.display = "block";
+  try { document.getElementById("clapSound").play(); } catch(e){}
+  
+  let badgeEl = document.getElementById("badge");
+  let finalEl = document.getElementById("final");
+  
+  // Set custom evaluation parameters based on scores
+  if (score >= 9) {
+    badgeEl.innerText = "🏆 Climate Expert!";
+    finalEl.innerText = "You fully understand the complex factors, wind systems, and geographic variations that dictate India's diverse climate.\n\nFinal Score: " + score + " / " + questions.length;
+  } else if (score >= 6) {
+    badgeEl.innerText = "🌤️ Weather Forecaster!";
+    finalEl.innerText = "You have a solid grasp of the core concepts but might want to re-read the sections on monsoon pressure shifts and topographic variations.\n\nFinal Score: " + score + " / " + questions.length;
+  } else {
+    badgeEl.innerText = "🌱 Climate Novice!";
+    finalEl.innerText = "Take another look at how altitude, oceans, and seasonal winds shape the subcontinent's weather systems.\n\nFinal Score: " + score + " / " + questions.length;
+  }
+}
+</script>
+
+</body>
+</html>
