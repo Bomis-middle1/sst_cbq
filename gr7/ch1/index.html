@@ -191,7 +191,7 @@ if(score>=9){title.textContent='🏆 Master Explorer';resultIcon.textContent='�
 else if(score>=6){title.textContent='🎒 Skilled Trekker';resultIcon.textContent='🎒';resultStamp.textContent='JOURNAL COMPLETE — TREKKER RANK';}
 else{title.textContent='🗺️ Young Wanderer';resultIcon.textContent='🗺️';resultStamp.textContent='JOURNAL COMPLETE — WANDERER RANK';}
 finalScore.textContent='You filled in '+score+' out of 10 journal entries correctly.';}
-function scoreEl(){score.textContent=score}
+function scoreEl(){document.getElementById('score').textContent=score}
 function confetti(){const sym=['🍃','✨','📍'];for(let i=0;i<10;i++){let s=document.createElement('div');s.className='confetti';s.innerHTML=sym[i%sym.length];s.style.left=Math.random()*innerWidth+'px';s.style.top=(innerHeight-80)+'px';document.body.appendChild(s);setTimeout(()=>s.remove(),1300);}}
 </script>
 </body>
