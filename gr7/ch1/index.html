@@ -1,1 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>India's Natural Tapestry — Explorer's Field Journal</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --kraft:#c9a86a;
+  --kraft-dark:#8a6a3a;
+  --leather:#5c4426;
+  --moss:#5f7a4f;
+  --moss-dark:#3f5634;
+  --berry:#a8453a;
+  --ink-blue:#2c4a5e;
+  --paper:#fbf3e3;
+  --paper-line:#e3d3ab;
+  --ink:#3a2e1f;
+  --good:#3f6b3a;
+  --good-bg:#e2ecd9;
+  --bad:#8c2f1d;
+  --bad-bg:#f3dad1;
+}
+body{font-family:'Courier New',monospace;background:linear-gradient(160deg,#7a5c34,#4a3621 80%);min-height:100vh;overflow-x:hidden;color:var(--ink)}
+h1,h2,.eyebrow,button,.top,.stamp,.tag{font-family:'Trebuchet MS',sans-serif}
+
+/* ---- Splash ---- */
+#splash{position:fixed;inset:0;background:#ffffff;display:flex;justify-content:center;align-items:center;z-index:9999}
+.splash-content{text-align:center}
+.splash-logo{width:260px;max-width:80%}
+
+.hidden{display:none!important}
+.container{max-width:760px;margin:auto;padding:24px}
+
+/* notebook page look */
+.panel{background:var(--paper);border-radius:4px;padding:32px 34px;box-shadow:0 20px 50px rgba(0,0,0,.45);position:relative;background-image:repeating-linear-gradient(var(--paper) 0px,var(--paper) 33px,var(--paper-line) 34px);border-left:10px solid var(--leather)}
+.panel::before{content:"";position:absolute;top:0;left:-10px;bottom:0;width:4px;background:repeating-linear-gradient(180deg,var(--kraft-dark) 0 6px,transparent 6px 14px)}
+.panel::after{content:"📍";position:absolute;top:-14px;right:24px;font-size:30px;transform:rotate(15deg)}
+.center{text-align:center}
+
+.eyebrow{text-transform:uppercase;letter-spacing:3px;font-size:12px;color:var(--berry);font-weight:700;margin-bottom:6px;border-bottom:2px dotted var(--kraft-dark);display:inline-block;padding-bottom:3px}
+h1{font-size:27px;color:var(--leather);margin-bottom:6px;letter-spacing:.5px;font-family:'Trebuchet MS',sans-serif}
+h2{font-size:18.5px;color:var(--leather);margin-bottom:10px;line-height:1.5;font-weight:700;white-space:pre-line}
+p{line-height:1.7;font-family:'Trebuchet MS',sans-serif}
+
+/* ---- Top bar / progress ---- */
+.top{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px;font-size:13.5px;font-weight:700;color:var(--leather)}
+.top span{color:var(--berry)}
+.progress{height:12px;background:var(--paper-line);border-radius:999px;overflow:hidden;border:1px solid var(--kraft-dark)}
+.bar{height:100%;width:0;background:linear-gradient(90deg,var(--moss),var(--kraft));transition:width .4s ease}
+
+/* region sticker */
+.region-chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;letter-spacing:.5px;padding:5px 12px 5px 9px;border-radius:3px;color:#fff;margin-bottom:12px;transform:rotate(-2deg);box-shadow:0 2px 4px rgba(0,0,0,.25)}
+
+/* ---- Options as journal tabs ---- */
+.option{background:#fffdf8;border:1.5px solid var(--paper-line);border-left:5px solid var(--kraft-dark);padding:13px 16px;border-radius:3px;margin:11px 0;cursor:pointer;font-size:15px;font-family:'Trebuchet MS',sans-serif;transition:all .15s ease;display:flex;align-items:center;gap:10px}
+.option:hover{background:#fff8e8;border-left-color:var(--berry);transform:translateX(3px) rotate(-.3deg)}
+.option .tag{font-weight:800;color:var(--berry);font-size:12px;width:20px;flex:none}
+.option.correct{background:var(--good-bg);border-left-color:var(--moss-dark)}
+.option.wrong{background:var(--bad-bg);border-left-color:var(--bad)}
+
+button{padding:13px 26px;border:none;border-radius:4px;background:var(--leather);color:var(--paper);cursor:pointer;font-weight:700;letter-spacing:.4px;font-size:14px;font-family:'Trebuchet MS',sans-serif;transition:background .15s ease;box-shadow:0 3px 0 var(--kraft-dark)}
+button:hover{background:var(--moss-dark)}
+button:active{transform:translateY(2px);box-shadow:0 1px 0 var(--kraft-dark)}
+
+.feedback{margin-top:14px;padding:12px 14px;border-radius:4px;font-size:14.5px;line-height:1.6;font-family:'Trebuchet MS',sans-serif;border:1px dashed}
+.good{background:var(--good-bg);color:var(--good);border-color:#a9caa1}
+.bad{background:var(--bad-bg);color:var(--bad);border-color:#d9a892}
+
+/* ---- floating compass/leaf bits ---- */
+.bg-sym{position:fixed;opacity:.12;animation:float linear infinite;font-size:40px;color:var(--paper)}
+@keyframes float{from{transform:translateY(110vh) rotate(0deg)}to{transform:translateY(-15vh) rotate(360deg)}}
+
+.confetti{position:fixed;animation:up 1.3s forwards;font-size:22px}
+@keyframes up{to{transform:translateY(-220px) scale(1.6) rotate(180deg);opacity:0}}
+
+.stamp{display:inline-block;background:var(--leather);color:var(--kraft);font-size:11px;font-weight:700;letter-spacing:1px;padding:6px 14px;border-radius:3px;margin-top:10px;border:2px dashed var(--kraft)}
+
+#startBtn{font-size:16px;padding:15px 32px}
+.divider{height:0;border-top:2px dotted var(--kraft-dark);margin:16px 0}
+
+@media(max-width:480px){
+  h1{font-size:21px}
+  .panel{padding:22px}
+  .top{font-size:11.5px}
+}
+</style>
+</head>
+<body>
+
+<div id="splash">
+ <div class="splash-content">
+  <img src="assets/innovine-logo.png" class="splash-logo" alt="Innovine Logo">
+ </div>
+</div>
+
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<div id="intro" class="container hidden">
+<div class="panel center">
+<div class="eyebrow">Geography · Chapter 1</div>
+<h1>📔 India's Natural Tapestry</h1>
+<p style="color:var(--leather);margin-top:10px;opacity:.9">Welcome, Junior Explorer! Fill in your Field Journal as you trek across mountains, deserts, plains, plateaus, coasts and islands — and discover what makes every region of India unique.</p>
+<br><div style="font-size:56px">🎒</div><br>
+<button id="startBtn" onclick="startGame()">Open My Journal</button>
+</div></div>
+
+<div id="game" class="container hidden">
+<div class="panel">
+<div class="top">
+<div>🖋️ Score: <span id="score">0</span></div>
+<div>⏳ Time: <span id="time">45</span>s</div>
+<div>Entry <span id="qnum">1</span>/10</div>
+</div>
+<div class="progress"><div id="bar" class="bar"></div></div><br>
+<div id="regionChip" class="region-chip"></div>
+<h2 id="question"></h2>
+<div id="options"></div>
+<div id="feedback"></div>
+<div class="divider"></div>
+<button id="nextBtn" class="hidden" onclick="nextQ()">Next Entry →</button>
+</div></div>
+
+<div id="challenge" class="container hidden">
+<div class="panel center">
+<div class="eyebrow">Final Page</div>
+<h2>🏁 Three of these are true about the Peninsular Plateau. One does not belong in this journal entry. Find it.</h2>
+<br>
+<button onclick="finishChallenge(false)" style="display:block;width:100%;margin:8px 0;text-align:left">It is shaped like an upside-down triangle</button>
+<button onclick="finishChallenge(false)" style="display:block;width:100%;margin:8px 0;text-align:left">It is bordered by the Western and Eastern Ghats</button>
+<button onclick="finishChallenge(false)" style="display:block;width:100%;margin:8px 0;text-align:left">Rivers like the Godavari and Krishna originate here</button>
+<button onclick="finishChallenge(true)" style="display:block;width:100%;margin:8px 0;text-align:left">It was formed entirely by glaciers melting from the Himalayas</button>
+</div></div>
+
+<div id="result" class="container hidden">
+<div class="panel center">
+<div style="font-size:50px" id="resultIcon"></div>
+<h1 id="title"></h1>
+<h2 id="finalScore"></h2>
+<div class="stamp" id="resultStamp"></div><br><br>
+<button onclick="location.reload()">Start a New Journal</button>
+</div></div>
+
+<script>
+const symbols=['🍂','🧭','⛺','🌿','🪨'];
+for(let i=0;i<18;i++){let s=document.createElement('div');s.className='bg-sym';s.innerHTML=symbols[i%symbols.length];s.style.left=Math.random()*100+'vw';s.style.animationDuration=(12+Math.random()*10)+'s';s.style.animationDelay=(Math.random()*-18)+'s';document.body.appendChild(s);}
+
+window.addEventListener('load',()=>{
+ setTimeout(()=>{
+   document.getElementById('splash').style.display='none';
+   document.getElementById('intro').classList.remove('hidden');
+ },5000);
+});
+
+const qs=[
+{r:"Himalayas",rc:"#2c4a5e",q:"A team of engineers is building a new road in a hilly region in the north. They face frequent landslides and find the slopes too steep to build straight roads. Which landform are they most likely working in?",o:["Thar Desert","Himalayas","Coastal Plains","Peninsular Plateau"],a:1,e:"The Himalayas are young, steep fold mountains, making road-building difficult due to landslides and sharp slopes."},
+{r:"Gangetic Plains",rc:"#5f7a4f",q:"A farmer in Bihar finds that his land is extremely fertile every year without using too many fertilisers. He grows rice, wheat, and sugarcane successfully. What is the most likely reason for this?",o:["The land receives mineral-rich silt deposited by Himalayan rivers","The land is located near coral reefs","The land has volcanic soil from old eruptions","The land is irrigated only by desert wells"],a:0,e:"Rivers like the Ganga and Yamuna carry mineral-rich silt from the Himalayas, making the Gangetic Plains naturally fertile."},
+{r:"Thar Desert",rc:"#c9a86a",q:"A family living in Jaisalmer stores rainwater in an underground tank to use during the dry months. Why do they follow this practice?",o:["Because the region gets too much rainfall to manage","Because rainfall is scarce and water needs to be conserved","Because rivers flood the region every year","Because the soil cannot absorb any water"],a:1,e:"The Thar Desert receives very low rainfall, so people use taankas to store and conserve scarce rainwater."},
+{r:"Aravalli Hills",rc:"#a8453a",q:"A mining company wants to extract marble, granite, and copper from a very old, low-lying hill range in Rajasthan that also acts as a barrier stopping desert sand from spreading eastward. Which hill range is being described?",o:["Himalayas","Aravalli Hills","Western Ghats","Eastern Ghats"],a:1,e:"The Aravalli Hills are an ancient, mineral-rich range that blocks the Thar Desert's eastward expansion."},
+{r:"North-eastern Hills",rc:"#3f5634",q:"A geography project shows that one region in India receives the highest rainfall in the world and is known for bridges made naturally from tree roots. Which region is this?",o:["Thar Desert","Gangetic Plains","North-eastern Hills","Andaman Islands"],a:2,e:"The North-eastern Hills, including Meghalaya, receive extremely high rainfall and are famous for living root bridges."},
+{r:"Coastal Plains",rc:"#3a6e7a",q:"A river starting from the Peninsular Plateau flows for a short, fast distance and forms a wide river mouth where sea water and fresh water mix, instead of forming a large delta. On which coast would this most likely happen?",o:["Eastern Coast","Western Coast","Northern Plains","Thar Desert"],a:1,e:"Rivers on the Western Coast, like the Narmada and Tapti, are short and fast-moving, forming estuaries rather than deltas."},
+{r:"Coastal Plains",rc:"#3a6e7a",q:"A student wrote notes about the Eastern Coastal Plains. One statement is incorrect. Which one?",o:["Rivers like the Godavari and Krishna flow into this coast","The coast lies between the Eastern Ghats and the Bay of Bengal","Rivers here are short and form estuaries instead of deltas","The region has fertile deltas suitable for farming"],a:2,e:"Eastern Coast rivers are actually long and slow, carrying silt to form large fertile deltas — not short estuary-forming rivers."},
+{r:"Coastal Plains",rc:"#3a6e7a",q:"Assertion (A): A shipping company wants to set up a port handling large international cargo ships on India's western side.\nReason (R): The Western Coast has natural harbours and port cities like Mumbai and Kochi that have been trade centres for centuries.",o:["Both true, and the reason correctly explains the choice","Both true, but the reason does not explain the choice","The plan is sound, but the reason is false","The plan is flawed, but the reason is true"],a:0,e:"Mumbai and Kochi are established, well-connected ports on the Western Coast, making them ideal for large-scale international trade."},
+{r:"Islands",rc:"#6a4a8a",q:"A marine biologist wants to study coral reefs, lagoons, and tuna fishing communities on a small group of islands near Kerala's coast. Which island territory should she visit?",o:["Andaman & Nicobar Islands","Lakshadweep","Aravalli Hills","Gangetic Delta"],a:1,e:"Lakshadweep is a coral island group near Kerala's Malabar Coast, known for lagoons and tuna fishing."},
+{r:"Peninsular Plateau",rc:"#8a6a3a",q:"Which of the following best describes the Peninsular Plateau's role in India's geography?",o:["It is a low, sandy desert with no minerals","It is an ancient, mineral-rich tableland bordered by the Western and Eastern Ghats","It is a coastal region known only for fishing","It is a young mountain range still being formed"],a:1,e:"The Peninsular Plateau is one of India's oldest, most stable landforms — rich in minerals and bordered by the Ghats."}
+];
+let c=0,score=0,retry=0,t=45,timer;
+
+function startGame(){intro.classList.add('hidden');game.classList.remove('hidden');loadQ();}
+function loadQ(){
+retry=0;t=45;time.textContent=t;qnum.textContent=c+1;bar.style.width=(c/qs.length*100)+'%';
+question.textContent=qs[c].q;options.innerHTML='';feedback.innerHTML='';nextBtn.classList.add('hidden');
+regionChip.textContent='📌 '+qs[c].r;regionChip.style.background=qs[c].rc;
+const labels=['A','B','C','D'];
+qs[c].o.forEach((op,i)=>{let d=document.createElement('div');d.className='option';d.innerHTML='<span class="tag">'+labels[i]+'</span><span>'+op+'</span>';d.onclick=()=>choose(i,d);options.appendChild(d);});
+clearInterval(timer);timer=setInterval(()=>{t--;time.textContent=t;if(t<=0){clearInterval(timer);showAnswer();}},1000);
+}
+function choose(i,el){
+if(i===qs[c].a){score++;scoreEl();correctSound.play().catch(()=>{});el.classList.add('correct');feedback.innerHTML='<div class="feedback good">✔️ Correct! '+qs[c].e+'</div>';confetti();disable();nextBtn.classList.remove('hidden');clearInterval(timer);}
+else if(retry===0){retry=1;el.classList.add('wrong');wrongSound.play().catch(()=>{});feedback.innerHTML='<div class="feedback bad">Not quite — try once more!</div>';}
+else{el.classList.add('wrong');showAnswer();}
+}
+function showAnswer(){disable();clearInterval(timer);const labels=['A','B','C','D'];feedback.innerHTML='<div class="feedback bad">Correct Answer: <b>'+labels[qs[c].a]+'. '+qs[c].o[qs[c].a]+'</b><br>'+qs[c].e+'</div>';nextBtn.classList.remove('hidden');}
+function disable(){document.querySelectorAll('.option').forEach(x=>x.onclick=null)}
+function nextQ(){c++;if(c<qs.length)loadQ();else{game.classList.add('hidden');challenge.classList.remove('hidden');}}
+function finishChallenge(ok){if(ok)score++;challenge.classList.add('hidden');result.classList.remove('hidden');
+if(score>=9){title.textContent='🏆 Master Explorer';resultIcon.textContent='🏆';resultStamp.textContent='JOURNAL COMPLETE — MASTER RANK';clapSound.play().catch(()=>{});}
+else if(score>=6){title.textContent='🎒 Skilled Trekker';resultIcon.textContent='🎒';resultStamp.textContent='JOURNAL COMPLETE — TREKKER RANK';}
+else{title.textContent='🗺️ Young Wanderer';resultIcon.textContent='🗺️';resultStamp.textContent='JOURNAL COMPLETE — WANDERER RANK';}
+finalScore.textContent='You filled in '+score+' out of 10 journal entries correctly.';}
+function scoreEl(){score.textContent=score}
+function confetti(){const sym=['🍃','✨','📍'];for(let i=0;i<10;i++){let s=document.createElement('div');s.className='confetti';s.innerHTML=sym[i%sym.length];s.style.left=Math.random()*innerWidth+'px';s.style.top=(innerHeight-80)+'px';document.body.appendChild(s);setTimeout(()=>s.remove(),1300);}}
+</script>
+</body>
+</html>
 
