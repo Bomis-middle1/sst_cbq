@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Module: Power, Thrones, and Glory</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow: hidden;
+  background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #333;
+}
+
+/* SPLASH SCREEN */
+#splash {
+  position: fixed;
+  inset: 0;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  transition: opacity 0.5s ease;
+}
+
+#splash img {
+  width: 240px;
+  max-width: 80%;
+  animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.95); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(0.95); }
+}
+
+/* GAME CONTAINER */
+#game {
+  display: none;
+  width: 100%;
+  max-width: 700px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(5px);
+  border-radius: 30px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  font-size: 16px;
+  color: #bf360c;
+}
+
+.box {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+#q {
+  font-size: 20px;
+  margin-top: 0;
+  margin-bottom: 25px;
+  color: #4e342e;
+  line-height: 1.5;
+  text-align: left;
+}
+
+/* OPTIONS */
+.option {
+  display: block;
+  margin: 12px 0;
+  padding: 14px 20px;
+  border: 2px solid #f5eae6;
+  border-radius: 12px;
+  cursor: pointer;
+  background: #ffffff;
+  font-size: 15px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  color: #5d4037;
+  text-align: left;
+}
+
+.option:hover {
+  background: #fff3e0;
+  border-color: #ffb74d;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(255,183,77,0.15);
+}
+
+/* STATE STYLES */
+.correct {
+  background: #e8f5e9 !important;
+  border-color: #81c784 !important;
+  color: #2e7d32 !important;
+  font-weight: bold;
+}
+
+.wrong {
+  background: #ffebee !important;
+  border-color: #e57373 !important;
+  color: #c62828 !important;
+}
+
+#feedback {
+  margin-top: 20px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #d84315;
+  padding: 12px;
+  border-radius: 8px;
+  background: #fbe9e7;
+  text-align: left;
+  line-height: 1.4;
+  animation: fadeIn 0.3s ease;
+}
+
+/* RESULT SCREEN */
+#result {
+  display: none;
+  text-align: center;
+  background: white;
+  padding: 40px;
+  border-radius: 24px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+  max-width: 550px;
+  width: 90%;
+  animation: scaleUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+#result h2 {
+  font-size: 26px;
+  color: #d84315;
+  margin-top: 0;
+}
+
+#badge {
+  font-size: 22px;
+  color: #2e7d32;
+  font-weight: bold;
+  margin: 15px 0;
+}
+
+#final {
+  font-size: 16px;
+  margin: 15px 0 30px 0;
+  line-height: 1.5;
+  color: #5d4037;
+}
+
+button {
+  padding: 12px 30px;
+  border: none;
+  border-radius: 25px;
+  background: linear-gradient(135deg, #ff7043, #ff5722);
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 5px 15px rgba(255,87,34,0.3);
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255,87,34,0.4);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; } to { opacity: 1; }
+}
+
+@keyframes scaleUp {
+  from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <img src="assets/innovine-logo.png" alt="Loading...">
+</div>
+
+<!-- GAME -->
+<div id="game">
+  <div class="top">
+    <div id="score">⭐ Score: 0</div>
+    <div id="timer">⏳ 45s</div>
+  </div>
+
+  <div class="box">
+    <h3 id="q"></h3>
+    <div id="options"></div>
+    <div id="feedback" style="display: none;"></div>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="result">
+  <h2>✨ Module Completed! ✨</h2>
+  <div id="badge"></div>
+  <p id="final"></p>
+  <button onclick="location.reload()">Play Again</button>
+</div>
+
+<!-- AUDIO -->
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<script>
+setTimeout(() => {
+  document.getElementById("splash").style.opacity = 0;
+  setTimeout(() => {
+    document.getElementById("splash").style.display = "none";
+    document.getElementById("game").style.display = "block";
+    loadQ();
+  }, 500);
+}, 5000);
+
+let questions = [
+  {
+    q: "Q1. Imagine you are an official responsible for maintaining peace and delivering royal orders across the vast Mauryan Empire. Which infrastructural feature from the empire would be most critical for your job?",
+    o: [
+      "A. The construction of high boundary walls around local city granaries.",
+      "B. The extensive network of well-maintained roads and communication lines.",
+      "C. The strict isolation of individual trade guilds from the capital city.",
+      "D. The frequent changing of the administrative capital to match seasonal climates."
+    ],
+    a: 1,
+    e: "Well-maintained roads and communication networks were essential for messengers to travel quickly and help the central administration stay connected with far-off provinces."
+  },
+  {
+    q: "Q2. Suppose Emperor Ashoka had won the Kalinga War but decided to ignore the massive human suffering and continue his previous policies. What would have been the most likely outcome of his remaining reign?",
+    o: [
+      "A. He would have stopped writing rock edicts and disbanded his entire standing army.",
+      "B. He would have immediately sent peaceful diplomatic emissaries to Sri Lanka and West Asia.",
+      "C. He would have continued expanding the empire's borders through active military campaigns.",
+      "D. He would have immediately embraced non-violence and banned all forms of taxation."
+    ],
+    a: 2,
+    e: "Before his transformation, Ashoka followed a policy of traditional military expansion. Without the remorse from the Kalinga War, he likely would have kept conquering neighboring lands by force."
+  },
+  {
+    q: "Q3. A merchant from Pataliputra is traveling to a distant province to sell textiles. Upon arrival, a local merchant tries to cheat him on pricing. Which institution during the Mauryan period would most likely step in to regulate the dispute and maintain fair business practices?",
+    o: [
+      "A. A religious council of Buddhist monks from the local monastery.",
+      "B. A local trade guild (shreni) governing that specific profession.",
+      "C. A provincial military unit under a newly appointed Greek satrap.",
+      "D. The royal treasury department based exclusively in the capital city."
+    ],
+    a: 1,
+    e: "Trade guilds (shrenis) had their own internal rules, set fair prices, and settled professional disputes peacefully among merchants without needing the king's intervention."
+  },
+  {
+    q: "Q4. If you were a military strategist advising the king of a small, neighboring kingdom on why Magadha had become a formidable power, which geographic advantage would you emphasize?",
+    o: [
+      "A. Its absolute isolation from river networks, protecting it from maritime invasions.",
+      "B. Its lack of dense forest cover, making it easy to spot incoming enemy scouts.",
+      "C. Its rich access to iron ore deposits for making strong weapons and agricultural tools.",
+      "D. Its dependency on foreign kingdoms for timber, which built strong alliances."
+    ],
+    a: 2,
+    e: "Magadha's strategic location gave it direct access to iron ore deposits, which were crucial for blacksmiths to forge superior weapons and durable agricultural tools."
+  },
+  {
+    q: "Q5. Following Alexander’s invasion and subsequent withdrawal from northwest India, what cultural or economic impact was most prominently integrated into the region?",
+    o: [
+      "A. The adoption of certain Greek-style artistic elements and numismatic (coin) features.",
+      "B. The complete conversion of the local population to traditional Greek religious practices.",
+      "C. The permanent military occupation of eastern India by Mediterranean forces.",
+      "D. The total abandonment of philosophy and debate in Indian intellectual traditions."
+    ],
+    a: 0,
+    e: "Contact with Greek culture led to a fascinating blend of art styles and influenced the design, shapes, and markings of regional coins in northwestern India."
+  },
+  {
+    q: "Q6. Based on historical data, the Sohagaura Copper Plate lists directives about storing grain safely. What does this reveal about the core philosophy of Mauryan governance?",
+    o: [
+      "A. The government left the responsibility of managing food security entirely to foreign traders.",
+      "B. The administration was highly organized and deeply concerned with public welfare and disaster relief.",
+      "C. The empire prohibited farmers from keeping any grain for their personal household consumption.",
+      "D. The rulers preferred building defensive structures rather than addressing agricultural crises."
+    ],
+    a: 1,
+    e: "The Sohagaura Copper Plate is an early record of state-level disaster management, proving that the empire planned ahead to protect citizens from famines."
+  },
+  {
+    q: "Q7. The Mauryan economy was primarily agrarian. In what major way did the state actively support the agricultural system to ensure stable food supplies?",
+    o: [
+      "A. By ordering the army to completely abandon defense and work full-time in the fields.",
+      "B. By building essential infrastructure like irrigation canals, dams, and reservoirs.",
+      "C. By encouraging farmers to grow crops only in mountainous alpine zones.",
+      "D. By relying entirely on rainfall and banning the collection of land revenue."
+    ],
+    a: 1,
+    e: "The state heavily backed agriculture by constructing extensive irrigation works, which kept farms productive even during unpredictable weather changes."
+  },
+  {
+    q: "Q8. Consider this statement pair regarding Ashoka's foreign policies:\n\nAssertion (A): Emperor Ashoka sent dedicated emissaries to regions like Sri Lanka and Southeast Asia.\nReason (R): Ashoka wanted to establish aggressive military outposts to launch maritime invasions.",
+    o: [
+      "A. Both A and R are true, and R is the correct explanation of A.",
+      "B. Both A and R are true, but R is not the correct explanation of A.",
+      "C. A is true, but R is false.",
+      "D. A is false, but R is true."
+    ],
+    a: 2,
+    e: "The assertion is true because Ashoka sent global missions, but the reason is false because these missions were peaceful initiatives to spread Dhamma, not military operations."
+  },
+  {
+    q: "Q9. Consider this statement pair regarding the internal economy of the empire:\n\nAssertion (A): Trade guilds (shrenis) during the Mauryan period held substantial economic power and social autonomy.\nReason (R): Guilds controlled local trade, maintained product quality, and could fund public works independently.",
+    o: [
+      "A. Both A and R are true, and R is the correct explanation of A.",
+      "B. Both A and R are true, but R is not the correct explanation of A.",
+      "C. A is true, but R is false.",
+      "D. A is false, but R is true."
+    ],
+    a: 0,
+    e: "Because guilds were highly organized, set reliable rules, and funded community infrastructure, kings trusted them and allowed them to manage their own affairs."
+  },
+  {
+    q: "Q10. Based on the factors that led to the decline of the Mauryan Empire, which problem would be the most critical warning for a future ruler governing a large territory?",
+    o: [
+      "A. Having a single capital city that remains in a fixed location for too long.",
+      "B. Allowing trade guilds to donate their extra wealth to build beautiful temples.",
+      "C. Relying on weak successor kings who cannot manage or defend distant, overextended provinces.",
+      "D. Utilizing local scripts and simple languages to communicate laws to common citizens."
+    ],
+    a: 2,
+    e: "Grand empires break down when central authority weakens. Without strong, competent rulers, far-off provinces become difficult to monitor, prompting local governors to rebel."
+  }
+];
+
+let i = 0, score = 0, time = 45, lock = false, attempt = 0, interval;
+
+function timer() {
+  clearInterval(interval);
+  time = 45;
+  document.getElementById("timer").innerText = "⏳ " + time + "s";
+
+  interval = setInterval(() => {
+    time--;
+    document.getElementById("timer").innerText = "⏳ " + time + "s";
+    if (time == 0) next();
+  }, 1000);
+}
+
+function loadQ() {
+  lock = false;
+  attempt = 0;
+  timer();
+
+  let q = questions[i];
+  document.getElementById("q").innerHTML = q.q.replace(/\n/g, "<br>");
+
+  let box = document.getElementById("options");
+  box.innerHTML = "";
+  
+  let feed = document.getElementById("feedback");
+  feed.innerText = "";
+  feed.style.display = "none";
+
+  q.o.forEach((op, idx) => {
+    let d = document.createElement("div");
+    d.className = "option";
+    d.innerText = op;
+    d.onclick = () => check(idx, d);
+    box.appendChild(d);
+  });
+}
+
+function check(ans, el) {
+  if (lock) return;
+
+  let q = questions[i];
+
+  if (ans === q.a) {
+    el.classList.add("correct");
+    try { document.getElementById("correctSound").play(); } catch(e){}
+    score++;
+    document.getElementById("score").innerText = "⭐ Score: " + score;
+    lock = true;
+    setTimeout(next, 800);
+  } else {
+    attempt++;
+    el.classList.add("wrong");
+    try { document.getElementById("wrongSound").play(); } catch(e){}
+
+    if (attempt == 2) {
+      let feed = document.getElementById("feedback");
+      feed.innerText = "Correct Answer: " + q.o[q.a] + "\n\n" + q.e;
+      feed.style.display = "block";
+      lock = true;
+      setTimeout(next, 4000);
+    }
+  }
+}
+
+function next() {
+  i++;
+  if (i < questions.length) {
+    loadQ();
+  } else end();
+}
+
+function end() {
+  clearInterval(interval);
+  document.getElementById("game").style.display = "none";
+  document.getElementById("result").style.display = "block";
+  try { document.getElementById("clapSound").play(); } catch(e){}
+  
+  let badgeEl = document.getElementById("badge");
+  let finalEl = document.getElementById("final");
+  
+  if (score >= 9) {
+    badgeEl.innerText = "🏆 Emperor's Prime Minister!";
+    finalEl.innerText = "Superb! You possess the strategic wisdom of Chanakya himself. You completely understand the governance, economic systems, and expansion patterns of India's first great empire.\n\nFinal Score: " + score + " / " + questions.length;
+  } else if (score >= 6) {
+    badgeEl.innerText = "📜 Imperial Royal Scribe!";
+    finalEl.innerText = "Great work! You have a strong understanding of Mauryan history, but you should review Kautilya's statecraft details and the factors of administrative decline.\n\nFinal Score: " + score + " / " + questions.length;
+  } else {
+    badgeEl.innerText = "⛺ Traveling Merchant!";
+    finalEl.innerText = "Keep exploring the ancient roads! Spend some time re-reading how trade guilds run and how Ashoka transformed his rule using Dhamma.\n\nFinal Score: " + score + " / " + questions.length;
+  }
+}
+</script>
+
+</body>
+</html>
