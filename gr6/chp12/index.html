@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CBQ Interactive - Grade 6 - Chapter 12: Grassroots Democracy – Part 3 (Urban Local Government)</title>
+
+<style>
+body{
+    margin:0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg,#e8d9b5,#f7f3e9,#d6b36a);
+    overflow-x:hidden;
+}
+
+/* Splash Screen */
+#splash{
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    z-index:10;
+}
+
+#splash img{
+    width:220px;
+    animation:zoom 2s ease-in-out;
+}
+
+@keyframes zoom{
+    from{transform:scale(0.6); opacity:0;}
+    to{transform:scale(1); opacity:1;}
+}
+
+/* Game Container */
+#game{
+    display:none;
+    padding:20px;
+    text-align:center;
+}
+
+/* Header (Grade + Chapter) */
+#header{
+    margin-bottom:15px;
+    font-size:22px;
+    font-weight:bold;
+    color:#3b2a1f;
+}
+
+/* Score */
+#score{
+    font-size:20px;
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
+/* Question Box */
+.question-box{
+    background:rgba(59,42,31,0.85);
+    color:#fff;
+    padding:20px;
+    border-radius:15px;
+    max-width:800px;
+    margin:auto;
+    box-shadow:0 0 15px rgba(0,0,0,0.3);
+    font-size:22px;
+}
+
+/* Options */
+.option{
+    display:block;
+    margin:12px auto;
+    padding:14px;
+    width:80%;
+    max-width:550px;
+    background:#f7f3e9;
+    border:2px solid #6b4f3a;
+    border-radius:12px;
+    font-size:18px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.option:hover{
+    transform:scale(1.03);
+    background:#fff;
+}
+
+/* Correct / Wrong */
+.correct{
+    background:#b6f7b6 !important;
+    border-color:green;
+}
+
+.wrong{
+    background:#f7b6b6 !important;
+    border-color:red;
+}
+
+/* Confetti */
+.confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background: gold;
+    top: -10px;
+    animation: fall 3s linear forwards;
+}
+
+@keyframes fall{
+    to{
+        transform:translateY(100vh) rotate(360deg);
+        opacity:0;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- SPLASH with Innovine logo -->
+<div id="splash">
+    <img src="assets/logo.png" alt="Innovine Logo">
+</div>
+
+<!-- GAME -->
+<div id="game">
+    <div id="header">Grade 6 - Chapter 12: Grassroots Democracy – Part 3 (Local Government in Urban Areas)</div>
+    <div id="score">Score: 0</div>
+
+    <div class="question-box" id="question">Loading...</div>
+    <div id="options"></div>
+</div>
+
+<!-- AUDIO -->
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<script>
+// QUESTIONS (shuffled once at start)
+let questions = [
+{
+    q:"Kamla notices that garbage has not been collected from her street for several days. Which urban local body function will help solve this problem?",
+    o:[
+        "Conducting school exams",
+        "Managing waste collection",
+        "Running train services",
+        "Protecting forests"
+    ],
+    a:1
+},
+{
+    q:"A town has a population of 75,000 people. Which type of urban local body is most suitable for managing this town?",
+    o:[
+        "Municipal Corporation",
+        "Zila Parishad",
+        "Nagar Panchayat",
+        "Gram Panchayat"
+    ],
+    a:2
+},
+{
+    q:"Residents of a ward noticed that drains were blocked after heavy rain. The ward committee informed the authorities and arranged cleaning work. What was the main role of the ward committee here?",
+    o:[
+        "Building a new hospital",
+        "Monitoring local problems and reporting them",
+        "Collecting income tax",
+        "Conducting elections"
+    ],
+    a:1
+},
+{
+    q:"A city council received these complaints in one week:\n\nProblem / Number of Complaints\nBroken Streetlights – 45\nGarbage Collection – 80\nWater Leaks – 25\nDamaged Park Equipment – 20\n\nWhich issue should the municipality address first based on the highest number of complaints?",
+    o:[
+        "Water Leaks",
+        "Broken Streetlights",
+        "Damaged Park Equipment",
+        "Garbage Collection"
+    ],
+    a:3
+},
+{
+    q:"During a community meeting, a student suggests planting more trees along roads to reduce pollution. Which idea of democracy is the student practicing?",
+    o:[
+        "Ignoring local problems",
+        "Participatory democracy",
+        "Private decision-making",
+        "Business management"
+    ],
+    a:1
+},
+{
+    q:"Assertion: Cities are divided into wards.\nReason: Smaller areas are easier to manage and monitor.\n\nChoose the correct option:",
+    o:[
+        "Both statements are true, and the reason explains the assertion.",
+        "Both statements are true, but the reason does not explain the assertion.",
+        "Assertion is true, reason is false.",
+        "Assertion is false, reason is true."
+    ],
+    a:0
+},
+{
+    q:"A citizen notices a large water leak on a road and immediately reports it to the municipality. How does this action help the community?",
+    o:[
+        "It wastes municipal time.",
+        "It helps conserve water and solve the problem quickly.",
+        "It increases taxes.",
+        "It reduces public meetings."
+    ],
+    a:1
+},
+{
+    q:"Which of these does NOT belong with the functions of urban local bodies?",
+    o:[
+        "Maintaining parks",
+        "Managing waste",
+        "Conducting international trade agreements",
+        "Repairing roads"
+    ],
+    a:2
+},
+{
+    q:"Rohan's town has a population of 5 lakh people. The local body is responsible for town services such as sanitation, roads, and public facilities. Which urban local body is likely managing the town?",
+    o:[
+        "Municipal Council",
+        "Nagar Panchayat",
+        "Gram Sabha",
+        "Panchayat Samiti"
+    ],
+    a:0
+},
+{
+    q:"A student made these statements about urban local bodies. Which statement is incorrect?",
+    o:[
+        "Municipal Corporations manage large cities.",
+        "Ward committees can organize health camps.",
+        "Urban local bodies allow citizens to participate in decisions.",
+        "Nagar Panchayats manage cities with populations above 10 lakh."
+    ],
+    a:3
+},
+{
+    q:"A city wants to reduce plastic waste while improving roads. Which solution is most similar to the innovation of R. Vasudevan?",
+    o:[
+        "Burning plastic in open spaces",
+        "Mixing plastic waste with road-building materials",
+        "Throwing plastic into rivers",
+        "Storing plastic in playgrounds"
+    ],
+    a:1
+},
+{
+    q:"A neighbourhood faces three problems:\n1. Overflowing garbage bins\n2. Broken streetlights\n3. Unsafe park equipment\nWhat should residents do first to support good local governance?",
+    o:[
+        "Ignore the problems",
+        "Wait for the national government to visit",
+        "Report the issues and participate in local meetings",
+        "Move to another city"
+    ],
+    a:2
+}
+];
+
+let current = 0;
+let score = 0;
+
+// Fisher–Yates shuffle to randomise question order
+function shuffleQuestions(arr){
+    for(let i = arr.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+}
+
+setTimeout(()=>{
+    document.getElementById("splash").style.display="none";
+    document.getElementById("game").style.display="block";
+    shuffleQuestions(questions);
+    loadQuestion();
+},3000);
+
+function loadQuestion(){
+    if(current >= questions.length){
+        document.getElementById("question").innerHTML = "🎉 Game Completed!";
+        document.getElementById("options").innerHTML = "";
+        document.getElementById("clapSound").play();
+        return;
+    }
+
+    let q = questions[current];
+    document.getElementById("question").innerHTML = q.q.replace(/\n/g,"<br>");
+
+    let optHTML = "";
+    q.o.forEach((opt,i)=>{
+        optHTML += `<div class='option' onclick='checkAnswer(this,${i})'>${opt}</div>`;
+    });
+
+    document.getElementById("options").innerHTML = optHTML;
+}
+
+function checkAnswer(el,i){
+    let q = questions[current];
+
+    if(i === q.a){
+        el.classList.add("correct");
+        document.getElementById("correctSound").play();
+        score++;
+        document.getElementById("score").innerText = "Score: " + score;
+        createConfetti();
+        setTimeout(()=>{ current++; loadQuestion(); },1200);
+    }else{
+        el.classList.add("wrong");
+        document.getElementById("wrongSound").play();
+    }
+}
+
+function createConfetti(){
+    for(let i=0;i<25;i++){
+        let c = document.createElement("div");
+        c.className = "confetti";
+        c.style.left = Math.random()*100 + "vw";
+        c.style.background = ["gold","orange","#fff","#d6b36a"][Math.floor(Math.random()*4)];
+        document.body.appendChild(c);
+        setTimeout(()=>c.remove(),3000);
+    }
+}
+</script>
+
+</body>
+</html>
