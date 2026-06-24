@@ -196,7 +196,7 @@ button:hover {
 <body>
 
 <div id="splash">
-  <img src="assets/logo.png" alt="Loading...">
+  <img src="assets/innovine-logo.png" alt="Loading...">
 </div>
 
 <div id="game">
@@ -224,7 +224,6 @@ button:hover {
 <audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
 
 <script>
-// Keep splash for 5 seconds as requested in your base template
 setTimeout(() => {
   document.getElementById("splash").style.opacity = 0;
   setTimeout(() => {
@@ -367,8 +366,6 @@ function loadQ() {
   timer();
 
   let q = questions[i];
-  
-  // Replace newlines with HTML line breaks for proper presentation
   document.getElementById("q").innerHTML = q.q.replace(/\n/g, "<br>");
 
   let box = document.getElementById("options");
@@ -409,7 +406,7 @@ function check(ans, el) {
       feed.innerText = "Correct Answer: " + q.o[q.a] + "\n\n" + q.e;
       feed.style.display = "block";
       lock = true;
-      setTimeout(next, 4000); // 4 seconds to read long climate explanations
+      setTimeout(next, 4000);
     }
   }
 }
@@ -430,7 +427,6 @@ function end() {
   let badgeEl = document.getElementById("badge");
   let finalEl = document.getElementById("final");
   
-  // Set custom evaluation parameters based on scores
   if (score >= 9) {
     badgeEl.innerText = "🏆 Climate Expert!";
     finalEl.innerText = "You fully understand the complex factors, wind systems, and geographic variations that dictate India's diverse climate.\n\nFinal Score: " + score + " / " + questions.length;
