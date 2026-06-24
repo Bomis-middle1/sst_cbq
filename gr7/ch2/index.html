@@ -1,442 +1,200 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Nature's Daily Drama - CBQ</title>
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nature's Daily Drama — Weather Watch</title>
 <style>
-
-body{
-  margin:0;
-  font-family:Arial, sans-serif;
-  background:linear-gradient(to bottom right,#d6f0ff,#ffffff,#dff5e1);
-  overflow:hidden;
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --sky:#3b5d76;
+  --sky-deep:#1c2f3d;
+  --storm:#5b7a91;
+  --mist:#cfe3ee;
+  --sun:#e8a23c;
+  --rain:#3f8ea8;
+  --paper:#f5f8fa;
+  --ink:#1d2c36;
+  --good:#2f6b4f;
+  --good-bg:#dcefe2;
+  --bad:#a3401f;
+  --bad-bg:#fbe3d6;
 }
+body{font-family:'Trebuchet MS','Segoe UI',sans-serif;background:linear-gradient(180deg,#8fb4c9 0%,#cfe3ee 55%,#eef5f8 100%);min-height:100vh;overflow-x:hidden;color:var(--ink)}
+h1,h2,.eyebrow,.tag,button,.top,.stamp{font-family:'Arial Narrow','Helvetica Neue',sans-serif}
 
-/* SPLASH SCREEN */
+/* ---- Splash ---- */
+#splash{position:fixed;inset:0;background:var(--sky-deep);display:flex;justify-content:center;align-items:center;z-index:9999}
+.splash-content{text-align:center;color:var(--paper)}
+.dial{width:130px;height:130px;border-radius:50%;background:radial-gradient(circle,var(--paper),#dbe7ee 75%);display:flex;align-items:center;justify-content:center;font-size:54px;margin:0 auto 18px;border:5px solid var(--sun);box-shadow:0 0 50px rgba(63,142,168,.5);position:relative}
+.dial::after{content:"🌪️";display:block;animation:spin 5s linear infinite}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.splash-content h2{letter-spacing:2px;font-weight:700;text-transform:uppercase;font-size:14px;color:var(--sun)}
 
-#splash{
-  position:fixed;
-  inset:0;
-  background:white;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:999;
+.hidden{display:none!important}
+.container{max-width:760px;margin:auto;padding:24px}
+
+.panel{background:var(--paper);border-radius:16px;overflow:hidden;box-shadow:0 18px 44px rgba(28,47,61,.35);border:1px solid #d7e3ea}
+.panel-inner{padding:28px 30px}
+.center{text-align:center}
+
+/* sky strip header on every panel */
+.skystrip{height:34px;width:100%;background:linear-gradient(180deg,#bcdcec,#eaf4f8);position:relative;overflow:hidden;border-bottom:2px solid #c7dbe6}
+.skystrip svg{position:absolute;bottom:-2px;left:0;width:100%;height:100%}
+
+.eyebrow{text-transform:uppercase;letter-spacing:3px;font-size:12px;color:var(--rain);font-weight:700;margin-bottom:6px}
+h1{font-size:28px;color:var(--sky-deep);margin-bottom:6px;letter-spacing:.5px}
+h2{font-size:19px;color:var(--sky-deep);margin-bottom:10px;line-height:1.45;font-weight:700;white-space:pre-line}
+p{line-height:1.6}
+
+/* ---- Top bar / progress ---- */
+.top{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px;font-size:13.5px;font-weight:700;color:var(--sky-deep)}
+.top span{color:var(--sun)}
+.progress{height:13px;background:#dbe7ee;border-radius:999px;overflow:hidden;border:1px solid #b9cdd9}
+.bar{height:100%;width:0;background:linear-gradient(90deg,var(--rain),var(--sun));transition:width .4s ease}
+
+/* ---- Options ---- */
+.option{background:#fff;border:1.5px solid #d7e3ea;padding:13px 16px;border-radius:10px;margin:10px 0;cursor:pointer;font-size:15.5px;transition:all .15s ease;display:flex;align-items:center;gap:10px}
+.option:hover{background:#eef7fa;border-color:var(--rain);transform:translateX(4px)}
+.option .tag{font-weight:800;color:var(--rain);font-size:12px;width:20px;flex:none}
+.option.correct{background:var(--good-bg);border-color:#aed6b9}
+.option.wrong{background:var(--bad-bg);border-color:#e3b89e}
+
+button{padding:13px 24px;border:none;border-radius:10px;background:var(--rain);color:#fff;cursor:pointer;font-weight:700;letter-spacing:.4px;font-size:14px;transition:background .15s ease}
+button:hover{background:var(--sky-deep)}
+
+.feedback{margin-top:14px;padding:12px 14px;border-radius:10px;font-size:14.5px;line-height:1.5}
+.good{background:var(--good-bg);color:var(--good);border:1px solid #aed6b9}
+.bad{background:var(--bad-bg);color:var(--bad);border:1px solid #e3b89e}
+
+/* ---- Background ambient clouds ---- */
+.cloud{position:fixed;color:rgba(255,255,255,.6);animation:drift linear infinite;font-size:34px;filter:blur(.3px)}
+@keyframes drift{from{transform:translateX(-10vw)}to{transform:translateX(110vw)}}
+.drop{position:fixed;color:rgba(63,142,168,.35);animation:fall linear infinite;font-size:16px}
+@keyframes fall{from{transform:translateY(-10vh)}to{transform:translateY(110vh)}}
+
+.confetti{position:fixed;animation:up 1.3s forwards;font-size:22px}
+@keyframes up{to{transform:translateY(-220px) scale(1.6) rotate(180deg);opacity:0}}
+
+.stamp{display:inline-block;background:var(--sky-deep);color:var(--sun);font-size:11px;font-weight:700;letter-spacing:1px;padding:5px 12px;border-radius:999px;margin-top:10px}
+
+#startBtn{font-size:16px;padding:15px 32px}
+.divider{height:1px;background:linear-gradient(90deg,transparent,#b9cdd9,transparent);margin:16px 0}
+
+@media(max-width:480px){
+  h1{font-size:22px}
+  .panel-inner{padding:20px}
+  .top{font-size:11.5px}
 }
-
-#splash img{
-  width:260px;
-  max-width:80%;
-}
-
-/* GAME AREA */
-
-#game{
-  display:none;
-  padding:20px;
-  text-align:center;
-}
-
-.top{
-  display:flex;
-  justify-content:space-between;
-  font-weight:bold;
-  font-size:20px;
-  padding:10px;
-}
-
-.box{
-  max-width:900px;
-  margin:auto;
-  background:white;
-  padding:25px;
-  border-radius:15px;
-  box-shadow:0 0 12px rgba(0,0,0,0.1);
-}
-
-#q{
-  font-size:22px;
-  font-weight:bold;
-  margin-bottom:20px;
-}
-
-.option{
-  display:block;
-  margin:12px 0;
-  padding:15px;
-  font-size:18px;
-  border:1px solid #ccc;
-  border-radius:10px;
-  cursor:pointer;
-  background:#f8f8f8;
-  transition:0.2s;
-}
-
-.option:hover{
-  background:#eaf7ff;
-}
-
-.correct{
-  background:#bff5bf !important;
-}
-
-.wrong{
-  background:#ffbdbd !important;
-}
-
-#feedback{
-  margin-top:15px;
-  font-size:16px;
-  color:#333;
-}
-
-/* RESULT SCREEN */
-
-#result{
-  display:none;
-  text-align:center;
-  padding:40px;
-}
-
-button{
-  padding:12px 25px;
-  font-size:16px;
-  border:none;
-  border-radius:10px;
-  background:#4caf50;
-  color:white;
-  cursor:pointer;
-}
-
 </style>
-
 </head>
-
 <body>
 
-<!-- SPLASH SCREEN -->
-
 <div id="splash">
-  <img src="../assets/innovine-logo.png" alt="Innovine Logo">
+ <div class="splash-content">
+  <div class="dial"></div>
+  <h2>Innovine Learning Adventure</h2>
+ </div>
 </div>
 
-<!-- GAME -->
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
 
-<div id="game">
+<div id="intro" class="container hidden">
+<div class="panel">
+<div class="skystrip">
+<svg viewBox="0 0 600 40" preserveAspectRatio="none"><ellipse cx="90" cy="18" rx="55" ry="14" fill="#fff" opacity=".8"/><ellipse cx="320" cy="12" rx="70" ry="16" fill="#fff" opacity=".7"/><ellipse cx="520" cy="22" rx="50" ry="13" fill="#fff" opacity=".75"/></svg>
+</div>
+<div class="panel-inner center">
+<div class="eyebrow">Geography · Chapter 2</div>
+<h1>🌦️ Nature's Daily Drama</h1>
+<p style="color:var(--sky-deep);margin-top:10px;opacity:.85">Step into the role of a Junior Meteorologist! Track temperature, rainfall, wind, humidity, and pressure to uncover how weather shapes daily life across India.</p>
+<br><div style="font-size:58px">🌪️</div><br>
+<button id="startBtn" onclick="startGame()">Start Forecasting</button>
+</div></div></div>
 
+<div id="game" class="container hidden">
+<div class="panel">
+<div class="skystrip">
+<svg viewBox="0 0 600 40" preserveAspectRatio="none"><ellipse cx="90" cy="18" rx="55" ry="14" fill="#fff" opacity=".8"/><ellipse cx="320" cy="12" rx="70" ry="16" fill="#fff" opacity=".7"/><ellipse cx="520" cy="22" rx="50" ry="13" fill="#fff" opacity=".75"/></svg>
+</div>
+<div class="panel-inner">
 <div class="top">
-  <div id="score">Score: 0</div>
-  <div id="timer">45</div>
+<div>⛅ Score: <span id="score">0</span></div>
+<div>⏳ Time: <span id="time">45</span>s</div>
+<div>Reading <span id="qnum">1</span>/10</div>
 </div>
+<div class="progress"><div id="bar" class="bar"></div></div><br>
+<h2 id="question"></h2>
+<div id="options"></div>
+<div id="feedback"></div>
+<div class="divider"></div>
+<button id="nextBtn" class="hidden" onclick="nextQ()">Next Reading →</button>
+</div></div></div>
 
-<div class="box">
-  <div id="q"></div>
-  <div id="options"></div>
-  <div id="feedback"></div>
+<div id="result" class="container hidden">
+<div class="panel">
+<div class="skystrip">
+<svg viewBox="0 0 600 40" preserveAspectRatio="none"><ellipse cx="90" cy="18" rx="55" ry="14" fill="#fff" opacity=".8"/><ellipse cx="320" cy="12" rx="70" ry="16" fill="#fff" opacity=".7"/><ellipse cx="520" cy="22" rx="50" ry="13" fill="#fff" opacity=".75"/></svg>
 </div>
-
-</div>
-
-<!-- RESULT -->
-
-<div id="result">
-  <h2>🌦️ Weather Wizard!</h2>
-  <p id="final"></p>
-  <button onclick="location.reload()">Play Again</button>
-</div>
-
-<!-- AUDIO FILES -->
-
-<audio id="correctSound" src="../assets/correct.mp3"></audio> <audio id="wrongSound" src="../assets/wrong.mp3"></audio> <audio id="clapSound" src="../assets/freesound_community-claps-44774.mp3"></audio>
+<div class="panel-inner center">
+<div style="font-size:52px" id="resultIcon"></div>
+<h1 id="title"></h1>
+<h2 id="finalScore"></h2>
+<div class="stamp" id="resultStamp"></div><br><br>
+<button onclick="location.reload()">Forecast Again</button>
+</div></div></div>
 
 <script>
+for(let i=0;i<10;i++){let s=document.createElement('div');s.className='cloud';s.innerHTML='☁️';s.style.top=Math.random()*50+'vh';s.style.animationDuration=(25+Math.random()*30)+'s';s.style.animationDelay=(Math.random()*-30)+'s';document.body.appendChild(s);}
+for(let i=0;i<14;i++){let d=document.createElement('div');d.className='drop';d.innerHTML='💧';d.style.left=Math.random()*100+'vw';d.style.animationDuration=(6+Math.random()*5)+'s';d.style.animationDelay=(Math.random()*-10)+'s';document.body.appendChild(d);}
 
-/* SPLASH SCREEN */
-
-setTimeout(() => {
-
-document.getElementById("splash").style.display = "none";
-document.getElementById("game").style.display = "block";
-
-loadQ();
-
-}, 5000);
-
-/* QUESTIONS */
-
-let questions = [
-
-{
-q:"Riya video-calls her cousin in another city and hears that it is 'chilly' there. Why is it important to use standard units like °C instead of words such as 'chilly' or 'hot'?",
-o:[
-"Standard units allow accurate comparison between places with different climates",
-"Words like 'chilly' are always wrong",
-"Only scientists are allowed to use temperature words",
-"Standard units make the weather change faster"
-],
-a:0,
-e:"Degrees Celsius provides a precise and common way to compare temperatures."
-},
-
-{
-q:"A pilot wants to avoid the layer of the atmosphere where most storms, rain, and clouds occur. Which layer should the pilot fly above?",
-o:[
-"Stratosphere",
-"Troposphere",
-"Mesosphere",
-"Exosphere"
-],
-a:1,
-e:"Most weather activities take place in the troposphere."
-},
-
-{
-q:"Ooty and Srinagar are both hill stations, yet Ooty stays much milder in winter. What does this tell us about climate?",
-o:[
-"All hill stations have identical climates",
-"Climate depends on factors like location and altitude, not just being in the hills",
-"Only northern hill stations experience cold weather",
-"Temperature has nothing to do with location"
-],
-a:1,
-e:"Climate is influenced by latitude, altitude, and regional conditions."
-},
-
-{
-q:"A farmer notices birds flying very low and sunflowers drooping in the afternoon. Based on traditional weather signs, what may happen next?",
-o:[
-"A heatwave is approaching",
-"A storm or rain may be coming soon",
-"A drought is starting",
-"Humidity will decrease sharply"
-],
-a:1,
-e:"Low-flying birds and drooping flowers can indicate approaching rain or storms."
-},
-
-{
-q:"A news report says Kolkata received 41 mm of rainfall in June. What does this measurement mean?",
-o:[
-"It rained continuously for 41 minutes",
-"The ground would be covered with water about 4.1 cm deep if it did not run off or soak in",
-"41 mm refers to wind speed",
-"It means 41% of the city got flooded"
-],
-a:1,
-e:"Rainfall in millimetres indicates the depth of water collected on a flat surface."
-},
-
-{
-q:"Anagha in Kochi and Zara in Jaipur hang identical wet clothes outside. Zara's clothes dry much faster. Why?",
-o:[
-"Jaipur has higher humidity",
-"Kochi has more sunlight",
-"Jaipur has lower humidity, allowing faster evaporation",
-"Kochi's air pressure is too low for evaporation"
-],
-a:2,
-e:"Lower humidity helps water evaporate more quickly."
-},
-
-{
-q:"Assertion: A sudden drop in air pressure recorded by a barometer often signals an approaching storm. Reason: Lower air pressure is linked with changing weather conditions like storms.",
-o:[
-"Both A and R are true, and R correctly explains A",
-"Both A and R are true, but R does not explain A",
-"A is true, but R is false",
-"A is false, but R is true"
-],
-a:0,
-e:"Falling air pressure is commonly associated with stormy weather."
-},
-
-{
-q:"The IMD used satellites and Automated Weather Stations to track a cyclone and issue red alerts. What does this demonstrate?",
-o:[
-"Cyclones cannot be predicted in advance",
-"Technology and early forecasting can help reduce damage and save lives",
-"Weather stations only measure temperature",
-"Red alerts are issued after damage occurs"
-],
-a:1,
-e:"Modern forecasting systems help people prepare and stay safe."
-},
-
-{
-q:"A traveller moves from Chennai's coast to the mountains of Ladakh and feels dizzy and short of breath. Why?",
-o:[
-"Ladakh has higher humidity",
-"Air pressure and oxygen levels are lower at high altitude",
-"Ladakh is much hotter",
-"The traveller is experiencing higher air pressure"
-],
-a:1,
-e:"Higher altitudes have thinner air with less oxygen available."
-},
-
-{
-q:"A student wrote notes on weather instruments. Which statement is incorrect?",
-o:[
-"A thermometer measures temperature",
-"A rain gauge measures precipitation",
-"An anemometer measures humidity",
-"A barometer measures air pressure"
-],
-a:2,
-e:"An anemometer measures wind speed. Humidity is measured using a hygrometer."
-}
-
-];
-
-let i = 0;
-let score = 0;
-let time = 45;
-let attempt = 0;
-let lock = false;
-let interval;
-
-/* TIMER */
-
-function timer(){
-
-clearInterval(interval);
-
-time = 45;
-
-document.getElementById("timer").innerText = time;
-
-interval = setInterval(() => {
-
-time--;
-
-document.getElementById("timer").innerText = time;
-
-if(time === 0){
-next();
-}
-
-},1000);
-
-}
-
-/* LOAD QUESTION */
-
-function loadQ(){
-
-lock = false;
-attempt = 0;
-
-timer();
-
-let q = questions[i];
-
-document.getElementById("q").innerText = q.q;
-
-let box = document.getElementById("options");
-
-box.innerHTML = "";
-
-document.getElementById("feedback").innerText = "";
-
-q.o.forEach((op,idx)=>{
-
-let d = document.createElement("div");
-
-d.className = "option";
-d.innerText = op;
-
-d.onclick = ()=>check(idx,d);
-
-box.appendChild(d);
-
+window.addEventListener('load',()=>{
+ setTimeout(()=>{
+   document.getElementById('splash').style.display='none';
+   document.getElementById('intro').classList.remove('hidden');
+ },5000);
 });
 
+const qs=[
+{q:"Riya video-calls her cousin in another city and hears that it is 'chilly' there. Why is it important to use standard units like °C instead of words such as 'chilly' or 'hot'?",o:["Standard units allow accurate comparison between places with different climates","Words like 'chilly' are always wrong","Only scientists are allowed to use temperature words","Standard units make the weather change faster"],a:0,e:"Degrees Celsius provides a precise and common way to compare temperatures across different places."},
+{q:"A pilot wants to avoid the layer of the atmosphere where most storms, rain, and clouds occur. Which layer should the pilot fly above?",o:["Stratosphere","Troposphere","Mesosphere","Exosphere"],a:1,e:"Most weather activity takes place in the troposphere, the lowest layer of the atmosphere."},
+{q:"Ooty and Srinagar are both hill stations, yet Ooty stays much milder in winter. What does this tell us about climate?",o:["All hill stations have identical climates","Climate depends on factors like location and altitude, not just being in the hills","Only northern hill stations experience cold weather","Temperature has nothing to do with location"],a:1,e:"Climate is influenced by latitude, altitude, and regional conditions, not just elevation alone."},
+{q:"A farmer notices birds flying very low and sunflowers drooping in the afternoon. Based on traditional weather signs, what may happen next?",o:["A heatwave is approaching","A storm or rain may be coming soon","A drought is starting","Humidity will decrease sharply"],a:1,e:"Low-flying birds and drooping flowers are traditional signs that often indicate approaching rain or storms."},
+{q:"A news report says Kolkata received 41 mm of rainfall in June. What does this measurement mean?",o:["It rained continuously for 41 minutes","The ground would be covered with water about 4.1 cm deep if it did not run off or soak in","41 mm refers to the wind speed during the rain","It means 41% of the city got flooded"],a:1,e:"Rainfall in millimetres shows the depth of water that would collect on a flat surface."},
+{q:"Anagha in Kochi and Zara in Jaipur hang identical wet clothes outside. Zara's clothes dry much faster. Why?",o:["Jaipur has higher humidity","Kochi has more sunlight than Jaipur","Jaipur has lower humidity, allowing faster evaporation","Kochi's air pressure is too low for evaporation"],a:2,e:"Lower humidity in Jaipur means the air can hold more water vapour, helping clothes dry faster through evaporation."},
+{q:"Assertion (A): A sudden drop in air pressure recorded by a barometer often signals an approaching storm.\nReason (R): Lower air pressure is linked with changing weather conditions like storms.",o:["Both A and R are true, and R correctly explains A","Both A and R are true, but R does not explain A","A is true, but R is false","A is false, but R is true"],a:0,e:"Falling air pressure is commonly associated with stormy weather, making R a correct explanation of A."},
+{q:"The IMD used satellites and Automated Weather Stations to track a cyclone and issue red alerts. What does this demonstrate?",o:["Cyclones cannot be predicted in advance","Technology and early forecasting can help reduce damage and save lives","Weather stations only measure temperature","Red alerts are issued only after damage occurs"],a:1,e:"Modern forecasting tools like satellites and AWS allow timely warnings that help people prepare and stay safe."},
+{q:"A traveller moves from Chennai's coast to the mountains of Ladakh and feels dizzy and short of breath. Why?",o:["Ladakh has higher humidity than Chennai","Air pressure and oxygen levels are lower at high altitude","Ladakh is much hotter than Chennai","The traveller is experiencing a sudden rise in air pressure"],a:1,e:"At high altitudes, the air is thinner with lower pressure and less oxygen, which can cause dizziness."},
+{q:"A student wrote notes on weather instruments. Which statement is incorrect?",o:["A thermometer measures temperature","A rain gauge measures precipitation","An anemometer measures humidity","A barometer measures air pressure"],a:2,e:"An anemometer actually measures wind speed. Humidity is measured using a hygrometer."}
+];
+let c=0,score=0,retry=0,t=45,timer;
+
+function startGame(){intro.classList.add('hidden');game.classList.remove('hidden');loadQ();}
+function loadQ(){
+retry=0;t=45;time.textContent=t;qnum.textContent=c+1;bar.style.width=(c/qs.length*100)+'%';
+question.textContent=qs[c].q;options.innerHTML='';feedback.innerHTML='';nextBtn.classList.add('hidden');
+const labels=['A','B','C','D'];
+qs[c].o.forEach((op,i)=>{let d=document.createElement('div');d.className='option';d.innerHTML='<span class="tag">'+labels[i]+'</span><span>'+op+'</span>';d.onclick=()=>choose(i,d);options.appendChild(d);});
+clearInterval(timer);timer=setInterval(()=>{t--;time.textContent=t;if(t<=0){clearInterval(timer);showAnswer();}},1000);
 }
-
-/* CHECK ANSWER */
-
-function check(ans,el){
-
-if(lock) return;
-
-let q = questions[i];
-
-if(ans === q.a){
-
-el.classList.add("correct");
-
-document.getElementById("correctSound").play();
-
-score++;
-
-document.getElementById("score").innerText = "Score: " + score;
-
-lock = true;
-
-setTimeout(next,800);
-
+function choose(i,el){
+if(i===qs[c].a){score++;scoreEl();correctSound.play().catch(()=>{});el.classList.add('correct');feedback.innerHTML='<div class="feedback good">✔️ Correct! '+qs[c].e+'</div>';confetti();disable();nextBtn.classList.remove('hidden');clearInterval(timer);}
+else if(retry===0){retry=1;el.classList.add('wrong');wrongSound.play().catch(()=>{});feedback.innerHTML='<div class="feedback bad">Not quite — try once more!</div>';}
+else{el.classList.add('wrong');showAnswer();}
 }
-else{
-
-attempt++;
-
-el.classList.add("wrong");
-
-document.getElementById("wrongSound").play();
-
-if(attempt === 2){
-
-document.getElementById("feedback").innerText =
-"Correct Answer: " + q.o[q.a] + " → " + q.e;
-
-lock = true;
-
-setTimeout(next,2500);
-
-}
-
-}
-
-}
-
-/* NEXT */
-
-function next(){
-
-i++;
-
-if(i < questions.length){
-
-loadQ();
-
-}
-else{
-
-end();
-
-}
-
-}
-
-/* END */
-
-function end(){
-
-clearInterval(interval);
-
-document.getElementById("game").style.display = "none";
-document.getElementById("result").style.display = "block";
-
-document.getElementById("clapSound").play();
-
-document.getElementById("final").innerText =
-"Final Score: " + score + " / " + questions.length;
-
-}
-
+function showAnswer(){disable();clearInterval(timer);const labels=['A','B','C','D'];feedback.innerHTML='<div class="feedback bad">Correct Answer: <b>'+labels[qs[c].a]+'. '+qs[c].o[qs[c].a]+'</b><br>'+qs[c].e+'</div>';nextBtn.classList.remove('hidden');}
+function disable(){document.querySelectorAll('.option').forEach(x=>x.onclick=null)}
+function nextQ(){c++;if(c<qs.length)loadQ();else{game.classList.add('hidden');showResult();}}
+function showResult(){
+result.classList.remove('hidden');
+if(score>=9){title.textContent='🏆 Master Meteorologist';resultIcon.textContent='🏆';resultStamp.textContent='STORM TRACKER — MASTER RANK';clapSound.play().catch(()=>{});}
+else if(score>=6){title.textContent='🌦️ Skilled Forecaster';resultIcon.textContent='🌦️';resultStamp.textContent='CLOUD READER — FORECASTER RANK';}
+else{title.textContent='🌤️ Young Weather Watcher';resultIcon.textContent='🌤️';resultStamp.textContent='SKY GAZER — APPRENTICE RANK';}
+finalScore.textContent='You correctly read '+score+' out of 10 weather clues.';}
+function scoreEl(){score.textContent=score}
+function confetti(){const sym=['💧','☀️','✨'];for(let i=0;i<10;i++){let s=document.createElement('div');s.className='confetti';s.innerHTML=sym[i%sym.length];s.style.left=Math.random()*innerWidth+'px';s.style.top=(innerHeight-80)+'px';document.body.appendChild(s);setTimeout(()=>s.remove(),1300);}}
 </script>
-
 </body>
 </html>
