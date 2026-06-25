@@ -89,53 +89,8 @@ h1,h2,p{margin:0 0 12px}
 h1{font-size:clamp(32px,5vw,54px);line-height:1.02}
 h2{font-size:clamp(22px,3vw,30px)}
 p{color:var(--muted);line-height:1.65;font-size:18px}
-.start-grid{
-  display:grid;
-  grid-template-columns:1.05fr .95fr;
-  gap:18px;
-  align-items:center;
-}
-.poster{
-  min-height:340px;
-  border-radius:24px;
-  border:1px solid rgba(216,176,106,.18);
-  background:
-    linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01)),
-    radial-gradient(circle at 20% 20%, rgba(244,215,160,.12), transparent 20%),
-    radial-gradient(circle at 80% 30%, rgba(111,129,85,.10), transparent 18%),
-    linear-gradient(135deg,#261a15,#3a2920 55%,#4f3729);
-  box-shadow:0 12px 26px rgba(0,0,0,.24);
-  position:relative;
-  overflow:hidden;
-  padding:18px;
-}
-.poster::before{
-  content:"";
-  position:absolute;
-  inset:14px;
-  border:1px solid rgba(244,215,160,.14);
-  border-radius:18px;
-}
-.poster-content{
-  position:relative;
-  z-index:1;
-  height:100%;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-}
-.poster-title{
-  font-size:31px;
-  font-weight:900;
-  color:#fff6e8;
-  letter-spacing:.02em;
-}
-.poster-sub{
-  color:#e4d4c2;
-  max-width:30ch;
-  font-size:16px;
-}
-.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.intro-center{text-align:center;padding:42px 20px}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;justify-content:center}
 .btn{
   appearance:none;border:0;border-radius:16px;
   padding:15px 18px;font-weight:800;font-size:16px;
@@ -279,7 +234,6 @@ th{background:#2d2018;color:var(--gold2)}
 .bar4{height:210px;background:linear-gradient(180deg,#8f5a36,#2f1c16)}
 .bar-label{font-size:13px;color:#f2e5d8;text-align:center}
 @media(max-width:760px){
-  .start-grid{grid-template-columns:1fr}
   .question{font-size:19px}
   p{font-size:17px}
   .bar-chart{gap:10px}
@@ -301,28 +255,18 @@ th{background:#2d2018;color:var(--gold2)}
           <div class="badge">British Raj theme</div>
         </div>
       </div>
-      <div class="main start-grid">
-        <div>
-          <h1>The British Raj in India</h1>
-          <p>A chapter quiz on British rule, resistance, and India’s freedom struggle.</p>
-          <div class="badges">
-            <span class="badge">Grade 5</span>
-            <span class="badge">Social Studies</span>
-          </div>
-          <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap">
-            <button class="btn primary" id="startBtn">Start Quiz</button>
-            <button class="btn ghost" id="previewBtn">View Instructions</button>
-          </div>
-          <p class="small" style="margin-top:14px">One retry is allowed after the first wrong answer. After the second wrong attempt, the correct answer and explanation appear.</p>
+      <div class="main intro-center">
+        <h1>The British Raj in India</h1>
+        <p>A chapter quiz on British rule, resistance, and India’s freedom struggle.</p>
+        <div class="badges">
+          <span class="badge">Grade 5</span>
+          <span class="badge">Social Studies</span>
         </div>
-        <div class="poster">
-          <div class="poster-content">
-            <div>
-              <div class="poster-title">The British Raj in India</div>
-              <div class="poster-sub">A sepia-style history layout with a stronger contrast and a cleaner intro screen.</div>
-            </div>
-          </div>
+        <div style="margin-top:22px;">
+          <button class="btn primary" id="startBtn">Start Quiz</button>
+          <button class="btn ghost" id="previewBtn">View Instructions</button>
         </div>
+        <p class="small" style="margin-top:14px">One retry is allowed after the first wrong answer. After the second wrong attempt, the correct answer and explanation appear.</p>
       </div>
     </div>
   </section>
