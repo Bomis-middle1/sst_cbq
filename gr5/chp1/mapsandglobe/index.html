@@ -192,18 +192,6 @@ body:after{
   margin:8px 0 14px;
 }
 .qhtml{line-height:1.45}
-.table-wrap{overflow-x:auto;margin:12px 0}
-.qtable{
-  width:100%;
-  min-width:620px;
-  border-collapse:collapse;
-  text-align:center;
-  background:#fff;
-  border-radius:12px;
-  overflow:hidden;
-}
-.qtable th,.qtable td{border:1px solid #c9e8d4;padding:10px}
-.qtable thead tr{background:#dff5e6}
 .stimulus{display:none;margin:10px 0 14px}
 .stimulus img{
   width:100%;
@@ -383,7 +371,6 @@ body:after{
   width:2px;height:42px;
   background:linear-gradient(180deg,#d94d4d 0 50%, #4d7bd9 50% 100%);
   transform:translate(-50%,-50%) rotate(18deg);
-  box-shadow:0 0 0 1px rgba(0,0,0,.02);
 }
 .compass:after{
   content:"N";
@@ -394,17 +381,7 @@ body:after{
   color:#d94d4d;
   font-size:12px;
 }
-.mini-note{
-  position:absolute;
-  bottom:8px;
-  left:50%;
-  transform:translateX(-50%);
-  text-align:center;
-  font-weight:700;
-  color:#4a6378;
-  line-height:1.35;
-  width:84%;
-}
+.mini-note{display:none}
 
 .final{text-align:center}
 .medal{font-size:72px;line-height:1}
@@ -516,7 +493,6 @@ body:after{
         </div>
         <div class="map-card"></div>
         <div class="compass"></div>
-        <div class="mini-note">Globe, maps, compass, and directions.</div>
       </div>
     </div>
   </div>
