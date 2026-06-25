@@ -6,25 +6,28 @@
 <title>Transport and Communication CBQ</title>
 <style>
 :root{
-  --bg1:#e8f7ff;
-  --bg2:#fff8ec;
-  --card:#ffffffee;
+  --bg1:#d8f1ff;
+  --bg2:#fff0dc;
+  --bg3:#f6e8ff;
+  --card:#ffffffef;
   --ink:#17324a;
-  --muted:#55728a;
-  --primary:#2d7dd2;
-  --secondary:#ff8a3d;
-  --good:#19a35b;
-  --bad:#d9534f;
-  --shadow:0 14px 42px rgba(18,50,80,.14);
+  --muted:#4f6d86;
+  --blue:#2f7ee6;
+  --orange:#ff8a3d;
+  --green:#15a05d;
+  --red:#d9534f;
+  --shadow:0 16px 46px rgba(18,50,80,.16);
 }
 *{box-sizing:border-box}
 html,body{
-  margin:0;height:100%;
+  margin:0;
+  height:100%;
   font-family:Arial,Helvetica,sans-serif;
   color:var(--ink);
   background:
-    radial-gradient(circle at 10% 10%, rgba(255,255,255,.9) 0 12px, transparent 13px),
-    linear-gradient(180deg,var(--bg1),var(--bg2));
+    radial-gradient(circle at 20% 15%, rgba(255,255,255,.9) 0 12px, transparent 13px),
+    radial-gradient(circle at 80% 20%, rgba(255,255,255,.85) 0 10px, transparent 11px),
+    linear-gradient(135deg,var(--bg1),var(--bg2) 55%, var(--bg3));
   overflow-x:hidden;
 }
 body::before,body::after{
@@ -33,43 +36,48 @@ body::before,body::after{
   inset:auto;
   pointer-events:none;
   z-index:0;
-  opacity:.5;
+  opacity:.55;
 }
 body::before{
-  top:8%;left:6%;
-  width:130px;height:130px;
+  top:7%;
+  left:4%;
+  width:150px;height:150px;
   background:radial-gradient(circle at 35% 35%,#fff 0 10%,transparent 11%),radial-gradient(circle at 50% 50%,#fff 0 20%,transparent 21%);
-  animation:float 11s linear infinite;
+  animation:float 12s linear infinite;
 }
 body::after{
-  right:6%;bottom:8%;
-  width:180px;height:180px;
+  right:6%;
+  bottom:8%;
+  width:190px;height:190px;
   background:radial-gradient(circle at 30% 30%,#fff 0 8%,transparent 9%),radial-gradient(circle at 70% 45%,#fff 0 6%,transparent 7%),radial-gradient(circle at 50% 70%,#fff 0 10%,transparent 11%);
-  animation:float 14s linear infinite reverse;
+  animation:float 15s linear infinite reverse;
 }
 @keyframes float{
   0%,100%{transform:translateY(0) rotate(0deg)}
-  50%{transform:translateY(-14px) rotate(8deg)}
+  50%{transform:translateY(-16px) rotate(8deg)}
 }
 #app{
-  position:relative;z-index:1;
+  position:relative;
+  z-index:1;
   min-height:100vh;
-  display:flex;align-items:center;justify-content:center;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   padding:16px;
 }
-.screen{width:min(1020px,100%);display:none}
+.screen{width:min(1040px,100%);display:none}
 .screen.active{display:block}
 .card{
   background:var(--card);
-  backdrop-filter:blur(8px);
-  border:1px solid rgba(255,255,255,.6);
-  border-radius:24px;
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.7);
+  border-radius:26px;
   box-shadow:var(--shadow);
   overflow:hidden;
 }
 .header{
-  padding:18px;
-  background:linear-gradient(135deg,#edf8ff,#fff2df);
+  padding:20px 20px 14px;
+  background:linear-gradient(135deg,#f0fbff,#fff4e0 60%,#f6ecff);
 }
 .brand{
   display:flex;
@@ -87,70 +95,99 @@ body::after{
   font-size:13px;
   font-weight:700;
 }
-.main{padding:18px}
+.main{padding:20px}
 h1,h2,p{margin:0 0 12px}
-h1{font-size:clamp(27px,4vw,42px)}
-h2{font-size:clamp(20px,3vw,28px)}
-p{color:var(--muted);line-height:1.5}
+h1{
+  font-size:clamp(30px,5vw,52px);
+  line-height:1.05;
+}
+h2{font-size:clamp(22px,3vw,30px)}
+p{
+  color:var(--muted);
+  line-height:1.65;
+  font-size:18px;
+}
 .start-grid{
   display:grid;
-  grid-template-columns:1.1fr .9fr;
+  grid-template-columns:1.08fr .92fr;
   gap:18px;
   align-items:center;
 }
 .hero-box{
-  background:linear-gradient(180deg,#ffffff,#f7fbff);
-  border:1px solid #ddebf7;
-  border-radius:18px;
+  background:linear-gradient(180deg,#ffffff,#f9fcff);
+  border:1px solid #dbeaf4;
+  border-radius:20px;
   padding:16px;
-  min-height:270px;
+  min-height:300px;
   display:flex;
   align-items:center;
   justify-content:center;
+  position:relative;
+  overflow:hidden;
+}
+.hero-box::before,.hero-box::after{
+  content:"";
+  position:absolute;
+  border-radius:50%;
+  pointer-events:none;
+}
+.hero-box::before{
+  width:180px;height:180px;
+  background:rgba(47,126,230,.12);
+  top:-40px;right:-30px;
+}
+.hero-box::after{
+  width:140px;height:140px;
+  background:rgba(255,138,61,.14);
+  bottom:-35px;left:-20px;
 }
 .hero-icons{
   display:grid;
   grid-template-columns:repeat(3,1fr);
   gap:12px;
   width:100%;
+  position:relative;
+  z-index:1;
 }
 .icon-card{
-  background:#f8fcff;
-  border:1px solid #e0eef7;
-  border-radius:16px;
-  padding:14px;
+  background:linear-gradient(180deg,#ffffff,#f7fbff);
+  border:1px solid #ddebf7;
+  border-radius:18px;
+  padding:16px;
   text-align:center;
-  min-height:90px;
+  min-height:100px;
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
   gap:6px;
+  box-shadow:0 8px 18px rgba(0,0,0,.05);
 }
 .icon{
-  font-size:28px;
+  font-size:30px;
   line-height:1;
 }
 .icon-card span{
-  font-size:13px;
+  font-size:14px;
   color:#35586f;
-  font-weight:700;
+  font-weight:800;
 }
-.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 .btn{
   appearance:none;
   border:0;
-  border-radius:14px;
-  padding:14px 16px;
-  font-weight:700;
+  border-radius:16px;
+  padding:15px 18px;
+  font-weight:800;
+  font-size:16px;
   cursor:pointer;
   transition:.2s transform,.2s opacity,.2s filter;
-  box-shadow:0 8px 18px rgba(0,0,0,.08);
+  box-shadow:0 10px 22px rgba(0,0,0,.08);
 }
 .btn:hover{transform:translateY(-1px)}
 .btn:disabled{opacity:.55;cursor:not-allowed}
-.primary{background:linear-gradient(135deg,#2d7dd2,#4db7ff);color:#fff}
-.ghost{background:#f1f7fb;color:#20506e}
+.primary{background:linear-gradient(135deg,#2f7ee6,#4db7ff);color:#fff}
+.ghost{background:#f2f8fb;color:#20506e}
 .danger{background:#fff0f0;color:#b6423f}
 .success{background:#e9fff1;color:#1d7d48}
 .topbar{
@@ -167,25 +204,26 @@ p{color:var(--muted);line-height:1.5}
   border:1px solid #dcebf5;
   border-radius:14px;
   padding:10px 12px;
-  font-weight:700;
+  font-weight:800;
+  font-size:15px;
 }
 .qbox{
   background:#fff;
-  border-radius:18px;
-  padding:16px;
+  border-radius:20px;
+  padding:18px;
   border:1px solid #e2edf4;
   box-shadow:0 6px 20px rgba(20,60,90,.06);
 }
 .qnum{
   font-size:13px;
-  font-weight:800;
+  font-weight:900;
   color:#1e6b96;
   text-transform:uppercase;
-  letter-spacing:.08em;
+  letter-spacing:.09em;
 }
 .question{
-  font-size:20px;
-  line-height:1.5;
+  font-size:22px;
+  line-height:1.55;
   margin-top:8px;
 }
 .options{
@@ -199,9 +237,10 @@ p{color:var(--muted);line-height:1.5}
   background:#f9fcff;
   border:1px solid #dbeaf3;
   border-radius:14px;
-  padding:13px 14px;
+  padding:14px 15px;
   color:#18364c;
-  font-size:16px;
+  font-size:17px;
+  line-height:1.45;
 }
 .opt.correct{background:#eafaf0;border-color:#82d19e}
 .opt.wrong{background:#fff1f1;border-color:#e9a7a3}
@@ -210,6 +249,7 @@ p{color:var(--muted);line-height:1.5}
   padding:12px 14px;
   border-radius:14px;
   display:none;
+  font-size:16px;
 }
 .feedback.show{display:block}
 .feedback.good{background:#eafaf0;color:#1e7544}
@@ -221,8 +261,8 @@ p{color:var(--muted);line-height:1.5}
   flex-wrap:wrap;
   margin-top:14px;
 }
-.timer{font-weight:800;color:#0f5f8e}
-.small{font-size:13px;color:var(--muted)}
+.timer{font-weight:900;color:#0f5f8e}
+.small{font-size:14px;color:var(--muted)}
 .final-challenge,.result-box{
   padding:18px;
   border-radius:18px;
@@ -238,7 +278,7 @@ p{color:var(--muted);line-height:1.5}
 }
 .logo-splash.hide{opacity:0;pointer-events:none}
 .logo-splash img{
-  max-width:min(330px,75vw);
+  max-width:min(340px,75vw);
   max-height:26vh;
   object-fit:contain;
 }
@@ -269,7 +309,7 @@ p{color:var(--muted);line-height:1.5}
   position:absolute;
   left:13px;top:0;
   width:4px;height:28px;
-  background:var(--bad);
+  background:var(--red);
   border-radius:3px;
 }
 .cross::before{transform:rotate(45deg)}
@@ -298,16 +338,10 @@ th{
   background:#eef8ff;
   color:#174f77;
 }
-.image-question{
-  width:100%;
-  max-height:240px;
-  object-fit:cover;
-  border-radius:14px;
-  border:1px solid #dcebf5;
-}
 @media(max-width:760px){
   .start-grid{grid-template-columns:1fr}
-  .question{font-size:18px}
+  .question{font-size:20px}
+  p{font-size:17px}
 }
 </style>
 </head>
@@ -330,16 +364,16 @@ th{
           <h1>Transport and Communication</h1>
           <p>Choose the best transport and communication decisions for real-life situations.</p>
           <div class="badges">
-            <span class="badge" id="gradeBadge">Grade 5</span>
-            <span class="badge" id="subjectBadge">Social Studies</span>
-            <span class="badge" id="topicBadge">Transport and Communication</span>
-            <span class="badge" id="countBadge">12 Questions</span>
+            <span class="badge">Grade 5</span>
+            <span class="badge">Social Studies</span>
+            <span class="badge">Transport and Communication</span>
+            <span class="badge">12 Questions</span>
           </div>
-          <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+          <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap">
             <button class="btn primary" id="startBtn">Start Quiz</button>
             <button class="btn ghost" id="previewBtn">View Instructions</button>
           </div>
-          <p class="small" style="margin-top:12px">One retry is allowed after the first wrong answer. After the second wrong attempt, the correct answer and explanation appear.</p>
+          <p class="small" style="margin-top:14px">One retry is allowed after the first wrong answer. After the second wrong attempt, the correct answer and explanation appear.</p>
         </div>
         <div class="hero-box">
           <div class="hero-icons">
@@ -430,12 +464,10 @@ const quizData = [
 {q:'A student observes that despite having advanced communication technology like video conferencing, people still travel long distances for meetings, trade, and tourism. The teacher asks why physical transport is still necessary. What is the MOST appropriate explanation?', o:['Communication tools are not reliable','Communication completely replaces physical movement','Transport is only used for entertainment','Physical presence is required for goods movement, services, and human interaction'], a:3, e:'Transport is still needed for people, goods, and services.'},
 {q:'Study the situation carefully: A transport planner is assigned to choose the best transport mode for three different scenarios in a country. The planner must choose the most appropriate transport combination for all three situations while balancing efficiency and practicality. What is the MOST suitable overall decision?', o:['Air – Rail/Road – Road','Water – Air – Rail','Road – Air – Water','Rail – Water – Air'], a:0, e:'Air is best for urgent international medicines, rail/road for produce, and road for daily commuting.'}
 ];
-
 const perQuestion = 45;
 let idx = 0, score = 0, attempts = 0, answered = false, timer = perQuestion, interval = null;
 const $ = s => document.querySelector(s);
 const screens = [...document.querySelectorAll('.screen')];
-
 function show(id){screens.forEach(s=>s.classList.remove('active'));$(id).classList.add('active')}
 function render(){
   answered=false;attempts=0;timer=perQuestion;
@@ -481,13 +513,11 @@ function render(){
     if(timer<=0) timeUp();
   },1000);
 }
-
 function chooseFeedback(type,text){
   const f=$('#feedback');
   f.className=`feedback show ${type}`;
   f.textContent=text;
 }
-
 function confetti(type){
   const overlay=$('#overlay');
   for(let i=0;i<18;i++){
@@ -500,7 +530,6 @@ function confetti(type){
     setTimeout(()=>el.remove(),2300);
   }
 }
-
 function select(i,btn){
   if(answered) return;
   const d=quizData[idx];
@@ -532,7 +561,6 @@ function select(i,btn){
     }
   }
 }
-
 function timeUp(){
   if(answered) return;
   answered=true;
@@ -541,7 +569,6 @@ function timeUp(){
   $('#nextBtn').disabled=false;
   $('#attemptInfo').textContent='Time up';
 }
-
 function next(){
   if(idx<quizData.length-1){
     idx++;
@@ -551,7 +578,6 @@ function next(){
     $('#finalChallengeText').textContent='You completed all 12 questions on Transport and Communication.';
   }
 }
-
 $('#startBtn').onclick=()=>{show('#quizScreen'); render()};
 $('#previewBtn').onclick=()=>alert('Read each question carefully. One retry is allowed after the first wrong answer.');
 $('#skipBtn').onclick=()=>{answered=true; $('#nextBtn').disabled=false; chooseFeedback('bad','Skipped. The correct answer is ' + String.fromCharCode(65+quizData[idx].a) + '. ' + quizData[idx].o[quizData[idx].a] + ' — ' + quizData[idx].e);};
@@ -568,7 +594,6 @@ $('#restartBtn').onclick=()=>{
   show('#introScreen');
   $('#scoreTracker').textContent='Score: 0';
 };
-
 setTimeout(()=>$('#splash').classList.add('hide'),5000);
 </script>
 </body>
