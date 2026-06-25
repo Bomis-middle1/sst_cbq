@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>From Barter to Money — Economic Evolution Quest</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif}
+:root{
+  --copper-base:#b85c38;
+  --copper-dark:#5c2a18;
+  --digital-teal:#00f5d4;
+  --digital-dark:#0b131a;
+  --surface-gray:#17222a;
+  --text-light:#e2e8f0;
+  --text-muted:#94a3b8;
+  --success-green:#10b981;
+  --success-bg:rgba(16,185,129,0.1);
+  --error-red:#ef4444;
+  --error-bg:rgba(239,68,68,0.1);
+}
+body{background:linear-gradient(135deg,var(--digital-dark),#070b10);min-height:100vh;color:var(--text-light);padding:20px;display:flex;align-items:center;justify-content:center}
+
+/* ---- Layout Components ---- */
+.hidden { display: none !important; }
+.terminal-card { background: var(--surface-gray); width: 100%; max-width: 640px; padding: 35px; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); border: 2px solid var(--copper-base); position: relative; overflow: hidden; }
+.terminal-card::before { content:''; position:absolute; top:0; left:0; width:100%; height:4px; background:linear-gradient(90deg, var(--copper-base), var(--digital-teal)); }
+.center { text-align: center; }
+.badge-node { display: inline-block; background: rgba(184,92,56,0.15); color: var(--digital-teal); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(0,245,212,0.3); margin-bottom: 20px; }
+
+/* ---- Welcome Panel Graphic ---- */
+#splash{position:fixed;top:0;left:0;width:100%;height:100%;background:#ffffff;display:flex;justify-content:center;align-items:center;z-index:99999;transition:opacity .3s ease}
+.splash-box{width:290px;max-width:80vw}
+.splash-box img{width:100%;height:auto;display:block}
+
+/* ---- Dashboard Indicators ---- */
+.dashboard-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; font-size:12px; font-weight:600; color:var(--text-muted); border-bottom:1px solid rgba(226,232,240,0.1); padding-bottom:14px; text-transform:uppercase; letter-spacing:1px }
+.dashboard-header span { color: var(--digital-teal); font-weight: 700; }
+
+/* ---- Horizontal Grid Progress ---- */
+.timeline-progress{display:flex;gap:4px;margin-bottom:24px}
+.step-bar{height:5px;flex:1;background:rgba(255,255,255,0.08);border-radius:2px;transition:all .3s ease}
+.step-bar.active{background:var(--digital-teal);box-shadow:0 0 10px var(--digital-teal)}
+.step-bar.filled{background:var(--copper-base)}
+
+/* ---- Text & Option Configurations ---- */
+h2{font-size:18px;line-height:1.5;color:var(--text-light);margin-bottom:24px;font-weight:600}
+.options-matrix{display:flex;flex-direction:column;gap:12px}
+.option-node{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:16px 20px;cursor:pointer;font-size:15px;line-height:1.5;transition:all 0.2s cubic-bezier(0.4, 0, 0.2, 1);display:flex;align-items:start;gap:14px}
+.option-node:hover{background:rgba(0,245,212,0.05);border-color:var(--digital-teal);transform:translateX(4px)}
+.index-prefix{font-weight:700;color:var(--copper-base);font-size:13px}
+
+/* ---- Feedback Messaging ---- */
+.status-msg{margin-top:20px;padding:16px;border-radius:8px;font-size:14px;line-height:1.5}
+.status-correct{background:var(--success-bg);color:var(--success-green);border:1px solid rgba(16,185,129,0.2)}
+.status-wrong{background:var(--error-bg);color:var(--error-red);border:1px solid rgba(239,68,68,0.2)}
+
+button.action-btn{width:100%;background:linear-gradient(135deg, var(--copper-base), #964322);color:white;border:none;padding:16px;border-radius:8px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;cursor:pointer;margin-top:20px;transition:all .2s;box-shadow:0 4px 12px rgba(184,92,56,0.3)}
+button.action-btn:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(184,92,56,0.4)}
+
+/* ---- Structural Feedback Vibrations ---- */
+#screen-vibe{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(239,68,68,0.05);pointer-events:none;opacity:0;z-index:99;transition:opacity .15s}
+#screen-vibe.vibe-active{opacity:1}
+
+.sparkle{position:fixed;pointer-events:none;animation:floatout 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;z-index:999;font-size:22px}
+@keyframes floatout{0%{transform:translateY(0) rotate(0deg) scale(0.5);opacity:1}100%{transform:translateY(-80px) rotate(30deg) scale(1.3);opacity:0}}
+</style>
+</head>
+<body>
+
+<audio id="sound-correct" src="assets/correct.mp3"></audio>
+<audio id="sound-wrong" src="assets/wrong.mp3"></audio>
+<audio id="sound-complete" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<div id="screen-vibe"></div>
+
+<div id="splash">
+  <div class="center">
+    <div class="splash-box">
+      <img src="assets/innovine-logo.png" alt="Innovine Core Logo" onerror="this.style.display='none'; document.getElementById('text-logo-fallback').style.display='block';">
+      <h2 id="text-logo-fallback" style="display:none;color:var(--copper-base);letter-spacing:2px;font-family:sans-serif">INNOVINE LEARNING</h2>
+    </div>
+  </div>
+</div>
+
+<div id="panel-start" class="terminal-card center hidden">
+  <div class="badge-node">Financial History Portal</div>
+  <h1 style="color:var(--text-light);font-size:24px;margin-bottom:12px;font-weight:600">💰 From Barter to Money</h1>
+  <p style="color:var(--text-muted);font-size:15px;line-height:1.6;margin-bottom:26px">Trace the architectural timeline of global transactions. Evaluate structural barter loops, commodity assets, weight standards, and modern cashless frameworks.</p>
+  <div style="font-size:48px;margin-bottom:24px">💳</div>
+  <button class="action-btn" onclick="initQuest()">Launch Timeline Ledger</button>
+</div>
+
+<div id="panel-quest" class="terminal-card hidden">
+  <div class="dashboard-header">
+    <div>📈 Step: <span id="lbl-index">1</span>/10</div>
+    <div>⏱️ Telemetry: <span id="lbl-clock">45</span>s</div>
+    <div>💰 Treasury: <span id="lbl-score">0</span></div>
+  </div>
+  <div class="timeline-progress" id="timeline-bar"></div>
+  <h2 id="quest-body"></h2>
+  <div class="options-matrix" id="quest-options"></div>
+  <div id="quest-feedback"></div>
+  <button id="btn-next" class="action-btn hidden" onclick="nextStep()">Commit Ledger & Advance →</button>
+</div>
+
+<div id="panel-summary" class="terminal-card center hidden">
+  <div style="font-size:56px;margin-bottom:16px" id="summary-badge"></div>
+  <h1 id="summary-heading" style="color:var(--text-light);margin-bottom:10px;font-weight:600"></h1>
+  <p id="summary-para" style="color:var(--text-muted);font-size:15px;margin-bottom:24px"></p>
+  <div class="badge-node" id="summary-honorific"></div>
+  <br><br>
+  <button class="action-btn" onclick="window.location.reload()">Re-verify Macro Economy</button>
+</div>
+
+<script>
+window.addEventListener('DOMContentLoaded',()=>{
+  setTimeout(()=>{
+    const spScreen = document.getElementById('splash');
+    spScreen.style.opacity = '0';
+    setTimeout(()=>{
+      spScreen.style.display = 'none';
+      document.getElementById('panel-start').classList.remove('hidden');
+    },300);
+  },1600);
+});
+
+const cbqDataset = [
+  {
+    q: "Anup has an extra basket of mangoes and wants a blanket. The weaver refuses mangoes because he wants wheat. Anup finds a farmer with wheat, but the farmer wants clay pots. Which core limitation of the barter system does Anup's long chain of trades highlight?",
+    o: ["Lack of storage capacity for seasonal fruits.","The absence of a standard written record-keeping law.","The failure of the double coincidence of wants.","Inability to divide goods into smaller fractional payments."],
+    a: 2,
+    e: "The barter system breaks down when the direct wants of trading partners do not match up immediately (the failure of double coincidence of wants)."
+  },
+  {
+    q: "A trading post in an ancient coastal settlement uses compressed blocks of sea salt as its primary currency. During an unseasonal monsoon, a leak in the central storage warehouse ruins half of the community's accumulated wealth. Which essential quality of good money did salt fail to fulfill in this situation?",
+    o: ["Portability and ease of long-distance transport.","Durability and permanent resistance to spoilage.","General acceptability among local tribal elders.","Official backing and stamps from a central royal authority."],
+    a: 1,
+    e: "Salt dissolves when exposed to water, failing the primary metric of durability and stable long-term storage of value."
+  },
+  {
+    q: "Meera wants to trade her healthy cow for 3 bags of rice and 2 bundles of firewood. The rice seller accepts the trade, but the firewood seller refuses to cooperate, leaving Meera with no way to complete half of the transaction without destroying the cow's utility. How does modern currency immediately resolve Meera’s specific issue?",
+    o: ["By acting as a standard of deferred payment to pay next year.","By providing a divisible medium of exchange that can be broken into exact monetary fractions.","By ensuring that all livestock values are pegged to international gold reserves.","By forcing all wood merchants to accept barter deals by law."],
+    a: 1,
+    e: "Currency provides a universally divisible medium, allowing individuals to split transactions without breaking physical assets like livestock."
+  },
+  {
+    q: "A historian compares ancient Indian punch-marked silver coins from the Mahājanapadas era with later Gupta Empire gold dīnāras. What major advancement in the evolution of coins does the design of the Gupta dīnāras represent?",
+    o: ["Shifting completely away from metal use to light paper certificates.","Incorporating clear royal faces, names, and inscriptions to elevate trust and authority.","Relying purely on natural un-shaped ocean shells to trade values.","Allowing every merchant to punch their own random symbols at home."],
+    a: 2,
+    e: "Imperial coinage introduced official text, languages, and portraits, making currency standard, verifiable, and highly trusted across empires."
+  },
+  {
+    q: "Kabir buys an electric scooter priced at ₹75,000. He pays ₹15,000 today and signs an agreement with the dealership to pay the remaining ₹60,000 through equal monthly installments over the next year. Which function of money makes this multi-month business agreement reliable for both parties?",
+    o: ["Medium of visual artwork display","Store of perishable agricultural value","Standard of deferred payment","Fractional divisibility of physical assets."],
+    a: 2,
+    e: "Money acts as a standard of deferred payment, enabling people to confidently secure credit, loans, and deferred contractual payments for the future."
+  },
+  {
+    q: "A street vendor refuses to accept a high-quality photocopy of a ₹500 note printed by a local commercial copy shop, even though the paper looks identical and features the correct serial number. Why does Indian society reject the copied note while accepting an official note issued by the RBI?",
+    o: ["Official currency holds a legal monopoly on authority and trust guaranteed by the central government.","The copy shop used heavier paper than the standard weight of a coin.","Private shops are only allowed to print small-value notes like ₹10 and ₹20.","Paper money cannot contain multi-language translations."],
+    a: 0,
+    e: "Modern paper currency functions entirely on institutional trust and legal backing provided exclusively by a single central printing authority (the RBI)."
+  },
+  {
+    q: "Sameer travels to a remote hill station with zero mobile network coverage. He has an e-wallet full of digital balance but cannot pay for a hot meal because the vendor's app cannot connect to verify the transaction. What core vulnerability of modern digital cashless transactions does this scenario highlight?",
+    o: ["Digital money has no fixed value compared to heavy copper coins.","High dependency on network connectivity, electricity, and functional technical infrastructure.","Online wallets are legally banned from holding more than ₹100.","QR code systems are restricted only to large international airports."],
+    a: 1,
+    e: "Digital networks are highly efficient but remain completely dependent on functional telecommunications infrastructure, batteries, and live internet access."
+  },
+  {
+    q: "In an imaginary village without money, 1 horse = 10 sheep, 1 sheep = 5 baskets of apples, and 1 basket of apples = 2 clay pots. Calculating the exact trade rate for a horse against pots requires complex mathematical formulas. Which specific property of modern currency eliminates this systemic confusion?",
+    o: ["Acting as a common measure/unit of account to express all prices in a single standard.","Offering a high level of physical bulkiness to prevent quick theft.","Allowing goods to spoil naturally without any financial tracking.","Restricting all purchases exclusively to mobile banking apps."],
+    a: 0,
+    e: "Money serves as a uniform unit of account, enabling every unique commodity to be labeled with a single clear price tag."
+  },
+  {
+    q: "Radha swipes her Debit Card to buy groceries at a local department store. Simultaneously, her father uses his Credit Card to pay for fuel at a petrol pump. What is the primary difference in how money moves during these two card transactions?",
+    o: ["Radha’s card leaves her bank balance unchanged, while her father's card instantly deletes his savings.","Radha's card draws existing funds directly from her bank account, while her father's card uses a short-term bank loan to be paid back later.","Debit cards can only buy electronic items, whereas credit cards are restricted to street markets.","Credit cards require physical gold coins to be deposited at the counter."],
+    a: 1,
+    e: "A debit card deducts real-time personal deposits instantly, while a credit card relies on a bank-extended credit line that must be settled at a later date."
+  },
+  {
+    q: "A tourist notices that a modern Indian banknote features an intricate panel displaying a column of text written in various regional scripts alongside Hindi and English. What core aspect of India does this feature of our paper currency explicitly recognize?",
+    o: ["The history of the British East India Company seals.","The rich cultural and linguistic diversity of the nation.","The list of all past Governors-General of India.","The technical coding languages used to build the UPI payment framework."],
+    a: 1,
+    e: "Printing 17 distinct languages on currency notes ensures that the diverse populations across all states can identify, read, and trust their national money."
+  }
+];
+
+let currIdx=0, totalScore=0, currentAttempts=0, timerTick=45, loopClock;
+
+function initQuest(){
+  document.getElementById('panel-start').classList.add('hidden');
+  document.getElementById('panel-quest').classList.remove('hidden');
+  buildTimelineBars();
+  renderQuestion();
+}
+
+function buildTimelineBars(){
+  const container = document.getElementById('timeline-bar');
+  container.innerHTML = '';
+  for(let i=0; i<cbqDataset.length; i++){
+    let step = document.createElement('div');
+    step.className = 'step-bar';
+    container.appendChild(step);
+  }
+}
+
+function renderQuestion(){
+  currentAttempts = 0;
+  timerTick = 45;
+  document.getElementById('lbl-clock').textContent = timerTick;
+  document.getElementById('lbl-index').textContent = currIdx + 1;
+  document.getElementById('quest-feedback').innerHTML = '';
+  document.getElementById('btn-next').classList.add('hidden');
+  
+  const steps = document.querySelectorAll('.step-bar');
+  steps.forEach((st,i)=>{
+    if(i===currIdx) st.className = 'step-bar active';
+    else if(i<currIdx) st.className = 'step-bar filled';
+    else st.className = 'step-bar';
+  });
+
+  document.getElementById('quest-body').textContent = cbqDataset[currIdx].q;
+  const matrix = document.getElementById('quest-options');
+  matrix.innerHTML = '';
+
+  const alphas = ['A','B','C','D'];
+  cbqDataset[currIdx].o.forEach((optText,i)=>{
+    let node = document.createElement('div');
+    node.className = 'option-node';
+    node.innerHTML = `<span class="index-prefix">${alphas[i]}.</span><span>${optText}</span>`;
+    node.onclick = (event) => evaluateChoice(i, node, event);
+    matrix.appendChild(node);
+  });
+
+  clearInterval(loopClock);
+  loopClock = setInterval(()=>{
+    timerTick--;
+    document.getElementById('lbl-clock').textContent = timerTick;
+    if(timerTick<=0){
+      clearInterval(loopClock);
+      exposeAnswerKey();
+    }
+  },1000);
+}
+
+function evaluateChoice(chosen, nodeElement, event){
+  const item = cbqDataset[currIdx];
+  if(chosen === item.a){
+    if(currentAttempts === 0){
+      totalScore++;
+      document.getElementById('lbl-score').textContent = totalScore;
+    }
+    playSoundFile('sound-correct');
+    triggerSparkles(event);
+    document.getElementById('quest-feedback').innerHTML = `<div class="status-msg status-correct"><b>⚡ Ledger Confirmed.</b> ${item.e}</div>`;
+    lockMatrix();
+    clearInterval(loopClock);
+    document.getElementById('btn-next').classList.remove('hidden');
+  } else {
+    if(currentAttempts === 0){
+      currentAttempts = 1;
+      playSoundFile('sound-wrong');
+      triggerVibeFX();
+      document.getElementById('quest-feedback').innerHTML = `<div class="status-msg status-wrong"><b>⚠️ Inflationary Deficit.</b> This trade mechanism breaks down under macroeconomic stress rules. Try once more.</div>`;
+      nodeElement.style.borderColor = 'var(--error-red)';
+      nodeElement.style.background = 'var(--error-bg)';
+    } else {
+      exposeAnswerKey();
+    }
+  }
+}
+
+function exposeAnswerKey(){
+  lockMatrix();
+  clearInterval(loopClock);
+  const item = cbqDataset[currIdx];
+  const alphas = ['A','B','C','D'];
+  document.getElementById('quest-feedback').innerHTML = `<div class="status-msg status-wrong"><b>🔍 Settlement Reached.</b> The stable economic solution is <b>${alphas[item.a]}. ${item.o[item.a]}</b>.<br><br>${item.e}</div>`;
+  document.getElementById('btn-next').classList.remove('hidden');
+}
+
+function lockMatrix(){
+  document.querySelectorAll('.option-node').forEach(n => n.onclick = null);
+}
+
+function nextStep(){
+  currIdx++;
+  if(currIdx < cbqDataset.length){
+    renderQuestion();
+  } else {
+    buildFinalSummary();
+  }
+}
+
+function buildFinalSummary(){
+  document.getElementById('panel-quest').classList.add('hidden');
+  document.getElementById('panel-summary').classList.remove('hidden');
+  
+  const bEl = document.getElementById('summary-badge');
+  const hEl = document.getElementById('summary-heading');
+  const pEl = document.getElementById('summary-para');
+  const rEl = document.getElementById('summary-honorific');
+
+  pEl.textContent = `You correctly synchronized ${totalScore} out of ${cbqDataset.length} physical and virtual economic variables.`;
+
+  if(totalScore >= 9){
+    bEl.textContent = '⚡';
+    hEl.textContent = 'Governor of Central Mint';
+    rEl.textContent = 'High-Speed UPI Network Architect';
+    playSoundFile('sound-complete');
+  } else if(totalScore >= 6){
+    bEl.textContent = '🪙';
+    hEl.textContent = 'Imperial Treasurer Master';
+    rEl.textContent = 'Gupta Dynasty Gold Dīnāra Mint Master';
+  } else {
+    bEl.textContent = '🐚';
+    hEl.textContent = 'Commodity Haat Broker';
+    rEl.textContent = 'Pre-Coinage Cowrie Shell Appraiser';
+  }
+}
+
+function playSoundFile(id){
+  try{
+    const element = document.getElementById(id);
+    element.currentTime = 0;
+    element.play();
+  } catch(e){}
+}
+
+function triggerVibeFX(){
+  const screen = document.getElementById('screen-vibe');
+  screen.classList.add('vibe-active');
+  setTimeout(()=>screen.classList.remove('vibe-active'),200);
+}
+
+function triggerSparkles(e){
+  const tokenIcons = ['🪙','💳','💵','✨','⚡'];
+  for(let i=0; i<6; i++){
+    let sp = document.createElement('div');
+    sp.className = 'sparkle';
+    sp.textContent = tokenIcons[i % tokenIcons.length];
+    sp.style.left = (e.clientX ? e.clientX : window.innerWidth/2) + (Math.random()*40 - 20) + 'px';
+    sp.style.top = (e.clientY ? e.clientY : window.innerHeight/2) + (Math.random()*40 - 20) + 'px';
+    document.body.appendChild(sp);
+    setTimeout(()=>sp.remove(),800);
+  }
+}
+</script>
+</body>
+</html>
