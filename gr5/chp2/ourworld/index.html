@@ -352,7 +352,6 @@ body:before{
       </div>
       <div class="question qhtml" id="questionText"></div>
       <div class="stimulus" id="stimulusBox"><img id="stimulusImg" alt="Question image" /></div>
-
       <div class="table-wrap" id="tableWrap" style="display:none">
         <table class="qtable">
           <thead>
@@ -365,7 +364,6 @@ body:before{
           </tbody>
         </table>
       </div>
-
       <div class="options" id="options"></div>
       <div class="feedback" id="feedback">Choose one answer to begin.</div>
     </div>
@@ -391,44 +389,32 @@ body:before{
 
 <script>
 const questions = [
-{q:`During a geography lesson, the teacher explains that Earth is always rotating on its axis. Riya and her classmates observe a globe being slowly rotated in a dark room with one side lit by a torch. Riya notices that one half is bright while the other is dark at the same time.
+{type:'text',q:`During a geography lesson, the teacher explains that Earth is always rotating on its axis. Riya and her classmates observe a globe being slowly rotated in a dark room with one side lit by a torch. Riya notices that one half is bright while the other is dark at the same time.
 What is the correct conclusion from this observation?`,o:['Earth does not move in space','Clouds create day and night','The Sun moves around Earth every day','Earth’s rotation causes day and night on different parts of the Earth'],a:3,e:'Earth’s rotation causes day and night on different parts of Earth.'},
-{q:`A student living in India calls a friend in the USA. He notices that when it is morning in India, it is night in the USA. He becomes confused because both places are on the same Earth.
+{type:'text',q:`A student living in India calls a friend in the USA. He notices that when it is morning in India, it is night in the USA. He becomes confused because both places are on the same Earth.
 What is the BEST explanation for this difference in time?`,o:['Earth rotates on its axis causing different parts to face the Sun at different times','The Sun shines only on India','The USA is always dark','Time is decided randomly'],a:0,e:'Earth’s rotation makes different places face the Sun at different times.'},
-{q:`In a classroom demonstration, the teacher slowly spins a globe and asks students to observe how sunlight falls on only one side at a time. The students notice that one side is bright while the other is dark.
+{type:'text',q:`In a classroom demonstration, the teacher slowly spins a globe and asks students to observe how sunlight falls on only one side at a time. The students notice that one side is bright while the other is dark.
 What does this activity BEST explain?`,o:['Formation of oceans','Formation of seasons','Day and night cycle due to Earth’s rotation','Movement of clouds'],a:2,e:'It explains the day and night cycle due to Earth’s rotation.'},
-{q:`A student says that sunrise and sunset happen because the Sun moves around the Earth. The teacher asks the class to think carefully about the actual motion of Earth.
+{type:'text',q:`A student says that sunrise and sunset happen because the Sun moves around the Earth. The teacher asks the class to think carefully about the actual motion of Earth.
 What is the correct scientific explanation?`,o:['The Sun revolves around Earth','Earth rotates on its axis, making the Sun appear to move','The Moon controls sunrise','Clouds block sunlight daily'],a:1,e:'Earth rotates on its axis, making the Sun appear to move.'},
-{q:`During a science discussion, the teacher explains that Earth takes 24 hours to complete one rotation. Students are asked to connect this with their daily life routine of day and night.
+{type:'text',q:`During a science discussion, the teacher explains that Earth takes 24 hours to complete one rotation. Students are asked to connect this with their daily life routine of day and night.
 What is the MOST appropriate conclusion?`,o:['One rotation of Earth causes one full day and night cycle','One rotation causes seasons','Rotation has no effect on time','Rotation changes continents'],a:0,e:'One rotation of Earth causes one full day and night cycle.'},
-{q:`A farmer notices that crops grow differently in different seasons. Some crops grow in winter while others grow in summer. The teacher explains that Earth moves around the Sun in a fixed path.
+{type:'text',q:`A farmer notices that crops grow differently in different seasons. Some crops grow in winter while others grow in summer. The teacher explains that Earth moves around the Sun in a fixed path.
 What is this movement called and what does it cause?`,o:['Rotation – causes day and night','Orbiting clouds – causes rain','Revolution – causes seasons','Tilt – causes earthquakes'],a:2,e:'Revolution causes seasons.'},
-{q:`Students observe that seasons keep changing throughout the year. Winter, summer, and monsoon come one after another regularly. The teacher explains Earth’s movement in space.
+{type:'text',q:`Students observe that seasons keep changing throughout the year. Winter, summer, and monsoon come one after another regularly. The teacher explains Earth’s movement in space.
 What is the MAIN reason for seasons?`,o:['Earth’s rotation is getting weaker','Ocean waves reach faster','Wind movement','Earth’s revolution around the Sun'],a:3,e:'Earth’s revolution around the Sun causes seasons.'},
-{q:`A student writes: “Weather and climate mean the same thing.” The teacher gives examples of a hot day, a rainy day, and long-term temperature patterns in a place.
+{type:'text',q:`A student writes: “Weather and climate mean the same thing.” The teacher gives examples of a hot day, a rainy day, and long-term temperature patterns in a place.
 What is the correct understanding?`,o:['Weather is long-term and climate is daily','Climate changes every hour','Both are identical','Weather is daily condition and climate is long-term pattern'],a:3,e:'Weather is daily condition and climate is long-term pattern.'},
-{q:`During a week, students observe that Monday is sunny, Tuesday is rainy, and Wednesday is windy. The teacher explains that these changes happen frequently.
+{type:'text',q:`During a week, students observe that Monday is sunny, Tuesday is rainy, and Wednesday is windy. The teacher explains that these changes happen frequently.
 What does this situation represent?`,o:['Climate stability','Weather changes','Earth’s revolution','Formation of continents'],a:1,e:'This represents weather changes.'},
-{q:`Study the table carefully:
-City
-Time
-Condition
-India
-10:00 AM
-Day
-USA
-12:30 AM
-Night
-Japan
-2:00 PM
-Day
-Students are asked to analyze why these differences exist.
-What is the correct conclusion?`,o:['Earth’s rotation causes different time zones across the world','All countries have same time','Sun shines only on Japan','Time is fixed by weather'],a:0,e:'Earth’s rotation causes different time zones across the world.'},
-{q:`Students notice that people living in different parts of the world have different clothing, food habits, and traditions even though they all live on the same Earth. The teacher explains that environment influences human life.
+{type:'table',intro:`Study the table carefully:`,afterTable:`Students are asked to analyze why these differences exist.
+What is the correct conclusion?`,table:true,o:['Earth’s rotation causes different time zones across the world','All countries have same time','Sun shines only on Japan','Time is fixed by weather'],a:0,e:'Earth’s rotation causes different time zones across the world.'},
+{type:'text',q:`Students notice that people living in different parts of the world have different clothing, food habits, and traditions even though they all live on the same Earth. The teacher explains that environment influences human life.
 What is the BEST explanation?`,o:['Geography and climate influence how people live in different regions','Everyone follows the same culture','Food habits are random','Geography has no effect on people'],a:0,e:'Geography and climate influence how people live in different regions.'}
 ];
 
 let idx=0, score=0, attempt=1, timer=45, t=null, answered=false;
+
 const els = {
   splash:document.getElementById('splash'),
   intro:document.getElementById('intro'),
@@ -455,10 +441,7 @@ const els = {
   clap:document.getElementById('clapSound')
 };
 
-function show(el){
-  ['splash','intro','game','result'].forEach(k=>els[k].classList.remove('active'));
-  el.classList.add('active');
-}
+function show(el){['splash','intro','game','result'].forEach(k=>els[k].classList.remove('active')); el.classList.add('active')}
 function play(a){try{a.currentTime=0;a.play()}catch(e){}}
 function burst(layer,sym,count){
   for(let i=0;i<count;i++){
@@ -494,10 +477,18 @@ function render(){
   els.fb.className='feedback';
   els.fb.textContent='Choose one answer to begin.';
   const x=questions[idx];
-  els.q.innerHTML=x.q;
-  els.stimBox.style.display=x.img?'block':'none';
-  els.tableWrap.style.display=(idx===9)?'block':'none';
-  if(x.img) els.stimImg.src=x.img;
+
+  if(x.type==='table'){
+    els.q.innerHTML = x.intro;
+    els.tableWrap.style.display = 'block';
+    els.stimBox.style.display = 'none';
+  } else {
+    els.q.innerHTML = x.q;
+    els.tableWrap.style.display = 'none';
+    els.stimBox.style.display = x.img?'block':'none';
+    if(x.img) els.stimImg.src=x.img;
+  }
+
   els.opts.innerHTML='';
   x.o.forEach((op,i)=>{
     const b=document.createElement('button');
@@ -575,8 +566,10 @@ function endGame(){
   els.finalScore.textContent=score+'/'+questions.length;
   els.finalText.textContent = score>=8 ? 'Great work about Our World!' : 'Good work. Keep practicing.';
 }
+
 document.getElementById('startBtn').onclick=()=>{show(els.game); render(); startTimer()};
 document.getElementById('restartBtn').onclick=()=>location.reload();
+
 show(els.splash);
 setTimeout(()=>show(els.intro),3000);
 </script>
