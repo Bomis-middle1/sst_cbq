@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shared Skies, Shared Seas - Interactive Arena</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif}
+:root{
+  --ocean-deep:#0f172a;
+  --maritime-blue:#1d4ed8;
+  --teal-coast:#0d9488;
+  --sky-light:#f0f9ff;
+  --panel-bg:#1e293b;
+  --text-primary:#f8fafc;
+  --text-muted:#94a3b8;
+  --gold-star:#eab308;
+  --emerald:#10b981;
+  --emerald-bg:rgba(16,185,129,0.1);
+  --crimson:#ef4444;
+  --crimson-bg:rgba(239,68,68,0.1);
+}
+body{background:linear-gradient(135deg,var(--ocean-deep),#0b0f19);min-height:100vh;color:var(--text-primary);padding:20px;display:flex;align-items:center;justify-content:center}
+
+/* ---- Card Structural Layout ---- */
+.hidden { display: none !important; }
+.geography-card { background: var(--panel-bg); width: 100%; max-width: 650px; padding: 35px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6); border: 2px solid var(--teal-coast); position: relative; overflow: hidden; }
+.geography-card::before { content:''; position:absolute; top:0; left:0; width:100%; height:5px; background:linear-gradient(90deg, var(--maritime-blue), var(--teal-coast), var(--gold-star)); }
+.center { text-align: center; }
+.geo-badge { display: inline-block; background: rgba(13,148,136,0.15); color: var(--gold-star); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(234,179,8,0.3); margin-bottom: 22px; }
+
+/* ---- Logo Loading Area ---- */
+#splash{position:fixed;top:0;left:0;width:100%;height:100%;background:#ffffff;display:flex;justify-content:center;align-items:center;z-index:99999;transition:opacity .3s ease}
+.splash-box{width:290px;max-width:80vw}
+.splash-box img{width:100%;height:auto;display:block}
+
+/* ---- Dashboard Metrics ---- */
+.telemetry-bar { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; font-size:12px; font-weight:600; color:var(--text-muted); border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:14px; text-transform:uppercase; letter-spacing:1px }
+.telemetry-bar span { color: var(--gold-star); font-weight: 700; }
+
+/* ---- Visual Node Tracker ---- */
+.progress-grid{display:flex;gap:5px;margin-bottom:24px}
+.node-seg{height:6px;flex:1;background:rgba(255,255,255,0.08);border-radius:3px;transition:all .3s ease}
+.node-seg.active{background:var(--gold-star);box-shadow:0 0 10px var(--gold-star)}
+.node-seg.passed{background:var(--teal-coast)}
+
+/* ---- Question Mechanics ---- */
+h2{font-size:17px;line-height:1.55;color:var(--text-primary);margin-bottom:24px;font-weight:600}
+.matrix-layout{display:flex;flex-direction:column;gap:12px}
+.choice-row{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:16px 20px;cursor:pointer;font-size:15px;line-height:1.5;transition:all 0.2s ease;display:flex;align-items:start;gap:14px}
+.choice-row:hover{background:rgba(13,148,136,0.06);border-color:var(--teal-coast);transform:translateX(4px)}
+.abc-prefix{font-weight:700;color:var(--teal-coast);font-size:13px}
+
+/* ---- Alerts & Actions ---- */
+.alert-box{margin-top:20px;padding:16px;border-radius:10px;font-size:14px;line-height:1.5}
+.alert-correct{background:var(--emerald-bg);color:var(--emerald);border:1px solid rgba(16,185,129,0.2)}
+.alert-wrong{background:var(--crimson-bg);color:var(--crimson);border:1px solid rgba(239,68,68,0.2)}
+
+button.nav-btn{width:100%;background:linear-gradient(135deg, var(--teal-coast), #115e59);color:white;border:none;padding:16px;border-radius:10px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;cursor:pointer;margin-top:20px;transition:all .2s;box-shadow:0 4px 14px rgba(13,148,136,0.25)}
+button.nav-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(13,148,136,0.35)}
+
+/* ---- Animations ---- */
+#shock-layer{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(239,68,68,0.04);pointer-events:none;opacity:0;z-index:99;transition:opacity .15s}
+#shock-layer.shock-on{opacity:1}
+
+.wave-bubble{position:fixed;pointer-events:none;animation:floatout 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;z-index:999;font-size:24px}
+@keyframes floatout{0%{transform:translateY(0) scale(0.6);opacity:1}100%{transform:translateY(-100px) scale(1.3);opacity:0}}
+</style>
+</head>
+<body>
+
+<audio id="audio-correct" src="assets/correct.mp3"></audio>
+<audio id="audio-wrong" src="assets/wrong.mp3"></audio>
+<audio id="audio-complete" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<div id="shock-layer"></div>
+
+<div id="splash">
+  <div class="center">
+    <div class="splash-box">
+      <img src="assets/innovine-logo.png" alt="Innovine Core Logo" onerror="this.style.display='none'; document.getElementById('txt-fallback').style.display='block';">
+      <h2 id="txt-fallback" style="display:none;color:var(--maritime-blue);letter-spacing:2px;font-family:sans-serif">INNOVINE LEARNING</h2>
+    </div>
+  </div>
+</div>
+
+<div id="panel-welcome" class="geography-card center hidden">
+  <div class="geo-badge">Geopolitical Relations Lab</div>
+  <h1 style="color:var(--text-primary);font-size:24px;margin-bottom:12px;font-weight:600">🗺️ Shared Skies, Shared Seas</h1>
+  <p style="color:var(--text-muted);font-size:15px;line-height:1.6;margin-bottom:26px">Navigate the land frontiers and ancient maritime trade paths of India. Test your understanding of cross-border alliances, ecosystem links, and cultural footprints across South and Southeast Asia.</p>
+  <div style="font-size:52px;margin-bottom:24px">🌏⚓🏔️</div>
+  <button class="nav-btn" onclick="startSimulation()">Begin Maritime & Border Analysis</button>
+</div>
+
+<div id="panel-game" class="geography-card hidden">
+  <div class="telemetry-bar">
+    <div>⚓ Frontier: <span id="idx-lbl">1</span>/10</div>
+    <div>⏱️ Transit: <span id="clock-lbl">45</span>s</div>
+    <div>⭐ Diplomacy: <span id="score-lbl">0</span></div>
+  </div>
+  <div class="progress-grid" id="seg-container"></div>
+  <h2 id="q-text"></h2>
+  <div class="matrix-layout" id="choices-box"></div>
+  <div id="feed-output"></div>
+  <button id="btn-forward" class="nav-btn hidden" onclick="advanceTimeline()">Log Diplomatic Data & Continue →</button>
+</div>
+
+<div id="panel-report" class="geography-card center hidden">
+  <div style="font-size:60px;margin-bottom:16px" id="end-emoji"></div>
+  <h1 id="end-title" style="color:var(--text-primary);margin-bottom:10px;font-weight:600"></h1>
+  <p id="end-desc" style="color:var(--text-muted);font-size:15px;margin-bottom:24px"></p>
+  <div class="geo-badge" id="end-badge"></div>
+  <br><br>
+  <button class="nav-btn" style="background:linear-gradient(135deg, var(--maritime-blue), #1e3a8a)" onclick="window.location.reload()">Re-verify Border Maps</button>
+</div>
+
+<script>
+window.addEventListener('DOMContentLoaded',()=>{
+  setTimeout(()=>{
+    const spl = document.getElementById('splash');
+    spl.style.opacity = '0';
+    setTimeout(()=>{
+      spl.style.display = 'none';
+      document.getElementById('panel-welcome').classList.remove('hidden');
+    },300);
+  },1600);
+});
+
+const cbqItems = [
+  {
+    q: "A central border management agency needs to deploy monitoring equipment along India's longest single continuous international land boundary, which stretches through five distinct eastern and northeastern states. Based on the chapter's border data, which neighboring country's frontier must this equipment secure?",
+    o: ["China (LAC)","Pakistan","Bangladesh","Myanmar"],
+    a: 2,
+    e: "The text explicitly states that Bangladesh shares India’s longest land border (4,096 km), running through five eastern and northeastern states: West Bengal, Assam, Meghalaya, Tripura, and Mizoram."
+  },
+  {
+    q: "In the 3rd century BCE, a group of Indian merchant vessels wanted to sail across the Indian Ocean to reach the wealthy ports of Southeast Asia—then known as Suvarṇabhūmi—to trade spices and textiles. Which natural phenomenon did these ancient mariners rely on to propel their ships across the sea?",
+    o: ["High-altitude Himalayan glacial melts","Seasonal monsoon wind systems","Tectonic rifts in the Palk Strait","Periodic cyclonic shields from the Sundarbans."],
+    a: 1,
+    e: "Historically, Indian traders sailed across the Indian Ocean to reach Southeast Asian destinations like Suvarṇabhūmi by strategically utilizing the seasonal monsoon winds."
+  },
+  {
+    q: "An archaeologist uncovers an ancient manuscript describing a journey to India. The author praises the local universities, noting that 'the teachings of the Buddha were carefully studied and preserved.' Historical records show this traveler returned home to China via high mountain passes in the 5th century CE. Which historical figure's travelogue matches this description?",
+    o: ["Xuanzang","Faxian","Mahendra","Padmasambhava"],
+    a: 1,
+    e: "The Chinese monk Faxian traveled to India in the 5th century CE and documented the preservation and study of Buddhist scriptures in local monasteries."
+  },
+  {
+    q: "A cargo truck carrying medicines and food grains approaches a busy checkpoint between Raxaul and Birgunj. The drivers cross the border freely to set up their market stalls without presenting passports or visas to the border officials. Which bilateral agreement legally permits this seamless, open-border economic activity?",
+    o: ["The Indo-Nepal Treaty of Peace and Friendship (1950)","The Simla Agreement following the 1971 Partition War","The Gross National Happiness (GNH) Border Act","The Indus Waters and Transboundary Rivers Accord"],
+    a: 0,
+    e: "The Indo-Nepal Treaty of Peace and Friendship (1950) established the historic open border framework, allowing citizens to move, work, and trade without visas."
+  },
+  {
+    q: "A meteorologist is tracking a powerful tropical cyclone gathering strength in the Bay of Bengal. As the storm moves north, it strikes a massive, shared UNESCO World Heritage mangrove forest, which absorbs the impact and slows down the winds before they reach inland populations. Which shared natural treasure is providing this environmental protection?",
+    o: ["The Western Ghats","The Sundarbans","The Paro Taktsang Valley","The Atolls of Minicoy"],
+    a: 1,
+    e: "The Sundarbans mangrove forest is a shared UNESCO World Heritage site between India and Bangladesh that absorbs high wind energies, protecting communities from severe cyclonic damage."
+  },
+  {
+    q: "An Indian trade delegation is designing an overland shipping route along the ancient Uttarapatha highway to directly connect the Ganga plains with Kabul. What primary geopolitical challenge prevents a direct overland transit route between India and Afghanistan today?",
+    o: ["The entire border is blocked by the world's largest mangrove forest.","Pakistan lies between them, as India no longer shares an accessible direct land border.","The Palk Strait separates the two countries by a 32-kilometer stretch of sea.","Afghanistan has passed legislation banning all land-based regional commerce."],
+    a: 1,
+    e: "Following the 1947 Partition, Pakistan lies between India and Afghanistan, meaning India no longer possesses a direct, accessible terrestrial trade link to Afghan territory today."
+  },
+  {
+    q: "Farmers living near the low-lying delta regions of Bangladesh and the neighboring state of West Bengal notice a drop in water levels during the dry season. Officials note that managing this resource requires close cooperation because the two nations share more than 54 transboundary rivers. Which pair of major rivers forms the core of this shared transboundary network?",
+    o: ["Koshi and Gandaki","Ganga (Padma) and Brahmaputra (Jamuna)","Indus and Sutlej","Mahakali and Mekong"],
+    a: 1,
+    e: "India and Bangladesh share 54 transboundary lifelines, anchored heavily by the Ganga (known as the Padma in Bangladesh) and the Brahmaputra (the Jamuna)."
+  },
+  {
+    q: "A global climate monitoring team estimates that global sea levels will rise significantly over the next few decades. They issue an urgent warning to an island nation made of 26 coral atolls with an average ground level of just 1.5 meters above sea level. Which close maritime neighbor of India faces this existential environmental threat?",
+    o: ["Bhutan","Myanmar","The Maldives","Thailand"],
+    a: 2,
+    e: "The Maldives is an exceptionally low-lying country built on coral structures with an average elevation of 1.5 meters, making it highly vulnerable to global ocean rise."
+  },
+  {
+    q: "A linguist studying Southeast Asian state symbols notes that one of Singapore's four official languages is Tamil, and its very name is derived from the Sanskrit word Singapura, meaning 'Lion City.' What do these linguistic and cultural markers directly indicate about Singapore?",
+    o: ["It was colonized exclusively by Himalayan kingdoms in the 3rd century BCE.","It maintains ancient, deep historical links with Southern India across maritime routes.","It produces more carbon-negative energy than any other Asian nation.","It shares a 4,096 km long land border with the Indian state of Mizoram."],
+    a: 1,
+    e: "The Sanskrit etymology of Singapura and the official status of the Tamil language point directly to Singapore's rich, historical maritime links with South India."
+  },
+  {
+    q: "A student of art history examines a digital blueprint of Borobudur, a massive 8th-century stone stupa shaped like a giant mandala containing over 500 Buddha statues. In which maritime neighbor of India is this monument located, reflecting ancient trade and spiritual ties?",
+    o: ["Sri Lanka","Malaysia","Afghanistan","Indonesia"],
+    a: 3,
+    e: "The historical monument of Borobudur is located on the island of Java in Indonesia, demonstrating the far-reaching influence of shared spiritual ideas over ancient Indian Ocean shipping lanes."
+  }
+];
+
+let roundIdx=0, totalPoints=0, currentShotAttempts=0, tickerVal=45, masterTimer;
+
+function startSimulation(){
+  document.getElementById('panel-welcome').classList.add('hidden');
+  document.getElementById('panel-game').classList.remove('hidden');
+  generateNodes();
+  displayItem();
+}
+
+function generateNodes(){
+  const holder = document.getElementById('seg-container');
+  holder.innerHTML = '';
+  for(let i=0; i<cbqItems.length; i++){
+    let node = document.createElement('div');
+    node.className = 'node-seg';
+    holder.appendChild(node);
+  }
+}
+
+function displayItem(){
+  currentShotAttempts = 0;
+  tickerVal = 45;
+  document.getElementById('clock-lbl').textContent = tickerVal;
+  document.getElementById('idx-lbl').textContent = roundIdx + 1;
+  document.getElementById('feed-output').innerHTML = '';
+  document.getElementById('btn-forward').classList.add('hidden');
+  
+  const nodes = document.querySelectorAll('.node-seg');
+  nodes.forEach((nd,idx)=>{
+    if(idx===roundIdx) nd.className = 'node-seg active';
+    else if(idx<roundIdx) nd.className = 'node-seg passed';
+    else nd.className = 'node-seg';
+  });
+
+  document.getElementById('q-text').textContent = cbqItems[roundIdx].q;
+  const area = document.getElementById('choices-box');
+  area.innerHTML = '';
+
+  const chars = ['A','B','C','D'];
+  cbqItems[roundIdx].o.forEach((textStr,idx)=>{
+    let row = document.createElement('div');
+    row.className = 'choice-row';
+    row.innerHTML = `<span class="abc-prefix">${chars[idx]}.</span><span>${textStr}</span>`;
+    row.onclick = (e) => assessChoice(idx, row, e);
+    area.appendChild(row);
+  });
+
+  clearInterval(masterTimer);
+  masterTimer = setInterval(()=>{
+    tickerVal--;
+    document.getElementById('clock-lbl').textContent = tickerVal;
+    if(tickerVal<=0){
+      clearInterval(masterTimer);
+      forceKeyDisclosure();
+    }
+  },1000);
+}
+
+function assessChoice(pickedIndex, elementRef, clickEvt){
+  const targetObj = cbqItems[roundIdx];
+  if(pickedIndex === targetObj.a){
+    if(currentShotAttempts === 0){
+      totalPoints++;
+      document.getElementById('score-lbl').textContent = totalPoints;
+    }
+    playSound('audio-correct');
+    sprayWaves(clickEvt);
+    document.getElementById('feed-output').innerHTML = `<div class="alert-box alert-correct"><b>⚓ Accurate Intelligence!</b> ${targetObj.e}</div>`;
+    freezeMatrix();
+    clearInterval(masterTimer);
+    document.getElementById('btn-forward').classList.remove('hidden');
+  } else {
+    if(currentShotAttempts === 0){
+      currentShotAttempts = 1;
+      playSound('audio-wrong');
+      triggerVibe();
+      document.getElementById('feed-output').innerHTML = `<div class="alert-box alert-wrong"><b>⚠️ Strategic Disconnect.</b> That choice fails to align with historical or physical geographic facts. Re-evaluate options.</div>`;
+      elementRef.style.borderColor = 'var(--crimson)';
+      elementRef.style.background = 'var(--crimson-bg)';
+    } else {
+      forceKeyDisclosure();
+    }
+  }
+}
+
+function forceKeyDisclosure(){
+  freezeMatrix();
+  clearInterval(masterTimer);
+  const dataNode = cbqItems[roundIdx];
+  const alphaChars = ['A','B','C','D'];
+  document.getElementById('feed-output').innerHTML = `<div class="alert-box alert-wrong"><b>🔍 Border Survey Update.</b> The verified vector is <b>${alphaChars[dataNode.a]}. ${dataNode.o[dataNode.a]}</b>.<br><br>${dataNode.e}</div>`;
+  document.getElementById('btn-forward').classList.remove('hidden');
+}
+
+function freezeMatrix(){
+  document.querySelectorAll('.choice-row').forEach(r => r.onclick = null);
+}
+
+function advanceTimeline(){
+  roundIdx++;
+  if(roundIdx < cbqItems.length){
+    displayItem();
+  } else {
+    compileFinalReport();
+  }
+}
+
+function compileFinalReport(){
+  document.getElementById('panel-game').classList.add('hidden');
+  document.getElementById('panel-report').classList.remove('hidden');
+  
+  const emo = document.getElementById('end-emoji');
+  const tit = document.getElementById('end-title');
+  const des = document.getElementById('end-desc');
+  const bdg = document.getElementById('end-badge');
+
+  des.textContent = `You validated ${totalPoints} out of ${cbqItems.length} regional and maritime borders accurately.`;
+
+  if(totalPoints >= 9){
+    emo.textContent = '🌏';
+    tit.textContent = 'Chief Regional Strategist';
+    bdg.textContent = 'SAARC & Ocean Rim Authority Diplomat';
+    playSound('audio-complete');
+  } else if(totalPoints >= 6){
+    emo.textContent = '⚓';
+    tit.textContent = 'Maritime Fleet Cartographer';
+    bdg.textContent = 'Transboundary Resource Manager';
+  } else {
+    emo.textContent = '🧭';
+    tit.textContent = 'Border Pass Explorer';
+    bdg.textContent = 'Novice Geopolitical Attaché';
+  }
+}
+
+function playSound(elementId){
+  try{
+    const sNode = document.getElementById(elementId);
+    sNode.currentTime = 0;
+    sNode.play();
+  } catch(err){}
+}
+
+function triggerVibe(){
+  const lyr = document.getElementById('shock-layer');
+  lyr.classList.add('shock-on');
+  setTimeout(()=>lyr.classList.remove('shock-on'),200);
+}
+
+function sprayWaves(event){
+  const items = ['⚓','💧','🌊','🧭','🗺️'];
+  for(let i=0; i<6; i++){
+    let p = document.createElement('div');
+    p.className = 'wave-bubble';
+    p.textContent = items[i % items.length];
+    p.style.left = (event.clientX ? event.clientX : window.innerWidth/2) + (Math.random()*40 - 20) + 'px';
+    p.style.top = (event.clientY ? event.clientY : window.innerHeight/2) + (Math.random()*40 - 20) + 'px';
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),800);
+  }
+}
+</script>
+</body>
+</html>
