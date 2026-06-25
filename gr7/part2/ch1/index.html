@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Story of Indian Farming - Interactive Arena</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif}
+:root{
+  --terracotta:#c2410c;
+  --harvest-gold:#eab308;
+  --monsoon-blue:#1d4ed8;
+  --fertile-green:#15803d;
+  --mud-dark:#1e1b4b;
+  --panel-bg:#1e293b;
+  --text-primary:#f8fafc;
+  --text-muted:#94a3b8;
+  --emerald:#10b981;
+  --emerald-bg:rgba(16,185,129,0.1);
+  --crimson:#ef4444;
+  --crimson-bg:rgba(239,68,68,0.1);
+}
+body{background:linear-gradient(135deg,var(--mud-dark),#09071f);min-height:100vh;color:var(--text-primary);padding:20px;display:flex;align-items:center;justify-content:center}
+
+/* ---- Layout Structuring ---- */
+.hidden { display: none !important; }
+.farming-card { background: var(--panel-bg); width: 100%; max-width: 650px; padding: 35px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6); border: 2px solid var(--fertile-green); position: relative; overflow: hidden; }
+.farming-card::before { content:''; position:absolute; top:0; left:0; width:100%; height:5px; background:linear-gradient(90deg, var(--terracotta), var(--harvest-gold), var(--monsoon-blue)); }
+.center { text-align: center; }
+.farm-badge { display: inline-block; background: rgba(21,128,61,0.15); color: var(--harvest-gold); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(234,179,8,0.3); margin-bottom: 22px; }
+
+/* ---- Logo Image Fallback & Load ---- */
+#splash{position:fixed;top:0;left:0;width:100%;height:100%;background:#ffffff;display:flex;justify-content:center;align-items:center;z-index:99999;transition:opacity .3s ease}
+.splash-box{width:290px;max-width:80vw}
+.splash-box img{width:100%;height:auto;display:block}
+
+/* ---- Metrics Header ---- */
+.telemetry-bar { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; font-size:12px; font-weight:600; color:var(--text-muted); border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:14px; text-transform:uppercase; letter-spacing:1px }
+.telemetry-bar span { color: var(--harvest-gold); font-weight: 700; }
+
+/* ---- Node Progress bar ---- */
+.progress-grid{display:flex;gap:5px;margin-bottom:24px}
+.node-seg{height:6px;flex:1;background:rgba(255,255,255,0.08);border-radius:3px;transition:all .3s ease}
+.node-seg.active{background:var(--harvest-gold);box-shadow:0 0 10px var(--harvest-gold)}
+.node-seg.passed{background:var(--fertile-green)}
+
+/* ---- Question Blocks ---- */
+h2{font-size:18px;line-height:1.5;color:var(--text-primary);margin-bottom:24px;font-weight:600}
+.matrix-layout{display:flex;flex-direction:column;gap:12px}
+.choice-row{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:16px 20px;cursor:pointer;font-size:15px;line-height:1.5;transition:all 0.2s ease;display:flex;align-items:start;gap:14px}
+.choice-row:hover{background:rgba(21,128,61,0.05);border-color:var(--fertile-green);transform:translateX(4px)}
+.abc-prefix{font-weight:700;color:var(--terracotta);font-size:13px}
+
+/* ---- Alerts ---- */
+.alert-box{margin-top:20px;padding:16px;border-radius:10px;font-size:14px;line-height:1.5}
+.alert-correct{background:var(--emerald-bg);color:var(--emerald);border:1px solid rgba(16,185,129,0.2)}
+.alert-wrong{background:var(--crimson-bg);color:var(--crimson);border:1px solid rgba(239,68,68,0.2)}
+
+button.nav-btn{width:100%;background:linear-gradient(135deg, var(--fertile-green), #166534);color:white;border:none;padding:16px;border-radius:10px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;cursor:pointer;margin-top:20px;transition:all .2s;box-shadow:0 4px 14px rgba(21,128,61,0.25)}
+button.nav-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(21,128,61,0.35)}
+
+/* ---- Special FX ---- */
+#shock-layer{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(239,68,68,0.04);pointer-events:none;opacity:0;z-index:99;transition:opacity .15s}
+#shock-layer.shock-on{opacity:1}
+
+.leaf-burst{position:fixed;pointer-events:none;animation:burstout 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;z-index:999;font-size:24px}
+@keyframes burstout{0%{transform:translateY(0) rotate(0deg) scale(0.6);opacity:1}100%{transform:translateY(-90px) rotate(60deg) scale(1.2);opacity:0}}
+</style>
+</head>
+<body>
+
+<audio id="audio-correct" src="assets/correct.mp3"></audio>
+<audio id="audio-wrong" src="assets/wrong.mp3"></audio>
+<audio id="audio-complete" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<div id="shock-layer"></div>
+
+<div id="splash">
+  <div class="center">
+    <div class="splash-box">
+      <img src="assets/innovine-logo.png" alt="Innovine Core Logo" onerror="this.style.display='none'; document.getElementById('txt-fallback').style.display='block';">
+      <h2 id="txt-fallback" style="display:none;color:var(--terracotta);letter-spacing:2px;font-family:sans-serif">INNOVINE LEARNING</h2>
+    </div>
+  </div>
+</div>
+
+<div id="panel-welcome" class="farming-card center hidden">
+  <div class="farm-badge">Agrarian Science Simulation</div>
+  <h1 style="color:var(--text-primary);font-size:24px;margin-bottom:12px;font-weight:600">🌾 The Story of Indian Farming</h1>
+  <p style="color:var(--text-muted);font-size:15px;line-height:1.6;margin-bottom:26px">Step into the fields of Indian agricultural history. Analyze shrinking operational landholdings, interpret weather vectors across dual monsoon networks, and evaluate soils from alluvial basins to volcanic plateaus.</p>
+  <div style="font-size:52px;margin-bottom:24px">🌱🚜🌦️</div>
+  <button class="nav-btn" onclick="startSimulation()">Begin Field Analysis</button>
+</div>
+
+<div id="panel-game" class="farming-card hidden">
+  <div class="telemetry-bar">
+    <div>🌾 Question: <span id="idx-lbl">1</span>/10</div>
+    <div>🌧️ Hydro Timer: <span id="clock-lbl">45</span>s</div>
+    <div>🌾 Crop Yield: <span id="score-lbl">0</span></div>
+  </div>
+  <div class="progress-grid" id="seg-container"></div>
+  <h2 id="q-text"></h2>
+  <div class="matrix-layout" id="choices-box"></div>
+  <div id="feed-output"></div>
+  <button id="btn-forward" class="nav-btn hidden" onclick="advanceTimeline()">Store Harvest & Next →</button>
+</div>
+
+<div id="panel-report" class="farming-card center hidden">
+  <div style="font-size:60px;margin-bottom:16px" id="end-emoji"></div>
+  <h1 id="end-title" style="color:var(--text-primary);margin-bottom:10px;font-weight:600"></h1>
+  <p id="end-desc" style="color:var(--text-muted);font-size:15px;margin-bottom:24px"></p>
+  <div class="farm-badge" id="end-badge"></div>
+  <br><br>
+  <button class="nav-btn" style="background:linear-gradient(135deg, var(--terracotta), #9a3412)" onclick="window.location.reload()">Re-examine Soil Cycles</button>
+</div>
+
+<script>
+window.addEventListener('DOMContentLoaded',()=>{
+  setTimeout(()=>{
+    const spl = document.getElementById('splash');
+    spl.style.opacity = '0';
+    setTimeout(()=>{
+      spl.style.display = 'none';
+      document.getElementById('panel-welcome').classList.remove('hidden');
+    },300);
+  },1600);
+});
+
+const cbqItems = [
+  {
+    q: "A farming family in 1970 owned a single cohesive plot of 2.3 hectares. Over three generations, the family expanded, and the land was divided equally among heirs. By 2022, the remaining great-grandson is farming a plot that matches the national average found in recent NABARD surveys. Based on the chapter's data, what is the approximate size of his current farm plot?",
+    o: ["Bigger than two standard football fields (1.84 hectares).","Exactly the same size as the 1970 holding (2.28 hectares).","Smaller than a single football field (0.74 hectares).","Completely non-existent due to mandatory government takeovers."],
+    a: 2,
+    e: "According to the text, the average landholding size dropped steadily over five decades, with the most recent NABARD data indicating a shrink down to 0.74 hectares, which is explicitly noted as being smaller than a football field."
+  },
+  {
+    q: "In late October, a farmer living on the southeastern coast in Chennai notices that the daily winds have completely flipped direction—now blowing from the northeast landmass out toward the Bay of Bengal, picking up heavy moisture along the way. Which agricultural benefit does this specific seasonal wind pattern provide to his region?",
+    o: ["It serves as the Southwest Monsoon, bringing 75% of India’s total rain.","It triggers the Northeast Monsoon, which provides over 60% of Tamil Nadu's annual rainfall.","It causes an immediate summer drought that destroys winter wheat production.","It brings heavy frost that is essential for harvesting jute fibers."],
+    a: 1,
+    e: "The Northeast Monsoon occurs from October to December when winds blow from the northeast landmass toward the ocean, providing over 60% of Tamil Nadu’s vital rainfall."
+  },
+  {
+    q: "It is mid-April in Punjab. The weather is extremely hot and dry, and the main winter wheat crop has already been harvested. A farmer decides to utilize his well-irrigated fields to plant a quick-maturing crop of watermelons and cucumbers before the monsoon rains arrive in June. Which cropping season is this short-duration summer farming categorized under?",
+    o: ["Kharif Season","Rabi Season","Zaid Season","Intensive Allied Season"],
+    a: 2,
+    e: "The Zaid season is a short summer cropping period lasting from March to June (between Rabi and Kharif) that relies on irrigation to grow fast-maturing crops like watermelons and cucumbers."
+  },
+  {
+    q: "During a hot walk in May across the Deccan Plateau in Maharashtra, Meera observes a field where the dark mud has dried up and formed deep, wide cracks. Her grandfather explains that when the monsoon arrives, these cracks will absorb water, swell up, and naturally lock in moisture for a long time. Which major Indian soil type is Meera observing?",
+    o: ["Laterite Soil","Desert Soil","Alluvial Soil","Black Soil (Regur)"],
+    a: 3,
+    e: "Black soil (or Regur soil) is known for its high clay content, excellent moisture retention, and its distinct feature of developing deep cracks during dry summers."
+  },
+  {
+    q: "An investor wants to set up a commercial plantation on a steep hill slope in a high-rainfall region of Kerala. The heavy monsoon rains have washed away most of the topsoil's soluble nutrients, leaving behind a highly drained, coarse, iron-rich, acidic earth. Which soil type is this, and which crop is best suited for these specific conditions?",
+    o: ["Laterite Soil — Ideal for tea, coffee, and cashew.","Alluvial Soil — Ideal for flooded paddy rice.","Desert Soil — Ideal for drought-resistant bajra and guar.","Red Soil — Ideal for deep-water sugarcane fields."],
+    a: 0,
+    e: "Laterite soil forms in areas of intense heat and heavy rainfall where nutrients leach away, creating an acidic, iron-rich environment perfectly tolerated by plantation crops like tea, coffee, and cashew."
+  },
+  {
+    q: "A farmer in Uttar Pradesh is preparing his fields in November. He records that the average daily temperature has dropped to around 12°C. He plans to grow a staple grain that requires this cool environment during sowing but needs warmer conditions (20–25°C) later in March for ripening. Which crop is he preparing to cultivate?",
+    o: ["Rice (Kharif)","Jute (Golden Fibre)","Wheat (Rabi)","Maize (Summer Feed)"],
+    a: 2,
+    e: "Wheat is a Rabi crop sown in winter (demanding cool temperatures of 10–15°C) and harvested in spring when temperatures rise for ripening."
+  },
+  {
+    q: "A field has high clay content, an alluvial base, and stays heavily flooded with 150 cm of standing water during the peak humid temperatures of July. Which of the following crops would thrive best under these exact conditions?",
+    o: ["Millets, because they are highly drought-resistant and hate water.","Rice, because it grows best in water-filled paddy fields.","Coffee, because its roots rot easily if exposed to waterlogging.","Desert Barley, which requires a coarse, sandy surface layer."],
+    a: 1,
+    e: "Rice requires a hot, humid climate (20–35°C), heavy rainfall, and clayey alluvial soils that hold water, creating the classic flooded paddy fields."
+  },
+  {
+    q: "A textile manufacturer wants to source a natural plant fiber known for its golden color and economic value. The crop requires river deltas with rich alluvial soil, a warm and humid climate (24–35°C), and heavy rainfall above 150 cm. In which Indian state should the manufacturer look to find the highest cultivation of this crop?",
+    o: ["Rajasthan","West Bengal","Maharashtra","Punjab"],
+    a: 1,
+    e: "Jute is known as the 'Golden Fibre' and requires hot, humid conditions with fertile deltaic alluvial soil, making West Bengal a primary producer."
+  },
+  {
+    q: "A region in western Rajasthan receives less than 40 cm of annual rainfall, and the soil is coarse and sandy with almost no organic matter. The local farmers cannot afford heavy chemical fertilizers or extensive canal irrigation. Which group of crops should they focus on as a resilient, 'climate-smart' option?",
+    o: ["Sugarcane and Rubber","Tea and Coffee","Millets like Bajra and Jowar","Wet Paddy Rice and Jute"],
+    a: 2,
+    e: "Millets are called 'climate-smart crops' because they are highly drought-resistant and can grow successfully in low-rainfall zones and poor sandy soils where other crops fail."
+  },
+  {
+    q: "A group of farmers in a dry district of Gujarat want to reduce their high diesel electricity costs while maintaining a steady supply of well-irrigation for their winter crops without damaging the environment. Which modern technological intervention directly solves their problem as mentioned in the text?",
+    o: ["Banning the use of all traditional organic manure.","Switching completely to high-altitude mountain terracing.","Implementing solar-powered irrigation pumps.","Stopping all agricultural activities during the Rabi season."],
+    a: 2,
+    e: "As highlighted in the text's Quick Facts, using solar-powered irrigation pumps helps farmers reduce electricity costs, save energy, and maintain sustainable irrigation access."
+  }
+];
+
+let roundIdx=0, totalPoints=0, currentShotAttempts=0, tickerVal=45, masterTimer;
+
+function startSimulation(){
+  document.getElementById('panel-welcome').classList.add('hidden');
+  document.getElementById('panel-game').classList.remove('hidden');
+  generateNodes();
+  displayItem();
+}
+
+function generateNodes(){
+  const holder = document.getElementById('seg-container');
+  holder.innerHTML = '';
+  for(let i=0; i<cbqItems.length; i++){
+    let node = document.createElement('div');
+    node.className = 'node-seg';
+    holder.appendChild(node);
+  }
+}
+
+function displayItem(){
+  currentShotAttempts = 0;
+  tickerVal = 45;
+  document.getElementById('clock-lbl').textContent = tickerVal;
+  document.getElementById('idx-lbl').textContent = roundIdx + 1;
+  document.getElementById('feed-output').innerHTML = '';
+  document.getElementById('btn-forward').classList.add('hidden');
+  
+  const nodes = document.querySelectorAll('.node-seg');
+  nodes.forEach((nd,idx)=>{
+    if(idx===roundIdx) nd.className = 'node-seg active';
+    else if(idx<roundIdx) nd.className = 'node-seg passed';
+    else nd.className = 'node-seg';
+  });
+
+  document.getElementById('q-text').textContent = cbqItems[roundIdx].q;
+  const area = document.getElementById('choices-box');
+  area.innerHTML = '';
+
+  const chars = ['A','B','C','D'];
+  cbqItems[roundIdx].o.forEach((textStr,idx)=>{
+    let row = document.createElement('div');
+    row.className = 'choice-row';
+    row.innerHTML = `<span class="abc-prefix">${chars[idx]}.</span><span>${textStr}</span>`;
+    row.onclick = (e) => assessChoice(idx, row, e);
+    area.appendChild(row);
+  });
+
+  clearInterval(masterTimer);
+  masterTimer = setInterval(()=>{
+    tickerVal--;
+    document.getElementById('clock-lbl').textContent = tickerVal;
+    if(tickerVal<=0){
+      clearInterval(masterTimer);
+      forceKeyDisclosure();
+    }
+  },1000);
+}
+
+function assessChoice(pickedIndex, elementRef, clickEvt){
+  const targetObj = cbqItems[roundIdx];
+  if(pickedIndex === targetObj.a){
+    if(currentShotAttempts === 0){
+      totalPoints++;
+      document.getElementById('score-lbl').textContent = totalPoints;
+    }
+    playSound('audio-correct');
+    sprayLeaves(clickEvt);
+    document.getElementById('feed-output').innerHTML = `<div class="alert-box alert-correct"><b>🌾 High Yield Harvest!</b> ${targetObj.e}</div>`;
+    freezeMatrix();
+    clearInterval(masterTimer);
+    document.getElementById('btn-forward').classList.remove('hidden');
+  } else {
+    if(currentShotAttempts === 0){
+      currentShotAttempts = 1;
+      playSound('audio-wrong');
+      triggerVibe();
+      document.getElementById('feed-output').innerHTML = `<div class="alert-box alert-wrong"><b>⚠️ Crop Stress.</b> The parameters checked mismatch with ecological realities. Adjust agricultural inputs and resubmit.</div>`;
+      elementRef.style.borderColor = 'var(--crimson)';
+      elementRef.style.background = 'var(--crimson-bg)';
+    } else {
+      forceKeyDisclosure();
+    }
+  }
+}
+
+function forceKeyDisclosure(){
+  freezeMatrix();
+  clearInterval(masterTimer);
+  const dataNode = cbqItems[roundIdx];
+  const alphaChars = ['A','B','C','D'];
+  document.getElementById('feed-output').innerHTML = `<div class="alert-box alert-wrong"><b>🔍 Agricultural Audit Log.</b> Optimal deployment vector is <b>${alphaChars[dataNode.a]}. ${dataNode.o[dataNode.a]}</b>.<br><br>${dataNode.e}</div>`;
+  document.getElementById('btn-forward').classList.remove('hidden');
+}
+
+function freezeMatrix(){
+  document.querySelectorAll('.choice-row').forEach(r => r.onclick = null);
+}
+
+function advanceTimeline(){
+  roundIdx++;
+  if(roundIdx < cbqItems.length){
+    displayItem();
+  } else {
+    compileFinalReport();
+  }
+}
+
+function compileFinalReport(){
+  document.getElementById('panel-game').classList.add('hidden');
+  document.getElementById('panel-report').classList.remove('hidden');
+  
+  const emo = document.getElementById('end-emoji');
+  const tit = document.getElementById('end-title');
+  const des = document.getElementById('end-desc');
+  const bdg = document.getElementById('end-badge');
+
+  des.textContent = `You cleared ${totalPoints} out of ${cbqItems.length} spatial agro-ecosystem parameters successfully.`;
+
+  if(totalPoints >= 9){
+    emo.textContent = '🚜';
+    tit.textContent = 'Master Agro-Meteorologist';
+    bdg.textContent = 'Sustainable Green Revolution Pioneer';
+    playSound('audio-complete');
+  } else if(totalPoints >= 6){
+    emo.textContent = '🌾';
+    tit.textContent = 'Expert Village Agronomist';
+    bdg.textContent = 'Dual Monsoon Network Planner';
+  } else {
+    emo.textContent = '🍂';
+    tit.textContent = 'Traditional Smallholder';
+    bdg.textContent = 'Rainfed Farming Intern';
+  }
+}
+
+function playSound(elementId){
+  try{
+    const sNode = document.getElementById(elementId);
+    sNode.currentTime = 0;
+    sNode.play();
+  } catch(err){}
+}
+
+function triggerVibe(){
+  const lyr = document.getElementById('shock-layer');
+  lyr.classList.add('shock-on');
+  setTimeout(()=>lyr.classList.remove('shock-on'),200);
+}
+
+function sprayLeaves(event){
+  const items = ['🌱','🍃','🌾','🍁','☀️'];
+  for(let i=0; i<6; i++){
+    let p = document.createElement('div');
+    p.className = 'leaf-burst';
+    p.textContent = items[i % items.length];
+    p.style.left = (event.clientX ? event.clientX : window.innerWidth/2) + (Math.random()*40 - 20) + 'px';
+    p.style.top = (event.clientY ? event.clientY : window.innerHeight/2) + (Math.random()*40 - 20) + 'px';
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),800);
+  }
+}
+</script>
+</body>
+</html>
