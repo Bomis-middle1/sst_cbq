@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Governments and How They Rule — Interactive Exploration</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',system-ui,-apple-system,sans-serif}
+:root{
+  --navy:#0f172a;
+  --civic-blue:#1e3a8a;
+  --crimson:#991b1b;
+  --crimson-light:#fef2f2;
+  --slate-bg:#f8fafc;
+  --ink:#334155;
+  --good-green:#16a34a;
+  --good-bg:#f0fdf4;
+  --bad-red:#dc2626;
+  --bad-bg:#fef2f2;
+}
+body{background:linear-gradient(135deg,#0f172a,#1e293b);min-height:100vh;color:var(--ink);padding:25px;display:flex;align-items:center;justify-content:center}
+
+/* ---- Component Containers ---- */
+.hidden { display: none !important; }
+.gov-card { background: #ffffff; width: 100%; max-width: 660px; padding: 40px; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); border-left: 6px solid var(--crimson); position: relative; }
+.center { text-align: center; }
+.pillar-tag { display: inline-block; background: var(--crimson-light); color: var(--crimson); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; padding: 5px 14px; border-radius: 4px; margin-bottom: 15px; border: 1px solid rgba(153,27,27,0.15); }
+
+/* ---- Welcome Splash Graphic ---- */
+#splash{position:fixed;top:0;left:0;width:100%;height:100%;background:#ffffff;display:flex;justify-content:center;align-items:center;z-index:99999;transition:opacity .3s ease}
+.splash-wrapper{width:290px;max-width:80vw}
+.splash-wrapper img{width:100%;height:auto;display:block}
+
+/* ---- Stat Monitors ---- */
+.dashboard-metrics { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; font-size:13px; font-weight:600; color:#475569; border-bottom:2px dashed #e2e8f0; padding-bottom:14px; }
+.metric-pill { background: var(--slate-bg); padding: 6px 12px; border-radius: 4px; display: flex; align-items: center; gap: 6px; border: 1px solid #e2e8f0; }
+.metric-pill span { color: var(--civic-blue); font-weight: 700; }
+
+/* ---- Dynamic Score Bar ---- */
+.timeline-track{display:flex;gap:4px;margin-bottom:24px}
+.segment{height:5px;flex:1;background:#cbd5e1;border-radius:2px;transition:all .3s ease}
+.segment.current{background:var(--civic-blue);box-shadow:0 0 8px rgba(30,58,138,0.4)}
+.segment.passed{background:var(--crimson)}
+
+/* ---- Text & Controls ---- */
+h2{font-size:19px;line-height:1.5;color:var(--navy);margin-bottom:20px;font-weight:700}
+.cluster-options{display:flex;flex-direction:column;gap:12px}
+.row-btn{background:var(--slate-bg);border:1px solid #e2e8f0;border-radius:6px;padding:15px 20px;cursor:pointer;font-size:15px;line-height:1.4;transition:all .15s ease;display:flex;align-items:start;gap:14px}
+.row-btn:hover{background:#f1f5f9;border-color:var(--civic-blue);transform:translateY(-1px)}
+.index-bullet{background:#ffffff;color:var(--civic-blue);font-weight:700;font-size:11px;width:24px;height:24px;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid #cbd5e1}
+
+/* ---- Feedback Block layouts ---- */
+.status-banner{margin-top:20px;padding:16px;border-radius:6px;font-size:14.5px;line-height:1.5}
+.banner-pass{background:var(--good-bg);color:var(--good-green);border:1px solid rgba(22,163,74,0.15)}
+.banner-fail{background:var(--bad-bg);color:var(--bad-red);border:1px solid rgba(220,38,38,0.15)}
+
+button.action-trigger{width:100%;background:var(--civic-blue);color:white;border:none;padding:15px;font-size:15px;font-weight:600;border-radius:6px;cursor:pointer;margin-top:20px;transition:all .2s;display:flex;justify-content:center;align-items:center;gap:6px}
+button.action-trigger:hover{background:var(--navy)}
+
+/* ---- Animation Effects ---- */
+#screen-shake{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(220,38,38,0.08);pointer-events:none;opacity:0;z-index:99;transition:opacity .15s}
+#screen-shake.shake-on{opacity:1}
+
+.burst-element{position:fixed;pointer-events:none;animation:blowup .8s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;z-index:999;font-size:22px}
+@keyframes blowup{0%{transform:translateY(0) scale(0.5);opacity:1}100%{transform:translateY(-60px) scale(1.3);opacity:0}}
+</style>
+</head>
+<body>
+
+<audio id="audio-correct" src="assets/correct.mp3"></audio>
+<audio id="audio-wrong" src="assets/wrong.mp3"></audio>
+<audio id="audio-complete" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<div id="screen-shake"></div>
+
+<div id="splash">
+  <div class="center">
+    <div class="splash-wrapper">
+      <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.display='none'; document.getElementById('alt-logo-text').style.display='block';">
+      <h2 id="alt-logo-text" style="display:none;color:var(--civic-blue);letter-spacing:1px">INNOVINE LEARNING</h2>
+    </div>
+  </div>
+</div>
+
+<div id="panel-dispatch" class="gov-card center hidden">
+  <div class="pillar-tag">Civics & Polity</div>
+  <h1 style="color:var(--navy);font-size:24px;margin-bottom:12px;font-weight:800">🏛️ Governments and How They Rule</h1>
+  <p style="color:#475569;font-size:15px;line-height:1.6;margin-bottom:24px">Test your understanding of institutional organs, constitutional architectures, comparative execution balances, and democratic safeguards.</p>
+  <div style="font-size:48px;margin-bottom:24px">🗳️</div>
+  <button class="action-trigger" onclick="initiateChallenge()">Launch Civic Evaluation</button>
+</div>
+
+<div id="panel-evaluation" class="gov-card hidden">
+  <div class="dashboard-metrics">
+    <div class="metric-pill">🏛️ Framework: <span id="monitor-idx">1</span>/10</div>
+    <div class="metric-pill">⏳ Countdown: <span id="monitor-clock">45</span>s</div>
+    <div class="metric-pill">📈 Matrix Score: <span id="monitor-score">0</span></div>
+  </div>
+  <div class="timeline-track" id="segment-track"></div>
+  <h2 id="field-question"></h2>
+  <div class="cluster-options" id="field-options"></div>
+  <div id="field-banner"></div>
+  <button id="trigger-advance" class="action-trigger hidden" onclick="moveForward()">Continue Evaluation Axis →</button>
+</div>
+
+<div id="panel-verdict" class="gov-card center hidden">
+  <div style="font-size:60px;margin-bottom:16px" id="verdict-icon"></div>
+  <h1 id="verdict-heading" style="color:var(--navy);margin-bottom:8px;font-weight:800"></h1>
+  <p id="verdict-desc" style="color:#475569;font-size:15px;margin-bottom:24px"></p>
+  <div class="pillar-tag" id="verdict-ranking" style="border-color:var(--crimson)"></div>
+  <br><br>
+  <button class="action-trigger" onclick="window.location.reload()">Re-examine Organs</button>
+</div>
+
+<script>
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    const target = document.getElementById('splash');
+    target.style.opacity = '0';
+    setTimeout(()=>{
+      target.style.display = 'none';
+      document.getElementById('panel-dispatch').classList.remove('hidden');
+    },300);
+  },1500);
+});
+
+const cbqBank = [
+  {
+    q: "A local municipal corporation drafts a strict new zoning rule banning street vendors from operating near high-traffic traffic junctions. However, a week later, street vendors continue to set up stalls exactly where they did before because no traffic police or municipal officers have arrived to communicate or enforce the boundary changes. Which core organ of government has failed to achieve its objective in this scenario?",
+    o: ["The Legislature, because the draft law was not formatted with correct technical wording.","The Executive, because it failed to implement, carry out, and actively enforce the regulation in daily life.","The Judiciary, because the local courts did not instantly issue a verdict penalizing the vendors.","The Election Commission, because the street vendors were not given a chance to vote on the policy."],
+    a: 1,
+    e: "While the legislature frames the laws, it is the explicit function of the Executive branch (including police and administrative officers) to put those laws into action and ensure public compliance."
+  },
+  {
+    q: "Imagine a country called Zandavia where citizens cast votes every four years to pick their local council representatives. However, according to Zandavia's strict legal code, only a single state-sanctioned political party is legally permitted to put forward candidates on the ballot paper. Which type of government does Zandavia actually resemble?",
+    o: ["A Representative Democracy","A Constitutional Monarchy","A Dictatorship/Totalitarian State","A Direct Participatory Republic"],
+    a: 2,
+    e: "Genuine democracy requires multiple choices, basic freedoms, and real competitive alternative paths. Holding a symbolic election where only one party is allowed to contest functions as a facade for a dictatorship or authoritarian regime."
+  },
+  {
+    q: "A country is trying to decide how to structure its executive head. Under System X, the leader is directly elected by the entire nation and does not require the approval of the legislative house to keep their office. Under System Y, the leader is chosen from the party holding a majority in the legislative house and is constantly answerable to it. Identify the correct categorization of System X and System Y:",
+    o: ["System X is an Absolute Monarchy; System Y is a Theocracy","System X is a Presidential Democracy; System Y is a Parliamentary Democracy","System X is a Direct Democracy; System Y is an Oligarchy","System X is a Bicameral Legislature; System Y is a Unicameral Assembly"],
+    a: 1,
+    e: "In a presidential system (like the USA), the executive head is independent of the legislature. In a parliamentary system (like India), the Prime Minister is deeply linked with and answerable to the parliament."
+  },
+  {
+    q: "A student is researching ancient methods of accountability and notes that a 10th-century inscription found on a temple wall in Tamil Nadu details a highly organized local election system utilizing a ballot mechanism, qualification rules, and immediate recall for corrupt officers. Which historical era and governing body is this case study describing?",
+    o: ["The Vajji mahājanapada clan assemblies","The Śākya clan republic of Kapilavastu","The Chola period village sabha recorded in the Uttaramerur inscriptions.","The Maurya empire administrative network outlined in the Arthaśāstra"],
+    a: 2,
+    e: "The Uttaramerur inscriptions from the reign of Parantaka Chola I outline an intricate local self-governance model for selecting the village sabha using strict eligibility parameters."
+  },
+  {
+    q: "A citizens' committee in a metropolitan town argues that instead of allowing a small group of municipal councilors to distribute funds behind closed doors, every citizen should receive a digital ballot to directly approve or reject major local tax rates and infrastructure projects. This group is pushing to shift their local setup closer to which model?",
+    o: ["Oligarchic Dynastic Control","Absolute Sovereign Theocracy","Direct Participation / Referendum System","Representative Bicameralism"],
+    a: 2,
+    e: "Direct participation systems, like those utilized in Switzerland, allow citizens to vote directly on specific laws, policies, and taxes rather than delegating all decisions to representatives."
+  },
+  {
+    q: "In ancient epic literature, Bhīṣma instructs King Yudhiṣṭhira on rājadharma, emphasizing that a ruler is not free to behave arbitrarily because their power is a sacred trust meant exclusively for the welfare of the subjects. How does this ancient concept of rājadharma align with modern democratic governance?",
+    o: ["It rejects democracy by stating only kings can rule wisely.","It mirrors the democratic principle of accountability, asserting that those in power must prioritize public welfare over personal benefit.","It advocates for absolute force and military coups to maintain strict discipline.","It suggests that laws should be based strictly on corporate wealth and commercial trade networks."],
+    a: 1,
+    e: "Both rājadharma and modern democratic theory reject arbitrary, unchecked power, viewing governance as a duty based on responsibility, fairness, and answering to the wellbeing of the people."
+  },
+  {
+    q: "During a financial session, a controversial national budget bill is passed rapidly. While one House of the Indian Parliament holds supreme authority to pass money bills and decide national financial allocations, the other House can only review, delay, or suggest changes to ensure hasty choices weren't made. Which House holds the primary leverage regarding financial budget matters, and why?",
+    o: ["The Rajya Sabha, because its members are appointed directly by the President.","The Lok Sabha, because its members are directly elected by the citizens and it represents the voice of the people.","The Supreme Court, because it constitutes the core of the national bicameral framework.","The State Legislative Assemblies, because they write the federal budget rules."],
+    a: 1,
+    e: "The Lok Sabha (Lower House) is more powerful in financial matters, including the budget, because its members are directly elected by the citizens of India."
+  },
+  {
+    q: "Consider the contrasting lives of two teenagers: 16-year-old Deepa lives in a country where she can catch a public bus freely to the library, while 16-year-old Aisha lives under a system where she requires formal permission from a male guardian to travel or attend educational events. What does this comparison illustrate about the impact of government structures on personal liberty?",
+    o: ["Absolute monarchies always grant more social liberty to minors than democracies do.","The source of authority and form of government directly determine the scale of fundamental daily rights and gender equality enjoyed by citizens.","All forms of government treat personal movement as completely disconnected from legal frameworks.","Dictatorships provide identical protections to both girls and boys without institutional discrimination."],
+    a: 1,
+    e: "As shown in the contrast between constitutional systems and absolute regimes, a country's form of government fundamentally dictates the day-to-day freedoms, equality, and protections given to its citizens."
+  },
+  {
+    q: "A foreign nation is governed by an elite council composed entirely of the country's wealthiest three aristocratic families, who pass down their council seats to their children through inheritance. They control all business channels, land holdings, and political positions, shutting out the rest of the population. This government represents a combination of which two systems?",
+    o: ["Direct Democracy and Representative Theocracy","Oligarchy and Hereditary/Monarchic tendencies","Presidential Bicameralism and Open Franchise","Dictatorship and Independent Judiciary."],
+    a: 1,
+    e: "Rule by a restricted elite group is an oligarchy, and passing power down through family lines reflects hereditary or monarchic succession."
+  },
+  {
+    q: "A government implements a rapid economic plan that doubles industrial output across five years. However, to achieve this, it strips away citizen access to media, blocks online expression, and criminalizes public protests. Which real-world historical or global governing trade-off does this scenario highlight?",
+    o: ["How absolute standard theocracies achieve complete social harmony without laws.","The choice some regimes make to prioritize rapid economic growth or stability by sacrificing human liberty, free speech, and democratic accountability.","The proof that an independent judiciary can only function when media channels are completely shut down.","How universal adult franchise naturally leads to a complete decline in national defense systems."],
+    a: 1,
+    e: "Authoritarian systems or specific states sometimes emphasize economic metrics by imposing tight restrictions on civil freedoms and political expressions. Modern democracies reject this trade-off, balancing progress with human rights."
+  }
+];
+
+let indexPointer=0, activeScore=0, currentTries=0, ticksLeft=45, loopTimer;
+
+function initiateChallenge(){
+  document.getElementById('panel-dispatch').classList.add('hidden');
+  document.getElementById('panel-evaluation').classList.remove('hidden');
+  buildSegments();
+  renderCurrentMatrix();
+}
+
+function buildSegments(){
+  const track = document.getElementById('segment-track');
+  track.innerHTML = '';
+  for(let i=0; i<cbqBank.length; i++){
+    let seg = document.createElement('div');
+    seg.className = 'segment';
+    track.appendChild(seg);
+  }
+}
+
+function renderCurrentMatrix(){
+  currentTries = 0;
+  ticksLeft = 45;
+  document.getElementById('monitor-clock').textContent = ticksLeft;
+  document.getElementById('monitor-idx').textContent = indexPointer + 1;
+  document.getElementById('field-banner').innerHTML = '';
+  document.getElementById('trigger-advance').classList.add('hidden');
+  
+  const segments = document.querySelectorAll('.segment');
+  segments.forEach((s,i)=>{
+    if(i===indexPointer) s.className = 'segment current';
+    else if(i<indexPointer) s.className = 'segment passed';
+    else s.className = 'segment';
+  });
+
+  document.getElementById('field-question').textContent = cbqBank[indexPointer].q;
+  const listArea = document.getElementById('field-options');
+  listArea.innerHTML = '';
+
+  const bulletLabels = ['A','B','C','D'];
+  cbqBank[indexPointer].o.forEach((text,i)=>{
+    let button = document.createElement('div');
+    button.className = 'row-btn';
+    button.innerHTML = `<span class="index-bullet">${bulletLabels[i]}</span><span>${text}</span>`;
+    button.onclick = (event) => assessInput(i, button, event);
+    listArea.appendChild(button);
+  });
+
+  clearInterval(loopTimer);
+  loopTimer = setInterval(()=>{
+    ticksLeft--;
+    document.getElementById('monitor-clock').textContent = ticksLeft;
+    if(ticksLeft<=0){
+      clearInterval(loopTimer);
+      exposeBaseline();
+    }
+  },1000);
+}
+
+function assessInput(selection, element, evt){
+  const targetCbq = cbqBank[indexPointer];
+  if(selection === targetCbq.a){
+    if(currentTries === 0){
+      activeScore++;
+      document.getElementById('monitor-score').textContent = activeScore;
+    }
+    playSound('audio-correct');
+    injectVFXParticles(evt);
+    document.getElementById('field-banner').innerHTML = `<div class="status-banner banner-pass"><b>✔️ Constitutionally Valid!</b> ${targetCbq.e}</div>`;
+    lockOptions();
+    clearInterval(loopTimer);
+    document.getElementById('trigger-advance').classList.remove('hidden');
+  } else {
+    if(currentTries === 0){
+      currentTries = 1;
+      playSound('audio-wrong');
+      triggerShakeFX();
+      document.getElementById('field-banner').innerHTML = `<div class="status-banner banner-fail"><b>⚠️ Check and Balance Warning.</b> That choice fails democratic transparency checks. Review the scenario criteria once more!</div>`;
+      element.style.borderColor = 'var(--crimson)';
+      element.style.background = 'var(--crimson-light)';
+    } else {
+      exposeBaseline();
+    }
+  }
+}
+
+function exposeBaseline(){
+  lockOptions();
+  clearInterval(loopTimer);
+  const targetCbq = cbqBank[indexPointer];
+  const bulletLabels = ['A','B','C','D'];
+  document.getElementById('field-banner').innerHTML = `<div class="status-banner banner-fail"><b>🔎 Judicial Overrule.</b> The accurate constitutional path is <b>${bulletLabels[targetCbq.a]}. ${targetCbq.o[targetCbq.a]}</b>.<br><br>${targetCbq.e}</div>`;
+  document.getElementById('trigger-advance').classList.remove('hidden');
+}
+
+function lockOptions(){
+  document.querySelectorAll('.row-btn').forEach(b => b.onclick = null);
+}
+
+function moveForward(){
+  indexPointer++;
+  if(indexPointer < cbqBank.length){
+    renderCurrentMatrix();
+  } else {
+    produceFinalVerdict();
+  }
+}
+
+function produceFinalVerdict(){
+  document.getElementById('panel-evaluation').classList.add('hidden');
+  document.getElementById('panel-verdict').classList.remove('hidden');
+  
+  const displayIcon = document.getElementById('verdict-icon');
+  const displayHeading = document.getElementById('verdict-heading');
+  const displayDesc = document.getElementById('verdict-desc');
+  const displayRank = document.getElementById('verdict-ranking');
+
+  displayDesc.textContent = `You correctly parsed ${activeScore} out of ${cbqBank.length} systemic regulatory matrices.`;
+
+  if(activeScore >= 9){
+    displayIcon.textContent = '⚖️';
+    displayHeading.textContent = 'Chief Constitutional Jurist';
+    displayRank.textContent = 'Parliamentary Sovereign Grade';
+    playSound('audio-complete');
+  } else if(activeScore >= 6){
+    displayIcon.textContent = '📜';
+    displayHeading.textContent = 'Legislative Analyst';
+    displayRank.textContent = 'Uttaramerur Assembly Council Rank';
+  } else {
+    displayIcon.textContent = '📋';
+    displayHeading.textContent = 'Civic Observer';
+    displayRank.textContent = 'Municipal Ward Level';
+  }
+}
+
+function playSound(elementId){
+  try{
+    const aud = document.getElementById(elementId);
+    aud.currentTime = 0;
+    aud.play();
+  } catch(e){}
+}
+
+function triggerShakeFX(){
+  const s = document.getElementById('screen-shake');
+  s.classList.add('shake-on');
+  setTimeout(()=>s.removeProperty ? s.removeAttribute('class') : s.className='',200);
+}
+
+function injectVFXParticles(e){
+  const tokens = ['⚖️','🗳️','📜','🏛️'];
+  for(let i=0; i<6; i++){
+    let el = document.createElement('div');
+    el.className = 'burst-element';
+    el.textContent = tokens[i % tokens.length];
+    el.style.left = (e.clientX ? e.clientX : window.innerWidth/2) + (Math.random()*50 - 25) + 'px';
+    el.style.top = (e.clientY ? e.clientY : window.innerHeight/2) + (Math.random()*50 - 25) + 'px';
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),800);
+  }
+}
+</script>
+</body>
+</html>
