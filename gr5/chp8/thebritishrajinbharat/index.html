@@ -6,17 +6,17 @@
 <title>The British Raj in India CBQ</title>
 <style>
 :root{
-  --bg1:#2a1c16;
-  --bg2:#4a3427;
-  --bg3:#6a4a36;
-  --card:#2f231ded;
-  --ink:#f4eadf;
-  --muted:#d6c4b5;
-  --gold:#d7b06b;
-  --gold2:#f2d39b;
-  --brown:#9e6b43;
+  --bg1:#1d1511;
+  --bg2:#36251c;
+  --bg3:#5a4030;
+  --card:#231913f0;
+  --ink:#f7efe6;
+  --muted:#d8c7b8;
+  --gold:#d8b06a;
+  --gold2:#f4d7a0;
+  --olive:#75855b;
   --red:#c55b4f;
-  --green:#51a66f;
+  --green:#52a66d;
   --shadow:0 18px 48px rgba(0,0,0,.38);
 }
 *{box-sizing:border-box}
@@ -25,8 +25,9 @@ html,body{
   font-family:Arial,Helvetica,sans-serif;
   color:var(--ink);
   background:
-    radial-gradient(circle at 15% 15%, rgba(255,220,170,.12), transparent 20%),
-    radial-gradient(circle at 85% 20%, rgba(255,255,255,.06), transparent 18%),
+    radial-gradient(circle at 12% 16%, rgba(248,220,176,.12), transparent 18%),
+    radial-gradient(circle at 85% 20%, rgba(117,133,91,.10), transparent 18%),
+    radial-gradient(circle at 50% 92%, rgba(213,175,107,.10), transparent 18%),
     linear-gradient(180deg,var(--bg1),var(--bg2) 52%,var(--bg3));
   overflow-x:hidden;
 }
@@ -36,19 +37,19 @@ body::before,body::after{
   inset:auto;
   pointer-events:none;
   z-index:0;
-  opacity:.34;
+  opacity:.24;
 }
 body::before{
-  top:8%;left:6%;
-  width:150px;height:150px;
+  top:8%;left:5%;
+  width:180px;height:180px;
   background:radial-gradient(circle at 35% 35%,#fff 0 8%,transparent 9%),radial-gradient(circle at 50% 50%,#fff 0 17%,transparent 18%);
-  animation:float 12s linear infinite;
+  animation:float 13s linear infinite;
 }
 body::after{
   right:7%;bottom:8%;
-  width:200px;height:200px;
+  width:220px;height:220px;
   background:radial-gradient(circle at 30% 30%,#fff 0 7%,transparent 8%),radial-gradient(circle at 72% 45%,#fff 0 5%,transparent 6%),radial-gradient(circle at 50% 72%,#fff 0 9%,transparent 10%);
-  animation:float 15s linear infinite reverse;
+  animation:float 16s linear infinite reverse;
 }
 @keyframes float{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-14px) rotate(8deg)}}
 #app{
@@ -63,89 +64,99 @@ body::after{
   background:var(--card);
   backdrop-filter:blur(10px);
   border:1px solid rgba(255,255,255,.08);
-  border-radius:26px;
+  border-radius:28px;
   box-shadow:var(--shadow);
   overflow:hidden;
 }
 .header{
-  padding:20px 20px 14px;
-  background:linear-gradient(135deg,rgba(215,176,107,.18),rgba(158,107,67,.10),rgba(255,255,255,.05));
+  padding:18px 20px 14px;
+  background:linear-gradient(135deg,rgba(216,176,106,.16),rgba(117,133,91,.08),rgba(255,255,255,.04));
   border-bottom:1px solid rgba(255,255,255,.08);
 }
-.brand{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.header-row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 .badge{
   display:inline-block;
   padding:8px 12px;
   border-radius:999px;
-  background:rgba(215,176,107,.14);
+  background:rgba(216,176,106,.14);
   color:var(--gold2);
-  border:1px solid rgba(215,176,107,.35);
+  border:1px solid rgba(216,176,106,.35);
   font-size:13px;
   font-weight:800;
 }
 .main{padding:20px}
 h1,h2,p{margin:0 0 12px}
-h1{font-size:clamp(30px,5vw,52px);line-height:1.05}
+h1{font-size:clamp(32px,5vw,54px);line-height:1.02}
 h2{font-size:clamp(22px,3vw,30px)}
 p{color:var(--muted);line-height:1.65;font-size:18px}
 .start-grid{
   display:grid;
-  grid-template-columns:1.08fr .92fr;
+  grid-template-columns:1.05fr .95fr;
   gap:18px;
   align-items:center;
 }
-.hero-box{
-  background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));
-  border:1px solid rgba(215,176,107,.20);
-  border-radius:20px;
-  padding:16px;
-  min-height:300px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+.poster{
+  min-height:340px;
+  border-radius:24px;
+  border:1px solid rgba(216,176,106,.18);
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01)),
+    radial-gradient(circle at 20% 20%, rgba(244,215,160,.12), transparent 20%),
+    radial-gradient(circle at 80% 30%, rgba(117,133,91,.10), transparent 18%),
+    linear-gradient(135deg,#291d17,#3a2920 55%,#4f3729);
+  box-shadow:0 12px 26px rgba(0,0,0,.24);
   position:relative;
   overflow:hidden;
+  padding:18px;
 }
-.hero-box::before,.hero-box::after{
+.poster::before{
   content:"";
   position:absolute;
-  border-radius:50%;
-  pointer-events:none;
+  inset:14px;
+  border:1px solid rgba(244,215,160,.14);
+  border-radius:18px;
 }
-.hero-box::before{
-  width:180px;height:180px;
-  background:rgba(215,176,107,.12);
-  top:-50px;right:-30px;
+.poster-map{
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at 30% 40%, rgba(255,255,255,.08) 0 2px, transparent 3px),
+    radial-gradient(circle at 60% 60%, rgba(255,255,255,.06) 0 2px, transparent 3px),
+    radial-gradient(circle at 70% 25%, rgba(255,255,255,.05) 0 2px, transparent 3px);
+  opacity:.65;
 }
-.hero-box::after{
-  width:140px;height:140px;
-  background:rgba(158,107,67,.12);
-  bottom:-35px;left:-20px;
-}
-.hero-icons{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:12px;
-  width:100%;
+.poster-content{
   position:relative;
   z-index:1;
-}
-.icon-card{
-  background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));
-  border:1px solid rgba(215,176,107,.18);
-  border-radius:18px;
-  padding:16px;
-  text-align:center;
-  min-height:110px;
+  height:100%;
   display:flex;
   flex-direction:column;
+  justify-content:space-between;
+  gap:14px;
+}
+.poster-title{
+  font-size:28px;
+  font-weight:900;
+  color:#fff6e8;
+  letter-spacing:.02em;
+}
+.poster-sub{
+  color:#e4d4c2;
+  max-width:28ch;
+  font-size:16px;
+}
+.poster-seal{
+  width:92px;height:92px;
+  border-radius:50%;
+  border:2px solid rgba(244,215,160,.45);
+  display:flex;
   align-items:center;
   justify-content:center;
-  gap:8px;
-  box-shadow:0 8px 18px rgba(0,0,0,.18);
+  color:var(--gold2);
+  font-weight:900;
+  background:rgba(0,0,0,.18);
+  box-shadow:0 0 0 10px rgba(244,215,160,.05);
 }
-.icon{font-size:30px;line-height:1}
-.icon-card span{font-size:14px;color:#f0dfcf;font-weight:800}
 .badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 .btn{
   appearance:none;border:0;border-radius:16px;
@@ -155,8 +166,8 @@ p{color:var(--muted);line-height:1.65;font-size:18px}
 }
 .btn:hover{transform:translateY(-1px)}
 .btn:disabled{opacity:.55;cursor:not-allowed}
-.primary{background:linear-gradient(135deg,#8b5a2b,#d7b06b);color:#1a120d}
-.ghost{background:#3b2b21;color:#f5eadf;border:1px solid rgba(215,176,107,.28)}
+.primary{background:linear-gradient(135deg,#8c5b2b,#d8b06a);color:#1a120d}
+.ghost{background:#30241d;color:#f5eadf;border:1px solid rgba(216,176,106,.28)}
 .danger{background:#4d2620;color:#ffdede}
 .success{background:#23402b;color:#d9ffe8}
 .topbar{
@@ -164,18 +175,18 @@ p{color:var(--muted);line-height:1.65;font-size:18px}
 }
 .trackers{display:flex;gap:10px;flex-wrap:wrap}
 .tracker{
-  background:#30241d;
-  border:1px solid rgba(215,176,107,.22);
+  background:#2f231d;
+  border:1px solid rgba(216,176,106,.22);
   border-radius:14px;
   padding:10px 12px;
   font-weight:800;
   font-size:15px;
 }
 .qbox{
-  background:rgba(18,12,9,.55);
+  background:rgba(18,12,9,.60);
   border-radius:20px;
   padding:18px;
-  border:1px solid rgba(215,176,107,.18);
+  border:1px solid rgba(216,176,106,.18);
   box-shadow:0 6px 20px rgba(0,0,0,.16);
 }
 .qnum{
@@ -187,15 +198,15 @@ p{color:var(--muted);line-height:1.65;font-size:18px}
 .opt{
   width:100%;
   text-align:left;
-  background:#3a2c23;
-  border:1px solid rgba(215,176,107,.16);
+  background:#372820;
+  border:1px solid rgba(216,176,106,.16);
   border-radius:14px;
   padding:14px 15px;
   color:#f4eadf;
   font-size:17px;
   line-height:1.45;
 }
-.opt.correct{background:#23402b;border-color:rgba(81,166,111,.45)}
+.opt.correct{background:#23402b;border-color:rgba(82,166,109,.45)}
 .opt.wrong{background:#4d2620;border-color:rgba(197,91,79,.45)}
 .feedback{
   margin-top:12px;
@@ -205,7 +216,7 @@ p{color:var(--muted);line-height:1.65;font-size:18px}
   font-size:16px;
 }
 .feedback.show{display:block}
-.feedback.good{background:#23402b;color:#d9ffe8;border:1px solid rgba(81,166,111,.35)}
+.feedback.good{background:#23402b;color:#d9ffe8;border:1px solid rgba(82,166,109,.35)}
 .feedback.bad{background:#4d2620;color:#ffdede;border:1px solid rgba(197,91,79,.35)}
 .nav{
   display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;margin-top:14px
@@ -216,11 +227,11 @@ p{color:var(--muted);line-height:1.65;font-size:18px}
   padding:18px;
   border-radius:18px;
   background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));
-  border:1px solid rgba(215,176,107,.16);
+  border:1px solid rgba(216,176,106,.16);
 }
 .logo-splash{
   position:fixed;inset:0;
-  background:radial-gradient(circle at top, rgba(215,176,107,.18), transparent 35%),linear-gradient(180deg,#241713,#34231c);
+  background:radial-gradient(circle at top, rgba(216,176,106,.18), transparent 35%),linear-gradient(180deg,#241713,#34231c);
   display:flex;align-items:center;justify-content:center;
   z-index:9999;transition:opacity .5s ease
 }
@@ -243,7 +254,7 @@ table{
   overflow:hidden
 }
 th,td{
-  border:1px solid rgba(215,176,107,.18);
+  border:1px solid rgba(216,176,106,.18);
   padding:10px;
   text-align:center;
   font-size:14px;
@@ -253,7 +264,7 @@ th{background:#2d2018;color:var(--gold2)}
 .bar-wrap{
   margin-top:12px;
   background:#1d140f;
-  border:1px solid rgba(215,176,107,.18);
+  border:1px solid rgba(216,176,106,.18);
   border-radius:16px;
   padding:14px;
 }
@@ -284,7 +295,7 @@ th{background:#2d2018;color:var(--gold2)}
   padding-bottom:8px;
   box-shadow:0 10px 18px rgba(0,0,0,.24);
 }
-.bar1{height:60px;background:linear-gradient(180deg,#d7b06b,#8b5a2b)}
+.bar1{height:60px;background:linear-gradient(180deg,#d8b06a,#8c5b2b)}
 .bar2{height:110px;background:linear-gradient(180deg,#cfa06f,#6e4730)}
 .bar3{height:160px;background:linear-gradient(180deg,#b57b4f,#4d3126)}
 .bar4{height:210px;background:linear-gradient(180deg,#8f5a36,#2f1c16)}
@@ -307,19 +318,19 @@ th{background:#2d2018;color:var(--gold2)}
   <section class="screen active" id="introScreen">
     <div class="card">
       <div class="header">
-        <div class="brand">
-          <div class="badge">Chapter-based MCQ Interactive</div>
+        <div class="header-row">
+          <div class="badge">Historical chapter quiz</div>
+          <div class="badge">British Raj theme</div>
         </div>
       </div>
       <div class="main start-grid">
         <div>
           <h1>The British Raj in India</h1>
-          <p>Explore how British rule expanded, how Indians resisted, and how national awakening grew over time.</p>
+          <p>Test your understanding of trade, resistance, and the rise of nationalism during British rule.</p>
           <div class="badges">
             <span class="badge">Grade 5</span>
             <span class="badge">Social Studies</span>
-            <span class="badge">The British Raj in India</span>
-            <span class="badge">11 Questions</span>
+            <span class="badge">11 MCQs</span>
           </div>
           <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap">
             <button class="btn primary" id="startBtn">Start Quiz</button>
@@ -327,12 +338,17 @@ th{background:#2d2018;color:var(--gold2)}
           </div>
           <p class="small" style="margin-top:14px">One retry is allowed after the first wrong answer. After the second wrong attempt, the correct answer and explanation appear.</p>
         </div>
-        <div class="hero-box">
-          <div class="hero-icons">
-            <div class="icon-card"><div class="icon">🏰</div><span>British Rule</span></div>
-            <div class="icon-card"><div class="icon">⚓</div><span>Trade Ports</span></div>
-            <div class="icon-card"><div class="icon">🚩</div><span>Protest</span></div>
-            <div class="icon-card"><div class="icon">🧵</div><span>Swadeshi</span></div>
+        <div class="poster">
+          <div class="poster-map"></div>
+          <div class="poster-content">
+            <div>
+              <div class="poster-title">British Raj</div>
+              <div class="poster-sub">A sepia-style history poster theme with stronger contrast and a more unique intro layout.</div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap">
+              <div class="poster-seal">1885</div>
+              <div class="small" style="max-width:18ch;color:#eddcc9">Trade, rule, protest, and nationalism.</div>
+            </div>
           </div>
         </div>
       </div>
@@ -457,26 +473,11 @@ function render(){
     wrap.innerHTML=`
       <div class="small" style="color:#f2d39b;font-weight:800;margin-bottom:10px">British Rule Response Graph</div>
       <div class="bar-chart">
-        <div class="bar-col">
-          <div class="bar bar1">1</div>
-          <div class="bar-label">Revolts<br>(1857)</div>
-        </div>
-        <div class="bar-col">
-          <div class="bar bar2">2</div>
-          <div class="bar-label">Movements<br>(Swadeshi)</div>
-        </div>
-        <div class="bar-col">
-          <div class="bar bar3">3</div>
-          <div class="bar-label">Protests<br>(Bengal)</div>
-        </div>
-        <div class="bar-col">
-          <div class="bar bar4">4</div>
-          <div class="bar-label">Congress<br>Sessions</div>
-        </div>
-        <div class="bar-col">
-          <div class="bar bar2">5</div>
-          <div class="bar-label">British<br>Policies</div>
-        </div>
+        <div class="bar-col"><div class="bar bar1">1</div><div class="bar-label">Revolts<br>(1857)</div></div>
+        <div class="bar-col"><div class="bar bar2">2</div><div class="bar-label">Movements<br>(Swadeshi)</div></div>
+        <div class="bar-col"><div class="bar bar3">3</div><div class="bar-label">Protests<br>(Bengal)</div></div>
+        <div class="bar-col"><div class="bar bar4">4</div><div class="bar-label">Congress<br>Sessions</div></div>
+        <div class="bar-col"><div class="bar bar2">5</div><div class="bar-label">British<br>Policies</div></div>
       </div>`;
     $('#extraArea').appendChild(wrap);
   }
