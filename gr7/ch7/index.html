@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Gupta Era: An Age of Tireless Creativity — Quest</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Georgia',serif}
+:root{
+  --clay:#9c4221;
+  --clay-dark:#6b2e16;
+  --rust:#c2622d;
+  --iron:#3d3833;
+  --parchment:#f3e6cf;
+  --parchment-dark:#e6d3ab;
+  --gold:#c79a3e;
+  --ink:#2c241c;
+  --good:#3f6b3a;
+  --good-bg:#dcead7;
+  --bad:#8c2f1d;
+  --bad-bg:#f3dad1;
+}
+body{background:radial-gradient(circle at 20% 20%,#7a3a1d,#3d2113 70%);min-height:100vh;overflow-x:hidden;color:var(--ink)}
+
+/* ---- Utility Classes ---- */
+.hidden { display: none !important; }
+.container { width: 100%; max-width: 680px; margin: 40px auto; padding: 0 20px; position: relative; z-index: 10; }
+.panel { background: var(--parchment); padding: 30px; border-radius: 16px; border: 4px double var(--clay); box-shadow: 0 12px 28px rgba(0,0,0,0.5); }
+.center { text-align: center; }
+.eyebrow { font-family: 'Trebuchet MS',sans-serif; font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: var(--rust); font-weight: 700; margin-bottom: 8px; }
+
+/* ---- Splash ---- */
+#splash{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:#ffffff;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:99999;
+  transition: opacity 0.4s ease;
+}
+.splash-content{ text-align:center; }
+.splash-logo{ width:350px; max-width:80vw; margin:auto; }
+.splash-logo img{ width:100%; height:auto; display:block; }
+
+/* ---- Top bar / progress ---- */
+.top{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px;font-family:'Trebuchet MS',sans-serif;font-size:14px;font-weight:600;color:var(--iron)}
+.top span{color:var(--clay-dark);font-weight:700}
+.progress{height:14px;background:var(--parchment-dark);border-radius:999px;overflow:hidden;border:1px solid var(--clay)}
+.bar{height:100%;width:0;background:linear-gradient(90deg,var(--rust),var(--gold));transition:width .4s ease}
+
+/* ---- Options ---- */
+.option{background:#fff;border:1.5px solid var(--parchment-dark);padding:13px 16px;border-radius:8px;margin:10px 0;cursor:pointer;font-size:15.5px;transition:all .15s ease;display:flex;align-items:center;gap:10px}
+.option:hover{background:#fff8ec;border-color:var(--rust);transform:translateX(3px)}
+.option .tag{font-family:'Trebuchet MS',sans-serif;font-weight:700;color:var(--clay);font-size:12px;width:20px}
+
+button{padding:13px 24px;border:none;border-radius:8px;background:var(--clay);color:var(--parchment);cursor:pointer;font-family:'Trebuchet MS',sans-serif;font-weight:700;letter-spacing:.5px;font-size:14px;transition:background .15s ease}
+button:hover{background:var(--clay-dark)}
+
+.feedback{margin-top:14px;padding:12px 14px;border-radius:8px;font-size:14.5px;line-height:1.5;font-family:'Trebuchet MS',sans-serif}
+.good{background:var(--good-bg);color:var(--good);border:1px solid #a9caa1}
+.bad{background:var(--bad-bg);color:var(--bad);border:1px solid #d9a892}
+
+/* ---- Background ambient symbols ---- */
+.bg-sym{position:fixed;color:rgba(243,230,207,.15);animation:float 16s linear infinite;font-size:28px;z-index: 1;}
+@keyframes float{from{transform:translateY(110vh) rotate(0deg)}to{transform:translateY(-15vh) rotate(360deg)}}
+
+#cross{position:fixed;right:24px;top:24px;font-size:54px;opacity:0;color:var(--bad);z-index: 100;}
+.flash{animation:f .8s}@keyframes f{50%{opacity:1}}
+
+.confetti{position:fixed;animation:up 1.3s forwards;font-size:22px;z-index: 100;}
+@keyframes up{to{transform:translateY(-220px) scale(1.6) rotate(180deg);opacity:0}}
+
+.stamp{display:inline-block;background:var(--clay-dark);color:var(--gold);font-family:'Trebuchet MS',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;padding:4px 10px;border-radius:4px;margin-top:10px}
+
+#startBtn{font-size:16px;padding:15px 32px;margin-top:15px;}
+#nextBtn { margin-top: 15px; }
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--clay),transparent);margin:16px 0;opacity:.4}
+
+@media(max-width:480px){
+  h1{font-size:24px}
+  .panel{padding:20px}
+  .top{font-size:12px}
+}
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <div class="splash-content">
+    <div class="splash-logo">
+      <img src="../ch4/assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.display='none'; document.getElementById('splash-text').style.display='block';">
+      <h1 id="splash-text" style="display:none; color: #9c4221; font-family:'Trebuchet MS';">INNOVINE LEARNING</h1>
+    </div>
+  </div>
+</div>
+
+<div id="cross">✕</div>
+
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<div id="intro" class="container hidden">
+  <div class="panel center">
+    <div class="eyebrow">History · Chapter 7</div>
+    <h1>🎨 The Gupta Era: An Age of Tireless Creativity</h1>
+    <p style="font-family:'Trebuchet MS',sans-serif;color:var(--iron);margin-top:10px;line-height:1.6">Uncover ancient golden horizons. Put your critical historical thinking skills to work and evaluate the scientific discoveries, diplomatic insights, and cultural wonders of the Gupta Classical Age.</p>
+    <br><div style="font-size:60px">👑</div><br>
+    <button id="startBtn" onclick="startGame()">Begin the Historical Quest</button>
+  </div>
+</div>
+
+<div id="game" class="container hidden">
+  <div class="panel">
+    <div class="top">
+      <div>🪙 Score: <span id="score">0</span></div>
+      <div>⏳ Time: <span id="time">45</span>s</div>
+      <div>Clue <span id="qnum">1</span>/10</div>
+    </div>
+    <div class="progress"><div id="bar" class="bar"></div></div><br>
+    <h2 id="question" style="font-size:18px; line-height:1.4; margin-bottom:10px;"></h2>
+    <div id="options"></div>
+    <div id="feedback"></div>
+    <div class="divider"></div>
+    <button id="nextBtn" class="hidden" onclick="nextQ()">Next Clue →</button>
+  </div>
+</div>
+
+<div id="result" class="container hidden">
+  <div class="panel center">
+    <div style="font-size:54px" id="resultIcon"></div>
+    <h1 id="title"></h1>
+    <h2 id="finalScore"></h2>
+    <div class="stamp" id="resultStamp"></div><br><br>
+    <button onclick="location.reload()">Excavate Again</button>
+  </div>
+</div>
+
+<script>
+// Ambient float particles setup
+const symbols=['🪙','🏺','⚔️','📜','🏛️','🎨'];
+for(let i=0;i<20;i++){
+  let s=document.createElement('div');
+  s.className='bg-sym';
+  s.innerHTML=symbols[i%symbols.length];
+  s.style.left=Math.random()*100+'vw';
+  s.style.animationDuration=(10+Math.random()*8)+'s';
+  s.style.animationDelay=(Math.random()*-15)+'s';
+  document.body.appendChild(s);
+}
+
+// Fade out splash safely
+window.addEventListener('load',()=>{
+ setTimeout(()=> {
+   document.getElementById('splash').style.opacity='0';
+   setTimeout(() => {
+     document.getElementById('splash').style.display='none';
+     document.getElementById('intro').classList.remove('hidden');
+   }, 400);
+ }, 2000);
+});
+
+const qs=[
+  {
+    q: "Imagine you are an elite metal blacksmith working under the supervision of Chandragupta II's royal administration in Mehrauli. Your supervisor asks you to explain why the newly constructed iron pillar does not undergo degradation and rust like regular weapons. Based on the metallurgical knowledge of the era, what scientific practice best explains this resistance to corrosion?",
+    o: [
+      "The structure was completely coated in an imported layer of solid Greek bronze to seal out the atmospheric air.",
+      "The iron was deliberately forged by precisely controlling material composition and using advanced metal-preservation techniques.",
+      "The blacksmiths regularly applied a secret Ayurvedic herbal blend mentioned in the Charaka Saṃhitā over the heated metal.",
+      "The structural preservation relies entirely on Delhi's isolated desert environment rather than any metallurgical innovation."
+    ],
+    a: 1,
+    e: "The Mehrauli iron pillar stands as an enduring monument because ancient Indian metallurgists understood how material composition and advanced forge-welding techniques directly affect structural durability and rust resistance."
+  },
+  {
+    q: "A team of modern maritime archaeologists uncovers ancient broken pottery shards, Indian textiles, and unique Gupta-era scripts on the remote Socotra Island. How does this finding translate into an understanding of the economic strategies implemented by Gupta-era administrations?",
+    o: [
+      "It demonstrates that the empire was highly integrated into an international trade network linking India with distant regions like Egypt, Greece, and Arabia.",
+      "It proves that the Gupta rulers prioritised global military colonisation and annexed coastal territories across Africa.",
+      "It indicates that the Gupta Empire suffered from deep economic isolation and banned merchant groups from selling goods domestically.",
+      "It shows that Indian merchants traded exclusively with nomadic tribes like the Hūṇas to secure peaceful borders."
+    ],
+    a: 0,
+    e: "Traveling to Socotra Island shows that Indian merchant networks actively connected domestic production (textiles, gems, and spices) to international markets across the western seas, spreading both material goods and cultural ideas globally."
+  },
+  {
+    q: "Analyze the two historical statements regarding the social and political structure of the 4th century CE:<br><br><b>Assertion (A):</b> Queen Prabhāvatī Gupta exercised direct political sovereignty, issued independent administrative decrees, and managed state resources as a regent.<br><b>Reason (R):</b> Royal women in the Vākāṭaka and Gupta dynasties were completely isolated from public life, economic decision-making, and structural administrative functions.",
+    o: [
+      "Both A and R are true, and R explains A.",
+      "Both A and R are true, but R does not explain A.",
+      "A is true, but R is false.",
+      "A is false, but R is true."
+    ],
+    a: 2,
+    e: "Assertion A is true because Prabhāvatī Gupta successfully governed the Vākāṭaka kingdom on behalf of her minor sons, issued land grants, and managed state diplomacy. Reason R is false because her public leadership directly contradicts the idea that royal women were completely isolated from administrative or financial life."
+  },
+  {
+    q: "Suppose you are a student attending classes at a school adjacent to a newly built temple complex in a Gupta city in 400 CE. What fundamental social value can a modern urban planner infer from the physical proximity of educational centers and places of worship in this era?",
+    o: [
+      "A strict state policy that prohibited the teaching of any subject outside of religious rituals.",
+      "An intentional effort by the royal family to isolate students from the economic activities of the merchant guilds.",
+      "A societal belief that spiritual development and intellectual training were integrated, complementary aspects of human life.",
+      "A historical lack of space in municipal zones that forced city builders to merge unrelated institutions."
+    ],
+    a: 2,
+    e: "Placing temples, schools, public wells, and gardens side-by-side in ancient Indian urban layouts reflects a holistic worldview that valued learning, civic well-being, and internal spiritual values equally."
+  },
+  {
+    q: "Analyze the statements regarding the mathematical breakthroughs of the 6th century CE:<br><br><b>Assertion (A):</b> Āryabhaṭa's scientific models introduced the revolutionary idea that the Earth rotates on its own axis, causing the apparent movement of stars.<br><b>Reason (R):</b> Āryabhaṭa rejected supernatural myths about astronomical events and instead used empirical observation and mathematical logic to explain star movement.",
+    o: [
+      "Both A and R are true, and R explains A.",
+      "Both A and R are true, but R does not explain A.",
+      "A is true, but R is false.",
+      "A is false, but R is true."
+    ],
+    a: 0,
+    e: "Both statements are true. It was precisely because Āryabhaṭa relied on scientific observation, calculation, and logic rather than traditional supernatural myths that he was able to formulate his revolutionary theories regarding planetary motion and eclipses."
+  },
+  {
+    q: "Samudragupta defeated numerous northern kings and southern rulers during his expansive military campaigns. Instead of completely annexing all defeated territories and removing their local leadership, he frequently established a system of tributary relationships. What was the primary administrative benefit of this policy?",
+    o: [
+      "It forced all southern kingdoms to immediately replace their spoken languages with the Gupta script.",
+      "It secured long-term political loyalty and regular financial revenue while minimizing the logistical strain of managing distant provinces directly.",
+      "It was forced upon him because his army suffered a total defeat at the Narmada River by the Chalukya forces.",
+      "It allowed him to completely abandon military affairs and spend all his time playing the veena in Pataliputra."
+    ],
+    a: 1,
+    e: "By leaving defeated kings in power as tributary vassals, Samudragupta asserted absolute imperial sovereignty ('Maharajadhiraja') and ensured a continuous flow of revenue without overextending his army or local state administration over distant regions."
+  },
+  {
+    q: "Analyze the statements regarding the architectural and religious dynamics of the Gupta period:<br><br><b>Assertion (A):</b> The Gupta era is considered a golden age of religious harmony and artistic syncretism, as seen in sites like the Ajanta and Ellora caves.<br><b>Reason (R):</b> The Gupta emperors strictly banned the construction of Hindu temples and redirected all imperial gold revenue exclusively toward Buddhist monasteries.",
+    o: [
+      "Both A and R are true, and R explains A.",
+      "Both A and R are true, but R does not explain A.",
+      "A is true, but R is false.",
+      "A is false, but R is true."
+    ],
+    a: 2,
+    e: "Assertion A is true because art schools and rock-cut cave monuments from this era display an intricate, tolerant blend of Hindu, Buddhist, and Jain motifs. Reason R is entirely false because Gupta rulers actively patronized and constructed monuments across diverse religious lines."
+  },
+  {
+    q: "A student reviewing a genealogical chart notes that King Srigupta, the founder of the dynasty, is believed to have belonged to the Vaishya community. How does this detail challenge conventional political assumptions regarding ancient Indian kingship up to that period?",
+    o: [
+      "It demonstrates that political leadership could change, departing from the standard expectation that rulers had to belong strictly to the Kshatriya clan.",
+      "It proves that the caste system was completely abolished throughout northern India by 320 CE.",
+      "It shows that only merchant families were permitted to build major imperial structures like the Mehrauli Iron Pillar.",
+      "It implies that Srigupta overthrew his own grandson, Chandragupta I, to establish the dynasty."
+    ],
+    a: 0,
+    e: "Historically, kings were expected to hail exclusively from the Kshatriya warrior lineage. The rise of Srigupta from a Vaishya (merchant/agricultural) background demonstrates a distinct shift where state authority could be grasped through marital alliances and military capability regardless of traditional caste expectations."
+  },
+  {
+    q: "The systematic codification of texts like the Charaka Saṃhitā and Suśruta Saṃhitā during the Gupta era represents a major milestone in medical history. What defining philosophical attribute characterizes the medical system of Ayurveda as presented in these compiled works?",
+    o: [
+      "It completely prohibited surgical operations, relying instead on celestial planetary models designed by astronomers.",
+      "It attributed all physical illnesses exclusively to supernatural curses or demonic entities.",
+      "It employs a holistic framework that emphasizes balancing the mind, body, and nature to achieve overall wellness.",
+      "It was kept completely confidential by royal edict and could only be practiced inside Pataliputra's palace gates."
+    ],
+    a: 2,
+    e: "Ayurveda stands apart because of its holistic methodology. Rather than focusing merely on symptoms, it emphasizes bringing a patient's physical body, mental health, and surrounding environment into a dynamic equilibrium."
+  },
+  {
+    q: "Consider the internal security problems of the late 5th century. How did these conflicts alter the political landscape of the Indian subcontinent by 570 CE?",
+    o: [
+      "The entire imperial territory was permanently absorbed into a unified southern state governed by King Pulakeshin II.",
+      "The continuous pressure of Hūṇa invasions exhausted state reserves and caused the empire to fracture into small kingdoms.",
+      "The empire voluntarily dissolved its armies to fund the growth of Nalanda University.",
+      "The state administration moved its primary base of operations to Socotra Island to manage maritime trade."
+    ],
+    a: 1,
+    e: "Repeated incursions along the frontier by the Hūṇas (a nomadic Central Asian warrior tribe) drained the centralized treasury, shattered domestic trade stability, and caused the unified empire to break down into localized rival factions."
+  }
+];
+
+let c=0,score=0,retry=0,t=45,timer;
+
+function startGame(){
+  document.getElementById('intro').classList.add('hidden');
+  document.getElementById('game').classList.remove('hidden');
+  loadQ();
+}
+
+function loadQ(){
+  retry=0;
+  t=45;
+  document.getElementById('time').textContent=t;
+  document.getElementById('qnum').textContent=c+1;
+  document.getElementById('bar').style.width=(c/qs.length*100)+'%';
+  document.getElementById('question').innerHTML=qs[c].q;
+  
+  let optionsBox = document.getElementById('options');
+  optionsBox.innerHTML='';
+  document.getElementById('feedback').innerHTML='';
+  document.getElementById('nextBtn').classList.add('hidden');
+  
+  const labels=['A','B','C','D'];
+  qs[c].o.forEach((op,i)=>{
+    let d=document.createElement('div');
+    d.className='option';
+    d.innerHTML='<span class="tag">'+labels[i]+'</span><span>'+op+'</span>';
+    d.onclick=()=>choose(i);
+    optionsBox.appendChild(d);
+  });
+  
+  clearInterval(timer);
+  timer=setInterval(()=>{
+    t--;
+    document.getElementById('time').textContent=t;
+    if(t<=0){
+      clearInterval(timer);
+      showAnswer();
+    }
+  },1000);
+}
+
+function choose(i){
+  if(i===qs[c].a){
+    if(retry===0){ score++; scoreEl(); }
+    try { document.getElementById('correctSound').play(); } catch(e){}
+    document.getElementById('feedback').innerHTML='<div class="feedback good">✔️ Correct! '+qs[c].e+'</div>';
+    confetti();
+    disable();
+    document.getElementById('nextBtn').classList.remove('hidden');
+    clearInterval(timer);
+  }
+  else if(retry===0){
+    retry=1;
+    try { document.getElementById('wrongSound').play(); } catch(e){}
+    document.getElementById('feedback').innerHTML='<div class="feedback bad">Not quite — analyze the historical details and try once more!</div>';
+    let cr = document.getElementById('cross');
+    cr.classList.add('flash');
+    setTimeout(()=>cr.classList.remove('flash'),800);
+  }
+  else {
+    showAnswer();
+  }
+}
+
+function showAnswer(){
+  disable();
+  clearInterval(timer);
+  const labels=['A','B','C','D'];
+  document.getElementById('feedback').innerHTML='<div class="feedback bad">Correct Answer: <b>'+labels[qs[c].a]+'. '+qs[c].o[qs[c].a]+'</b><br><br>'+qs[c].e+'</div>';
+  document.getElementById('nextBtn').classList.remove('hidden');
+}
+
+function disable(){
+  document.querySelectorAll('.option').forEach(x=>x.onclick=null);
+}
+
+function nextQ(){
+  c++;
+  if(c<qs.length) loadQ();
+  else{
+    finishGame();
+  }
+}
+
+function finishGame(){
+  document.getElementById('game').classList.add('hidden');
+  document.getElementById('result').classList.remove('hidden');
+  
+  let resIcon = document.getElementById('resultIcon');
+  let resTitle = document.getElementById('title');
+  let resStamp = document.getElementById('resultStamp');
+  
+  if(score>=9){
+    resTitle.textContent='🏆 Master Vikramāditya Scholar';
+    resIcon.textContent='🏆';
+    resStamp.textContent='IMPERIAL SEAL OF PATALIPUTRA — GOLD RANK';
+    try { document.getElementById('clapSound').play(); } catch(e){}
+  }
+  else if(score>=6){
+    resTitle.textContent='🏛️ Skilled Chronicler';
+    resIcon.textContent='🏛️';
+    resStamp.textContent='VĀKĀṬAKA REGENCY COIN — CHRONICLER RANK';
+  }
+  else{
+    resTitle.textContent='📜 Budding Historian';
+    resIcon.textContent='📜';
+    resStamp.textContent='MEHRAULI IRON APPRENTICE';
+  }
+  document.getElementById('finalScore').textContent='You uncovered '+score+' out of '+qs.length+' historical conclusions correctly.';
+}
+
+function scoreEl(){
+  document.getElementById('score').textContent=score;
+}
+
+function confetti(){
+  const sym=['🪙','✨','🏺','👑'];
+  for(let i=0; i<12; i++){
+    let s=document.createElement('div');
+    s.className='confetti';
+    s.innerHTML=sym[i%sym.length];
+    s.style.left=Math.random()*innerWidth+'px';
+    s.style.top=(innerHeight-80)+'px';
+    document.body.appendChild(s);
+    setTimeout(()=>s.remove(),1300);
+  }
+}
+</script>
+</body>
+</html>
