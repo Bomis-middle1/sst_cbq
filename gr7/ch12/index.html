@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Market Maze: Where Buyers Meet Sellers</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif}
+:root{
+  --marigold:#f59e0b;
+  --marigold-dark:#78350f;
+  --neon-teal:#06b6d4;
+  --space-dark:#0f172a;
+  --panel-bg:#1e293b;
+  --text-primary:#f8fafc;
+  --text-muted:#94a3b8;
+  --emerald:#10b981;
+  --emerald-bg:rgba(16,185,129,0.1);
+  --crimson:#ef4444;
+  --crimson-bg:rgba(239,68,68,0.1);
+}
+body{background:linear-gradient(135deg,var(--space-dark),#090d16);min-height:100vh;color:var(--text-primary);padding:20px;display:flex;align-items:center;justify-content:center}
+
+/* ---- Component Elements ---- */
+.hidden { display: none !important; }
+.bazaar-card { background: var(--panel-bg); width: 100%; max-width: 650px; padding: 35px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); border: 2px solid var(--marigold); position: relative; overflow: hidden; }
+.bazaar-card::before { content:''; position:absolute; top:0; left:0; width:100%; height:5px; background:linear-gradient(90deg, var(--marigold), var(--neon-teal)); }
+.center { text-align: center; }
+.hub-badge { display: inline-block; background: rgba(245,158,11,0.12); color: var(--neon-teal); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(6,182,212,0.3); margin-bottom: 22px; }
+
+/* ---- Logo Loading Protection ---- */
+#splash{position:fixed;top:0;left:0;width:100%;height:100%;background:#ffffff;display:flex;justify-content:center;align-items:center;z-index:99999;transition:opacity .3s ease}
+.splash-box{width:290px;max-width:80vw}
+.splash-box img{width:100%;height:auto;display:block}
+
+/* ---- Status Header ---- */
+.telemetry-bar { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; font-size:12px; font-weight:600; color:var(--text-muted); border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:14px; text-transform:uppercase; letter-spacing:1px }
+.telemetry-bar span { color: var(--marigold); font-weight: 700; }
+
+/* ---- Segmented Node Progress ---- */
+.progress-grid{display:flex;gap:5px;margin-bottom:24px}
+.node-seg{height:6px;flex:1;background:rgba(255,255,255,0.08);border-radius:3px;transition:all .3s ease}
+.node-seg.active{background:var(--neon-teal);box-shadow:0 0 10px var(--neon-teal)}
+.node-seg.passed{background:var(--marigold)}
+
+/* ---- Question Blocks ---- */
+h2{font-size:18px;line-height:1.5;color:var(--text-primary);margin-bottom:24px;font-weight:600}
+.matrix-layout{display:flex;flex-direction:column;gap:12px}
+.choice-row{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:16px 20px;cursor:pointer;font-size:15px;line-height:1.5;transition:all 0.2s ease;display:flex;align-items:start;gap:14px}
+.choice-row:hover{background:rgba(6,182,212,0.05);border-color:var(--neon-teal);transform:translateX(4px)}
+.abc-prefix{font-weight:700;color:var(--marigold);font-size:13px}
+
+/* ---- Feedback Alerts ---- */
+.alert-box{margin-top:20px;padding:16px;border-radius:10px;font-size:14px;line-height:1.5}
+.alert-correct{background:var(--emerald-bg);color:var(--emerald);border:1px solid rgba(16,185,129,0.2)}
+.alert-wrong{background:var(--crimson-bg);color:var(--crimson);border:1px solid rgba(239,68,68,0.2)}
+
+button.nav-btn{width:100%;background:linear-gradient(135deg, var(--marigold), #d97706);color:white;border:none;padding:16px;border-radius:10px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;cursor:pointer;margin-top:20px;transition:all .2s;box-shadow:0 4px 14px rgba(245,158,11,0.25)}
+button.nav-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(245,158,11,0.35)}
+
+/* ---- Screen Vibration Effects ---- */
+#shock-layer{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(239,68,68,0.04);pointer-events:none;opacity:0;z-index:99;transition:opacity .15s}
+#shock-layer.shock-on{opacity:1}
+
+.coin-burst{position:fixed;pointer-events:none;animation:burstout 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;z-index:999;font-size:24px}
+@keyframes burstout{0%{transform:translateY(0) rotate(0deg) scale(0.6);opacity:1}100%{transform:translateY(-90px) rotate(45deg) scale(1.2);opacity:0}}
+</style>
+</head>
+<body>
+
+<audio id="audio-correct" src="assets/correct.mp3"></audio>
+<audio id="audio-wrong" src="assets/wrong.mp3"></audio>
+<audio id="audio-complete" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<div id="shock-layer"></div>
+
+<div id="splash">
+  <div class="center">
+    <div class="splash-box">
+      <img src="assets/innovine-logo.png" alt="Innovine Core Logo" onerror="this.style.display='none'; document.getElementById('txt-fallback').style.display='block';">
+      <h2 id="txt-fallback" style="display:none;color:var(--marigold);letter-spacing:2px;font-family:sans-serif">INNOVINE LEARNING</h2>
+    </div>
+  </div>
+</div>
+
+<div id="panel-welcome" class="bazaar-card center hidden">
+  <div class="hub-badge">Microeconomic Simulation</div>
+  <h1 style="color:var(--text-primary);font-size:24px;margin-bottom:12px;font-weight:600">🛒 Market Maze Arena</h1>
+  <p style="color:var(--text-muted);font-size:15px;line-height:1.6;margin-bottom:26px">Test your understanding of macro and micro supply structures. Navigate the trade see-saw, evaluate regulatory policy tools, and analyze global commercial history vectors.</p>
+  <div style="font-size:52px;margin-bottom:24px">🛍️</div>
+  <button class="nav-btn" onclick="startSimulation()">Enter Trading Floor</button>
+</div>
+
+<div id="panel-game" class="bazaar-card hidden">
+  <div class="telemetry-bar">
+    <div>📊 Progress: <span id="idx-lbl">1</span>/10</div>
+    <div>⏰ Market Timer: <span id="clock-lbl">45</span>s</div>
+    <div>💰 Earnings: <span id="score-lbl">0</span></div>
+  </div>
+  <div class="progress-grid" id="seg-container"></div>
+  <h2 id="q-text"></h2>
+  <div class="matrix-layout" id="choices-box"></div>
+  <div id="feed-output"></div>
+  <button id="btn-forward" class="nav-btn hidden" onclick="advanceTimeline()">Process Invoicing & Next →</button>
+</div>
+
+<div id="panel-report" class="bazaar-card center hidden">
+  <div style="font-size:60px;margin-bottom:16px" id="end-emoji"></div>
+  <h1 id="end-title" style="color:var(--text-primary);margin-bottom:10px;font-weight:600"></h1>
+  <p id="end-desc" style="color:var(--text-muted);font-size:15px;margin-bottom:24px"></p>
+  <div class="hub-badge" id="end-badge"></div>
+  <br><br>
+  <button class="nav-btn" onclick="window.location.reload()">Audit Next Fiscal Cycle</button>
+</div>
+
+<script>
+window.addEventListener('DOMContentLoaded',()=>{
+  setTimeout(()=>{
+    const canvasSplash = document.getElementById('splash');
+    canvasSplash.style.opacity = '0';
+    setTimeout(()=>{
+      canvasSplash.style.display = 'none';
+      document.getElementById('panel-welcome').classList.remove('hidden');
+    },300);
+  },1600);
+});
+
+const cbqItems = [
+  {
+    q: "An unexpected frost destroys 70% of the tomato crop in a major agricultural district. Over the next week, hundreds of household buyers arrive at the city mandi looking for tomatoes, but the vendors have only a few crates available. What will happen to the price of tomatoes based on this demand and supply balance?",
+    o: ["The price will drop sharply to motivate reluctant buyers.","The price will rise because high demand faces a limited supply.","The government will instantly ban the sale of all remaining tomatoes.","The price will stay exactly the same because value is always fixed."],
+    a: 1,
+    e: "When supply drops drastically while demand remains high, buyers are forced to compete for a limited resource, pushing prices upward."
+  },
+  {
+    q: "Ten different electronics vendors set up stalls right next to each other in a small local market, all trying to sell identical smartphone models. There are only two buyers in the entire marketplace looking for a phone. How will negotiation and pricing settle in this specific environment?",
+    o: ["Prices will shoot up because sellers have to pay for stall space.","Sellers will refuse to bargain to protect international trade rates.","Prices will drop as sellers compete and bargain aggressively to attract the few buyers.","The buyers will be forced by law to buy one phone from every stall."],
+    a: 2,
+    e: "An oversupply of sellers chasing too few buyers creates a buyer's market where sellers must lower prices and negotiate to secure a transaction."
+  },
+  {
+    q: "A large corporate refinery in Assam buys raw petroleum from a local extraction site, processes it into diesel, and ships it via domestic trains to fuel stations across Kerala to be used by public transport buses. Which classification of trade does this supply chain represent?",
+    o: ["International Market","Domestic Market","Virtual E-Commerce Market","Perishable Haat Market"],
+    a: 1,
+    e: "Since the raw material is extracted, refined, transported, and sold entirely within the geographical borders of India, it constitutes a domestic market."
+  },
+  {
+    q: "Rohan runs a small grocery shop in his neighborhood. He travels to a massive central mandi at 4:00 AM to buy 500 kilograms of lentils in sealed sacks, which he later unpacks into small 1-kilogram paper packets to sell to local families. Which market roles do the central mandi and Rohan's neighborhood shop fulfill respectively?",
+    o: ["Both are strictly online international wholesale markets.","The mandi is a retail market, while Rohan’s shop is an export hub.","The mandi is a wholesale market, while Rohan’s shop is a retail market.","Both are government-owned non-profit public parks."],
+    a: 2,
+    e: "Wholesale markets involve buying goods in bulk quantities for resale, while retail markets distribute goods in small, immediate quantities to end consumers."
+  },
+  {
+    q: "Priya wants to buy a silk saree for a family wedding. Her mother advises her to go to a physical textile bazaar instead of ordering it from a midnight online flash sale on a mobile app. What unique advantage of a physical market supports her mother's advice?",
+    o: ["Physical markets allow the buyer to touch, inspect fabric quality, and verify color accuracy before paying.","Physical markets are open 24 hours a day and ship items globally via cargo planes.","Physical markets have zero crowded spaces or noise.","Traditional bazaars completely ban the use of physical cash notes."],
+    a: 0,
+    e: "Physical markets eliminate the virtual risk of fake reviews or unexpected quality variations by allowing face-to-face inspection before purchase."
+  },
+  {
+    q: "A historian notes that both 16th-century Surat on India’s west coast and the Grand Bazaar of Istanbul in Turkey became highly prosperous, legendary trade hubs that attracted merchants from thousands of miles away. What shared structural factor most directly enabled both markets to achieve global dominance?",
+    o: ["Cold mountain climates that naturally preserved seasonal fruits for years.","Favorable geographic locations along major maritime ports or cross-continental transport routes.","Strict laws that made bargaining completely illegal in both cities.","Total reliance on digital e-wallet applications to process daily payments."],
+    a: 1,
+    e: "Access to navigable water bodies, ports, and critical overland crossroads is historically the single greatest accelerator for trade expansion."
+  },
+  {
+    q: "Due to perfect monsoon conditions, there is a bumper harvest of wheat across India. Private traders refuse to pay farmers more than ₹10 per kilogram, knowing that fields are overflowing with grain. However, the government steps in and mandates that no purchase can happen below ₹22 per kilogram. What regulatory mechanism is the government using to protect these farmers from a financial crash?",
+    o: ["FSSAI Quality Certification Mark","Minimum Support Price (MSP)","International Export Embargo Order","BEE Star Rating System"],
+    a: 1,
+    e: "Minimum Support Price (MSP) acts as a government-guaranteed price floor to prevent agricultural distress when market prices crash due to oversupply."
+  },
+  {
+    q: "Nitin is buying a new electric water heater for his bathroom. He notices a cheap, unbranded model without any markings and a slightly more expensive model stamped with an official ISI mark. Why is it vital for Nitin’s safety to choose the model with the ISI mark?",
+    o: ["It certifies that the heater was imported from a Middle Eastern desert market.","It proves the appliance was handmade by women artisans in Ima Keithal.","It guarantees the product has passed rigorous safety and quality tests conducted by official authorities.","It ensures the product has zero instructions printed on its outer box."],
+    a: 2,
+    e: "The ISI mark is India's official certification for industrial and electrical goods, verifying structural safety and compliance with national standards."
+  },
+  {
+    q: "Deepa is buying a carton of strawberry yogurt from a supermarket shelf. She reads the back label carefully and notices that today's date is June 25, 2026, while the stamp next to the barcode reads: 'Best Before: May 15, 2026.' What immediate risk does this consumer awareness exercise help Deepa avoid?",
+    o: ["Buying an appliance that consumes too much household electricity.","Consuming an expired food product that could be unsafe or harmful to her health.","Paying wholesale rates for an international luxury asset.","Violating the geographic border guidelines of the European Union."],
+    a: 1,
+    e: "Expiry dates tell a consumer exactly how long a packaged food item or medicine remains chemically stable and safe for consumption."
+  },
+  {
+    q: "A school wants to replace all its old classroom air conditioners to lower its monthly electricity bills. The purchasing committee is comparing two models that cost exactly the same amount of money. Which feature on the product labels will help them identify the unit that saves the most power?",
+    o: ["The AGMARK stamp for organic farm produce.","A higher number of filled stars on the BEE Star Rating Label.","The unique font style used to write the manufacturer's address.","The presence of an Ottoman pattern design border on the chassis."],
+    a: 1,
+    e: "Bureau of Energy Efficiency (BEE) star labels show energy efficiency; more stars translate directly into lower power consumption and maximum cost savings."
+  }
+];
+
+let roundIdx=0, totalPoints=0, currentShotAttempts=0, tickerVal=45, masterTimer;
+
+function startSimulation(){
+  document.getElementById('panel-welcome').classList.add('hidden');
+  document.getElementById('panel-game').classList.remove('hidden');
+  generateNodes();
+  displayItem();
+}
+
+function generateNodes(){
+  const holder = document.getElementById('seg-container');
+  holder.innerHTML = '';
+  for(let i=0; i<cbqItems.length; i++){
+    let node = document.createElement('div');
+    node.className = 'node-seg';
+    holder.appendChild(node);
+  }
+}
+
+function displayItem(){
+  currentShotAttempts = 0;
+  tickerVal = 45;
+  document.getElementById('clock-lbl').textContent = tickerVal;
+  document.getElementById('idx-lbl').textContent = roundIdx + 1;
+  document.getElementById('feed-output').innerHTML = '';
+  document.getElementById('btn-forward').classList.add('hidden');
+  
+  const nodes = document.querySelectorAll('.node-seg');
+  nodes.forEach((nd,idx)=>{
+    if(idx===roundIdx) nd.className = 'node-seg active';
+    else if(idx<roundIdx) nd.className = 'node-seg passed';
+    else nd.className = 'node-seg';
+  });
+
+  document.getElementById('q-text').textContent = cbqItems[roundIdx].q;
+  const area = document.getElementById('choices-box');
+  area.innerHTML = '';
+
+  const chars = ['A','B','C','D'];
+  cbqItems[roundIdx].o.forEach((textStr,idx)=>{
+    let row = document.createElement('div');
+    row.className = 'choice-row';
+    row.innerHTML = `<span class="abc-prefix">${chars[idx]}.</span><span>${textStr}</span>`;
+    row.onclick = (e) => assessChoice(idx, row, e);
+    area.appendChild(row);
+  });
+
+  clearInterval(masterTimer);
+  masterTimer = setInterval(()=>{
+    tickerVal--;
+    document.getElementById('clock-lbl').textContent = tickerVal;
+    if(tickerVal<=0){
+      clearInterval(masterTimer);
+      forceKeyDisclosure();
+    }
+  },1000);
+}
+
+function assessChoice(pickedIndex, elementRef, clickEvt){
+  const targetObj = cbqItems[roundIdx];
+  if(pickedIndex === targetObj.a){
+    if(currentShotAttempts === 0){
+      totalPoints++;
+      document.getElementById('score-lbl').textContent = totalPoints;
+    }
+    playSound('audio-correct');
+    sprayCoins(clickEvt);
+    document.getElementById('feed-output').innerHTML = `<div class="alert-box alert-correct"><b>⚡ Transaction Complete.</b> ${targetObj.e}</div>`;
+    freezeMatrix();
+    clearInterval(masterTimer);
+    document.getElementById('btn-forward').classList.remove('hidden');
+  } else {
+    if(currentShotAttempts === 0){
+      currentShotAttempts = 1;
+      playSound('audio-wrong');
+      triggerVibe();
+      document.getElementById('feed-output').innerHTML = `<div class="alert-box alert-wrong"><b>⚠️ Trade Friction.</b> Market equilibrium rejected this pricing strategy. Recalculate your margins and select again.</div>`;
+      elementRef.style.borderColor = 'var(--crimson)';
+      elementRef.style.background = 'var(--crimson-bg)';
+    } else {
+      forceKeyDisclosure();
+    }
+  }
+}
+
+function forceKeyDisclosure(){
+  freezeMatrix();
+  clearInterval(masterTimer);
+  const dataNode = cbqItems[roundIdx];
+  const alphaChars = ['A','B','C','D'];
+  document.getElementById('feed-output').innerHTML = `<div class="alert-box alert-wrong"><b>🔍 Price Floor Disclosed.</b> The optimal option is <b>${alphaChars[dataNode.a]}. ${dataNode.o[dataNode.a]}</b>.<br><br>${dataNode.e}</div>`;
+  document.getElementById('btn-forward').classList.remove('hidden');
+}
+
+function freezeMatrix(){
+  document.querySelectorAll('.choice-row').forEach(r => r.onclick = null);
+}
+
+function advanceTimeline(){
+  roundIdx++;
+  if(roundIdx < cbqItems.length){
+    displayItem();
+  } else {
+    compileFinalReport();
+  }
+}
+
+function compileFinalReport(){
+  document.getElementById('panel-game').classList.add('hidden');
+  document.getElementById('panel-report').classList.remove('hidden');
+  
+  const emo = document.getElementById('end-emoji');
+  const tit = document.getElementById('end-title');
+  const des = document.getElementById('end-desc');
+  const bdg = document.getElementById('end-badge');
+
+  des.textContent = `You cleared ${totalPoints} out of ${cbqItems.length} macro-market optimization benchmarks successfully.`;
+
+  if(totalPoints >= 9){
+    emo.textContent = '👑';
+    tit.textContent = 'Chief Market Regulator';
+    bdg.textContent = 'Surat & Istanbul Trade Route Architect';
+    playSound('audio-complete');
+  } else if(totalPoints >= 6){
+    emo.textContent = '⚖️';
+    tit.textContent = 'Senior Mandi Arbitrator';
+    bdg.textContent = 'Ima Keithal Institutional Advisor';
+  } else {
+    emo.textContent = '🎪';
+    tit.textContent = 'Weekly Haat Broker';
+    bdg.textContent = 'Bargaining Apprentice';
+  }
+}
+
+function playSound(elementId){
+  try{
+    const sNode = document.getElementById(elementId);
+    sNode.currentTime = 0;
+    sNode.play();
+  } catch(err){}
+}
+
+function triggerVibe(){
+  const lyr = document.getElementById('shock-layer');
+  lyr.classList.add('shock-on');
+  setTimeout(()=>lyr.classList.remove('shock-on'),200);
+}
+
+function sprayCoins(event){
+  const tokens = ['🪙','🏷️','📊','✨','⭐'];
+  for(let i=0; i<6; i++){
+    let p = document.createElement('div');
+    p.className = 'coin-burst';
+    p.textContent = tokens[i % tokens.length];
+    p.style.left = (event.clientX ? event.clientX : window.innerWidth/2) + (Math.random()*40 - 20) + 'px';
+    p.style.top = (event.clientY ? event.clientY : window.innerHeight/2) + (Math.random()*40 - 20) + 'px';
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),800);
+  }
+}
+</script>
+</body>
+</html>
