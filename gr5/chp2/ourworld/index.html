@@ -1,1 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Grade 5 CBQ - Our World</title>
+<style>
+:root{
+  --bg1:#040814;
+  --bg2:#0d1730;
+  --card:#101a33ee;
+  --card2:#0b1327ee;
+  --text:#eef4ff;
+  --muted:#adc2e6;
+  --accent:#7cc4ff;
+  --accent2:#8cffd1;
+  --danger:#ff7d7d;
+  --gold:#ffd56a;
+  --shadow:0 20px 50px rgba(0,0,0,.42);
+}
+*{box-sizing:border-box}
+html,body{
+  margin:0;height:100%;
+  font-family:Arial,Helvetica,sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(circle at 20% 20%, rgba(124,196,255,.15), transparent 20%),
+    radial-gradient(circle at 80% 10%, rgba(140,255,209,.10), transparent 18%),
+    radial-gradient(circle at 50% 80%, rgba(255,213,106,.08), transparent 22%),
+    linear-gradient(160deg,var(--bg1),var(--bg2));
+  overflow-x:hidden;
+}
+body:before{
+  content:"";
+  position:fixed;inset:0;
+  background:
+    radial-gradient(circle, rgba(255,255,255,.9) 0 1px, transparent 1.5px) 0 0/42px 42px,
+    radial-gradient(circle, rgba(255,255,255,.5) 0 1px, transparent 1.5px) 12px 18px/64px 64px;
+  opacity:.2;
+  pointer-events:none;
+  z-index:0;
+}
+.orbit{
+  position:fixed;
+  border:1px solid rgba(124,196,255,.15);
+  border-radius:50%;
+  pointer-events:none;
+  z-index:0;
+}
+.orbit.one{width:520px;height:520px;left:-120px;top:10vh;opacity:.22}
+.orbit.two{width:420px;height:420px;right:-110px;bottom:8vh;opacity:.18}
+.star,.moon{
+  position:fixed;
+  pointer-events:none;
+  z-index:0;
+}
+.star{
+  width:4px;height:4px;border-radius:50%;
+  background:#fff;
+  box-shadow:0 0 10px rgba(255,255,255,.9);
+  animation:twinkle 4s ease-in-out infinite;
+}
+.moon{
+  width:54px;height:54px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, #fff, #dce7ff 65%, #95a9d8 100%);
+  box-shadow:0 0 28px rgba(255,255,255,.15);
+  opacity:.75;
+}
+@keyframes twinkle{50%{transform:scale(1.8);opacity:.2}}
 
+#splash,#intro,#game,#result{
+  position:relative;z-index:1;
+  min-height:100vh;
+  display:none;
+  padding:16px;
+}
+#splash.active,#intro.active,#game.active,#result.active{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.panel{
+  width:min(1000px,100%);
+  background:linear-gradient(180deg,var(--card),var(--card2));
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:26px;
+  box-shadow:var(--shadow);
+  padding:18px;
+}
+.splash-box{text-align:center;padding:34px 18px}
+.logo-wrap{
+  width:176px;height:176px;margin:0 auto 16px;display:grid;place-items:center;
+  border-radius:36px;
+  background:radial-gradient(circle at 30% 25%, rgba(255,255,255,.95), rgba(140,255,209,.12));
+  box-shadow:inset 0 0 0 1px rgba(124,196,255,.12),0 18px 38px rgba(0,0,0,.28);
+}
+.logo-wrap img{max-width:72%;max-height:72%;object-fit:contain;display:block}
+.brand{font-weight:800;color:var(--accent);letter-spacing:.6px}
+.title{font-size:clamp(26px,4vw,42px);margin:8px 0 10px;line-height:1.15}
+.sub{font-size:clamp(15px,2.1vw,18px);margin:0 auto;max-width:850px;line-height:1.55;color:var(--muted)}
+.btnrow{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+.btn{
+  border:none;border-radius:16px;padding:14px 18px;
+  font-weight:700;font-size:16px;cursor:pointer;color:#03111f;
+  background:linear-gradient(135deg,var(--gold),#fff1a8);
+  box-shadow:0 10px 24px rgba(255,213,106,.18);
+}
+.btn:active{transform:scale(.98)}
+
+.topbar{
+  display:flex;gap:10px;flex-wrap:wrap;
+  align-items:center;justify-content:space-between;
+  margin-bottom:12px;
+}
+.chip{
+  background:#0d1730;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:999px;
+  padding:10px 14px;
+  font-weight:700;
+  color:var(--text);
+  box-shadow:0 8px 18px rgba(0,0,0,.18);
+}
+.progress{
+  height:12px;border-radius:999px;background:#182545;
+  overflow:hidden;border:1px solid rgba(255,255,255,.06);
+}
+.bar{
+  height:100%;width:0%;
+  background:linear-gradient(90deg,var(--accent2),var(--accent));
+  border-radius:inherit;transition:width .25s ease;
+}
+.layout{
+  display:grid;grid-template-columns:1.05fr .95fr;gap:16px;align-items:stretch;
+}
+.qcard{
+  padding:18px;
+  background:linear-gradient(180deg,#111c38,#0c152a);
+  border:1px solid rgba(255,255,255,.06);
+}
+.qmeta{
+  display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;
+  margin-bottom:10px;font-weight:700;color:var(--muted)
+}
+.question{
+  font-size:clamp(18px,2.5vw,24px);
+  line-height:1.48;
+  margin:8px 0 14px;
+}
+.qhtml{line-height:1.48}
+.stimulus{display:none;margin:10px 0 14px}
+.stimulus img{
+  width:100%;max-height:260px;object-fit:contain;
+  border-radius:18px;background:#0a1020;
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:0 10px 24px rgba(0,0,0,.22);
+}
+.table-wrap{overflow-x:auto;margin:12px 0}
+.qtable{
+  width:100%;
+  min-width:520px;
+  border-collapse:collapse;
+  text-align:center;
+  color:#eaf2ff;
+  background:#0c1427;
+  border-radius:12px;
+  overflow:hidden;
+}
+.qtable th,.qtable td{border:1px solid rgba(255,255,255,.10);padding:10px}
+.qtable thead tr{background:#162848}
+.options{
+  display:grid;grid-template-columns:1fr 1fr;gap:12px;
+}
+.opt{
+  border:1px solid rgba(255,255,255,.10);
+  background:#0f1a35;color:var(--text);
+  border-radius:18px;padding:14px 14px;text-align:left;min-height:64px;
+  cursor:pointer;font-size:16px;line-height:1.35;
+  box-shadow:0 8px 18px rgba(0,0,0,.16);
+  transition:.18s transform,.18s border-color,.18s box-shadow;
+}
+.opt:hover{transform:translateY(-1px)}
+.opt:disabled{cursor:default;opacity:.9}
+.opt.correct{background:#12341f;border-color:#44b46c}
+.opt.wrong{background:#3b1717;border-color:#ff7d7d}
+.feedback{
+  margin-top:12px;min-height:50px;padding:12px 14px;border-radius:16px;
+  background:#0b1327;border:1px dashed rgba(255,255,255,.12);line-height:1.45;color:var(--muted)
+}
+.feedback.good{background:#102c1e;border-color:#49ba74;color:#dfffe9}
+.feedback.bad{background:#2b1414;border-color:#ff8d8d;color:#ffd7d7}
+
+.envart{
+  min-height:360px;
+  position:relative;overflow:hidden;border-radius:24px;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(124,196,255,.16), transparent 22%),
+    radial-gradient(circle at 70% 20%, rgba(255,255,255,.10), transparent 18%),
+    linear-gradient(180deg,#081022,#050913);
+  border:1px solid rgba(255,255,255,.06);
+}
+.earth{
+  position:absolute;left:50%;top:50%;
+  transform:translate(-50%,-50%);
+  width:250px;height:250px;border-radius:50%;
+  background:
+    radial-gradient(circle at 34% 28%, rgba(255,255,255,.95) 0 8%, rgba(255,255,255,.25) 9% 11%, transparent 12%),
+    radial-gradient(circle at 42% 35%, #79d7ff 0 20%, #2c88d8 21% 44%, #173d8a 45% 58%, #1a7e54 59% 74%, #0f4f35 75% 100%);
+  box-shadow:0 0 0 12px rgba(255,255,255,.06),0 0 50px rgba(124,196,255,.22);
+  overflow:hidden;
+}
+.earth:before{
+  content:"";
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse at 38% 46%, rgba(33,110,74,.95) 0 10%, transparent 11%),
+    radial-gradient(ellipse at 56% 56%, rgba(33,110,74,.95) 0 14%, transparent 15%),
+    radial-gradient(ellipse at 68% 35%, rgba(33,110,74,.95) 0 9%, transparent 10%),
+    radial-gradient(ellipse at 48% 26%, rgba(255,255,255,.16) 0 12%, transparent 13%);
+  opacity:.95;
+}
+.earth:after{
+  content:"";
+  position:absolute;inset:0;
+  background:
+    linear-gradient(90deg, transparent 48.7%, rgba(255,255,255,.22) 48.7% 51.3%, transparent 51.3%),
+    linear-gradient(0deg, transparent 48.7%, rgba(255,255,255,.22) 48.7% 51.3%, transparent 51.3%),
+    radial-gradient(circle at center, transparent 0 68%, rgba(255,255,255,.12) 69% 70%, transparent 71%);
+  opacity:.75;
+}
+.sun{
+  position:absolute;right:20px;top:18px;
+  width:56px;height:56px;border-radius:50%;
+  background:radial-gradient(circle,#fff8b4,#ffd85b 65%, #ffb52f 100%);
+  box-shadow:0 0 30px rgba(255,216,91,.75);
+}
+.shadow{
+  position:absolute;left:0;top:0;bottom:0;width:50%;
+  background:linear-gradient(90deg, rgba(0,0,0,.0), rgba(0,0,0,.35));
+  border-top-left-radius:50%;
+  border-bottom-left-radius:50%;
+  clip-path:polygon(50% 0,100% 0,100% 100%,50% 100%);
+}
+.moon{
+  position:absolute;left:20px;top:24px;width:44px;height:44px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, #fff, #d7e2ff 65%, #97a9d5 100%);
+  box-shadow:0 0 22px rgba(255,255,255,.18);
+  opacity:.9;
+}
+.orbitline{
+  position:absolute;inset:26px;border:1px dashed rgba(124,196,255,.18);border-radius:50%;
+}
+.note{
+  position:absolute;bottom:16px;left:50%;transform:translateX(-50%);
+  color:#cfe2ff;font-weight:700;font-size:14px;text-align:center;width:86%;line-height:1.35
+}
+.final{text-align:center}
+.medal{font-size:72px;line-height:1}
+.scorebig{
+  font-size:clamp(34px,6vw,56px);
+  font-weight:800;margin:8px 0;color:var(--gold)
+}
+.cross,.stars{
+  position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden;
+}
+.cross span,.stars span{
+  position:absolute;animation:pop 850ms ease-out forwards;
+}
+.cross span{font-size:34px;color:#ff7d7d;text-shadow:0 4px 10px rgba(0,0,0,.15)}
+.stars span{font-size:28px;color:#ffd54f;text-shadow:0 4px 10px rgba(0,0,0,.12)}
+@keyframes pop{0%{transform:scale(.4) translateY(0);opacity:1}100%{transform:scale(1.2) translateY(-36px);opacity:0}}
+@media (max-width:860px){
+  .layout{grid-template-columns:1fr}
+  .options{grid-template-columns:1fr}
+  .panel{padding:14px}
+  .logo-wrap{width:140px;height:140px}
+  .earth{width:200px;height:200px}
+  .envart{min-height:280px}
+}
+</style>
+</head>
+<body>
+<div class="orbit one"></div>
+<div class="orbit two"></div>
+<div class="star" style="top:12%;left:10%"></div>
+<div class="star" style="top:18%;left:78%"></div>
+<div class="star" style="top:32%;left:63%"></div>
+<div class="star" style="top:72%;left:16%"></div>
+<div class="star" style="top:84%;left:82%"></div>
+<div class="moon" style="top:10%;right:14%"></div>
+
+<div id="splash" class="active">
+  <div class="panel splash-box">
+    <div class="logo-wrap">
+      <img src="assets/logo.png" alt="Innovine logo" onerror="this.style.display='none'" />
+    </div>
+    <div class="brand">Innovine</div>
+    <div class="title">Our World</div>
+  </div>
+</div>
+
+<div id="intro">
+  <div class="panel">
+    <div class="title" style="margin-top:0">Instructions for Students</div>
+    <div class="sub" style="max-width:none;text-align:left">
+      <ul>
+        <li>Read each question carefully and choose the best answer.</li>
+        <li>You get 2 attempts for every question.</li>
+        <li>After the first wrong answer, try once more.</li>
+        <li>After the second wrong answer, the correct answer will be shown.</li>
+      </ul>
+    </div>
+    <div class="btnrow"><button class="btn" id="startBtn">Start Quiz</button></div>
+  </div>
+</div>
+
+<div id="game">
+  <div class="panel">
+    <div class="topbar">
+      <div class="chip" id="scoreChip">Score: 0</div>
+      <div class="chip" id="timerChip">Time: 45s</div>
+      <div class="chip" id="attemptChip">Attempt: 1/2</div>
+      <div class="chip" id="qChip">Question 1/11</div>
+    </div>
+    <div class="progress"><div class="bar" id="bar"></div></div>
+    <div class="layout" style="margin-top:14px">
+      <div class="box qcard">
+        <div class="qmeta">
+          <span id="topicTag">Chapter 2: Our World</span>
+          <span id="difficultyTag">Level 1</span>
+        </div>
+        <div class="question qhtml" id="questionText"></div>
+        <div class="stimulus" id="stimulusBox"><img id="stimulusImg" alt="Question image" /></div>
+        <div class="table-wrap" id="tableWrap" style="display:none">
+          <table class="qtable">
+            <thead>
+              <tr><th>City</th><th>Time</th><th>Condition</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>India</td><td>10:00 AM</td><td>Day</td></tr>
+              <tr><td>USA</td><td>12:30 AM</td><td>Night</td></tr>
+              <tr><td>Japan</td><td>2:00 PM</td><td>Day</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="options" id="options"></div>
+        <div class="feedback" id="feedback">Choose one answer to begin.</div>
+      </div>
+      <div class="box envart">
+        <div class="sun"></div>
+        <div class="moon" style="left:18px;top:26px;position:absolute"></div>
+        <div class="orbitline"></div>
+        <div class="earth"></div>
+        <div class="shadow"></div>
+        <div class="note">Earth spins, parts face the Sun, and time changes across the world.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="result">
+  <div class="panel final" id="finalPanel">
+    <div class="medal">🌍</div>
+    <div class="title">Quiz Complete</div>
+    <div class="scorebig" id="finalScore">0/11</div>
+    <p class="sub" id="finalText"></p>
+    <div class="btnrow"><button class="btn" id="restartBtn">Play Again</button></div>
+  </div>
+</div>
+
+<div class="cross" id="crossLayer"></div>
+<div class="stars" id="starsLayer"></div>
+<audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="clapSound" src="assets/claps.mp3" preload="auto"></audio>
+
+<script>
+const questions = [
+{q:`During a geography lesson, the teacher explains that Earth is always rotating on its axis. Riya and her classmates observe a globe being slowly rotated in a dark room with one side lit by a torch. Riya notices that one half is bright while the other is dark at the same time.
+What is the correct conclusion from this observation?`,o:['Earth does not move in space','Clouds create day and night','The Sun moves around Earth every day','Earth’s rotation causes day and night on different parts of the Earth'],a:3,e:'Earth’s rotation causes day and night on different parts of Earth.'},
+{q:`A student living in India calls a friend in the USA. He notices that when it is morning in India, it is night in the USA. He becomes confused because both places are on the same Earth.
+What is the BEST explanation for this difference in time?`,o:['Earth rotates on its axis causing different parts to face the Sun at different times','The Sun shines only on India','The USA is always dark','Time is decided randomly'],a:0,e:'Earth’s rotation makes different places face the Sun at different times.'},
+{q:`In a classroom demonstration, the teacher slowly spins a globe and asks students to observe how sunlight falls on only one side at a time. The students notice that one side is bright while the other is dark.
+What does this activity BEST explain?`,o:['Formation of oceans','Formation of seasons','Day and night cycle due to Earth’s rotation','Movement of clouds'],a:2,e:'It explains the day and night cycle due to Earth’s rotation.'},
+{q:`A student says that sunrise and sunset happen because the Sun moves around the Earth. The teacher asks the class to think carefully about the actual motion of Earth.
+What is the correct scientific explanation?`,o:['The Sun revolves around Earth','Earth rotates on its axis, making the Sun appear to move','The Moon controls sunrise','Clouds block sunlight daily'],a:1,e:'Earth rotates on its axis, making the Sun appear to move.'},
+{q:`During a science discussion, the teacher explains that Earth takes 24 hours to complete one rotation. Students are asked to connect this with their daily life routine of day and night.
+What is the MOST appropriate conclusion?`,o:['One rotation of Earth causes one full day and night cycle','One rotation causes seasons','Rotation has no effect on time','Rotation changes continents'],a:0,e:'One rotation of Earth causes one full day and night cycle.'},
+{q:`A farmer notices that crops grow differently in different seasons. Some crops grow in winter while others grow in summer. The teacher explains that Earth moves around the Sun in a fixed path.
+What is this movement called and what does it cause?`,o:['Rotation – causes day and night','Orbiting clouds – causes rain','Revolution – causes seasons','Tilt – causes earthquakes'],a:2,e:'Revolution causes seasons.'},
+{q:`Students observe that seasons keep changing throughout the year. Winter, summer, and monsoon come one after another regularly. The teacher explains Earth’s movement in space.
+What is the MAIN reason for seasons?`,o:['Earth’s rotation is getting weaker','Ocean waves reach faster','Wind movement','Earth’s revolution around the Sun'],a:3,e:'Earth’s revolution around the Sun causes seasons.'},
+{q:`A student writes: “Weather and climate mean the same thing.” The teacher gives examples of a hot day, a rainy day, and long-term temperature patterns in a place.
+What is the correct understanding?`,o:['Weather is long-term and climate is daily','Climate changes every hour','Both are identical','Weather is daily condition and climate is long-term pattern'],a:3,e:'Weather is daily condition and climate is long-term pattern.'},
+{q:`During a week, students observe that Monday is sunny, Tuesday is rainy, and Wednesday is windy. The teacher explains that these changes happen frequently.
+What does this situation represent?`,o:['Climate stability','Weather changes','Earth’s revolution','Formation of continents'],a:1,e:'This represents weather changes.'},
+{q:`Study the table carefully:
+City
+Time
+Condition
+India
+10:00 AM
+Day
+USA
+12:30 AM
+Night
+Japan
+2:00 PM
+Day
+Students are asked to analyze why these differences exist.
+What is the correct conclusion?`,o:['Earth’s rotation causes different time zones across the world','All countries have same time','Sun shines only on Japan','Time is fixed by weather'],a:0,e:'Earth’s rotation causes different time zones across the world.'},
+{q:`Students notice that people living in different parts of the world have different clothing, food habits, and traditions even though they all live on the same Earth. The teacher explains that environment influences human life.
+What is the BEST explanation?`,o:['Geography and climate influence how people live in different regions','Everyone follows the same culture','Food habits are random','Geography has no effect on people'],a:0,e:'Geography and climate influence how people live in different regions.'}
+];
+
+let idx=0, score=0, attempt=1, timer=45, t=null, answered=false;
+const els = {
+  splash:document.getElementById('splash'),
+  intro:document.getElementById('intro'),
+  game:document.getElementById('game'),
+  result:document.getElementById('result'),
+  finalPanel:document.getElementById('finalPanel'),
+  q:document.getElementById('questionText'),
+  opts:document.getElementById('options'),
+  fb:document.getElementById('feedback'),
+  score:document.getElementById('scoreChip'),
+  timer:document.getElementById('timerChip'),
+  attempt:document.getElementById('attemptChip'),
+  qchip:document.getElementById('qChip'),
+  bar:document.getElementById('bar'),
+  stimBox:document.getElementById('stimulusBox'),
+  stimImg:document.getElementById('stimulusImg'),
+  tableWrap:document.getElementById('tableWrap'),
+  finalScore:document.getElementById('finalScore'),
+  finalText:document.getElementById('finalText'),
+  cross:document.getElementById('crossLayer'),
+  stars:document.getElementById('starsLayer'),
+  correct:document.getElementById('correctSound'),
+  wrong:document.getElementById('wrongSound'),
+  clap:document.getElementById('clapSound')
+};
+
+function show(el){['splash','intro','game','result'].forEach(k=>els[k].classList.remove('active')); el.classList.add('active')}
+function play(a){try{a.currentTime=0;a.play()}catch(e){}}
+function burst(layer,sym,count){
+  for(let i=0;i<count;i++){
+    const s=document.createElement('span');
+    s.textContent=sym;
+    s.style.left=Math.random()*100+'vw';
+    s.style.top=Math.random()*100+'vh';
+    s.style.animationDelay=(Math.random()*120)+'ms';
+    layer.appendChild(s);
+    setTimeout(()=>s.remove(),900);
+  }
+}
+function confetti(ok){ ok ? burst(els.stars,'★',16) : burst(els.cross,'✖',1); }
+
+function startTimer(){
+  clearInterval(t);
+  timer=45;
+  els.timer.textContent='Time: '+timer+'s';
+  t=setInterval(()=>{
+    timer--;
+    els.timer.textContent='Time: '+timer+'s';
+    if(timer<=0){ clearInterval(t); lockAnswer(-1,true); }
+  },1000);
+}
+
+function render(){
+  answered=false;
+  attempt=1;
+  els.attempt.textContent='Attempt: 1/2';
+  els.qchip.textContent='Question '+(idx+1)+'/'+questions.length;
+  els.score.textContent='Score: '+score;
+  els.bar.style.width=((idx)/questions.length*100)+'%';
+  els.fb.className='feedback';
+  els.fb.textContent='Choose one answer to begin.';
+  const x=questions[idx];
+  els.q.innerHTML=x.q;
+  els.stimBox.style.display=x.img?'block':'none';
+  els.tableWrap.style.display=(idx===9)?'block':'none';
+  if(x.img) els.stimImg.src=x.img;
+  els.opts.innerHTML='';
+  x.o.forEach((op,i)=>{
+    const b=document.createElement('button');
+    b.className='opt';
+    b.textContent=String.fromCharCode(65+i)+'. '+op;
+    b.onclick=()=>lockAnswer(i,false);
+    els.opts.appendChild(b);
+  });
+}
+function disable(){ [...els.opts.querySelectorAll('button')].forEach(b=>b.disabled=true); }
+function mark(i,cls){ const b=els.opts.children[i]; if(b) b.classList.add(cls); }
+function reveal(){
+  const x=questions[idx];
+  els.fb.className='feedback bad';
+  els.fb.innerHTML='Correct answer: <b>'+String.fromCharCode(65+x.a)+'. '+x.o[x.a]+'</b><br>'+x.e;
+  mark(x.a,'correct');
+  disable();
+  answered=true;
+  setTimeout(next,1800);
+}
+function lockAnswer(i,timeout){
+  if(answered) return;
+  const x=questions[idx];
+  if(timeout){
+    disable();
+    els.fb.className='feedback bad';
+    els.fb.innerHTML='Time is up. Correct answer: <b>'+String.fromCharCode(65+x.a)+'. '+x.o[x.a]+'</b><br>'+x.e;
+    mark(x.a,'correct');
+    answered=true;
+    setTimeout(next,1800);
+    return;
+  }
+  if(i===x.a){
+    score++;
+    els.score.textContent='Score: '+score;
+    els.fb.className='feedback good';
+    els.fb.textContent='Correct! '+x.e;
+    mark(i,'correct');
+    disable();
+    play(els.correct);
+    play(els.clap);
+    confetti(true);
+    answered=true;
+    clearInterval(t);
+    setTimeout(next,1500);
+  } else {
+    mark(i,'wrong');
+    play(els.wrong);
+    confetti(false);
+    if(attempt===1){
+      attempt=2;
+      els.attempt.textContent='Attempt: 2/2';
+      els.fb.className='feedback bad';
+      els.fb.textContent='Not quite. Try once more.';
+      els.opts.children[i].disabled=true;
+    } else {
+      clearInterval(t);
+      reveal();
+      play(els.correct);
+    }
+  }
+}
+function next(){
+  idx++;
+  if(idx<questions.length){
+    els.bar.style.width=((idx)/questions.length*100)+'%';
+    render();
+    startTimer();
+  } else endGame();
+}
+function endGame(){
+  clearInterval(t);
+  show(els.result);
+  els.finalPanel.style.display='block';
+  els.finalScore.textContent=score+'/'+questions.length;
+  els.finalText.textContent = score>=8 ? 'Great work about Our World!' : 'Good work. Keep practicing.';
+}
+document.getElementById('startBtn').onclick=()=>{show(els.game); render(); startTimer()};
+document.getElementById('restartBtn').onclick=()=>location.reload();
+show(els.splash);
+setTimeout(()=>show(els.intro),3000);
+</script>
+</body>
+</html>
