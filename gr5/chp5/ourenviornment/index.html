@@ -93,6 +93,14 @@ body:after{right:-8vw;bottom:-10vh;width:34vw;height:34vw;animation-direction:re
   font-weight:700;color:#4c627a
 }
 .question{font-size:clamp(18px,2.6vw,24px);line-height:1.42;margin:8px 0 14px}
+.qhtml{line-height:1.45}
+.table-wrap{overflow-x:auto;margin:12px 0}
+.qtable{
+  width:100%;min-width:620px;border-collapse:collapse;text-align:center;background:#fff;
+  border-radius:12px;overflow:hidden
+}
+.qtable th,.qtable td{border:1px solid #c9e8d4;padding:10px}
+.qtable thead tr{background:#dff5e6}
 .stimulus{display:none;margin:10px 0 14px}
 .stimulus img{
   width:100%;max-height:260px;object-fit:contain;border-radius:18px;background:#f7fbff;
@@ -224,7 +232,7 @@ body:after{right:-8vw;bottom:-10vh;width:34vw;height:34vw;animation-direction:re
           <span id="topicTag">Chapter 5: Our Environment</span>
           <span id="difficultyTag">Level 1</span>
         </div>
-        <div class="question" id="questionText"></div>
+        <div class="question qhtml" id="questionText"></div>
         <div class="stimulus" id="stimulusBox"><img id="stimulusImg" alt="Question image" /></div>
         <div class="options" id="options"></div>
         <div class="feedback" id="feedback">Choose one answer to begin.</div>
@@ -235,7 +243,6 @@ body:after{right:-8vw;bottom:-10vh;width:34vw;height:34vw;animation-direction:re
         <div class="hill two"></div>
         <div class="tree"></div>
         <div class="river"></div>
-        <div class="mini-note"></div>
       </div>
     </div>
   </div>
@@ -261,74 +268,95 @@ body:after{right:-8vw;bottom:-10vh;width:34vw;height:34vw;animation-direction:re
 <script>
 const questions = [
   {
-    q:'During a school sports period, Rohan notices that some classrooms are empty but lights and fans are still running. He also hears two classmates say, “It doesn’t matter; someone else will switch them off later.” What should Rohan do in this situation, and what does this show about his thinking?',
+    q:`During a school sports period, Rohan notices that some classrooms are empty but lights and fans are still running. He also hears two classmates say, “It doesn’t matter; someone else will switch them off later.” What should Rohan do in this situation, and what does this show about his thinking?`,
     o:['Do nothing as it is not his duty','Join his classmates and leave it for others','Switch off the appliances and explain why saving energy is a shared responsibility','Only switch off fans but leave lights on'],
     a:2,
     e:'Saving electricity is a shared responsibility, and choosing to act shows responsibility and awareness.'
   },
   {
-    q:'Look at the picture carefully: What environmental issue are the children trying to prevent?',
+    q:`Look at the picture carefully: What environmental issue are the children trying to prevent?`,
     img:'assets/picture1.png',
     o:['Noise pollution','Water pollution','Soil pollution','Air pollution'],
     a:1,
     e:'The picture question is about stopping dirty waste from entering water, which causes water pollution.'
   },
   {
-    q:'The Eco Club recorded the number of trees planted by each class and the number of students who participated. Which class should be appreciated for the best effort per student?',
+    q:`
+      <div>The Eco Club of Greenfield School recorded the number of trees planted by each class and the number of students who participated in the plantation drive.</div>
+      <div class="table-wrap">
+        <table class="qtable">
+          <thead>
+            <tr>
+              <th>Class</th>
+              <th>No. of trees planted</th>
+              <th>No. of students participated</th>
+              <th>Average trees planted per student</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>5A</td><td>12</td><td>30</td><td>0.40</td></tr>
+            <tr><td>5B</td><td>15</td><td>25</td><td>0.60</td></tr>
+            <tr><td>5C</td><td>10</td><td>20</td><td>0.50</td></tr>
+            <tr><td>5D</td><td>8</td><td>16</td><td>0.50</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>The Eco Club wants to appreciate the class that showed the greatest effort in tree plantation relative to the number of students who participated. Which class should be appreciated for its best effort?</div>
+    `,
     o:['Class 5A','Class 5B','Class 5C','Class 5D'],
     a:1,
-    e:'Class 5B has the highest average trees planted per student among the given classes.'
+    e:'Class 5B has the highest average trees planted per student, so it should be appreciated.'
   },
   {
-    q:'During a school awareness drive, Meera switches to a cloth bag and encourages her friends to do the same. What is the most appropriate environmental benefit of Meera’s action?',
+    q:`During a school awareness drive, Meera switches to a cloth bag and encourages her friends to do the same. What is the most appropriate environmental benefit of Meera’s action?`,
     o:['It increases the production of plastic bags in markets','It reduces the amount of plastic waste entering the environment','It increases water pollution in rivers and lakes','It leads to higher consumption of disposable materials'],
     a:1,
     e:'Using cloth bags reduces plastic waste, which helps protect land and water.'
   },
   {
-    q:'During Green Energy Awareness Week, students must choose an energy source that reduces pollution and lasts for a long time. Which choice is most suitable?',
+    q:`During Green Energy Awareness Week, students must choose an energy source that reduces pollution and lasts for a long time. Which choice is most suitable?`,
     o:['Coal','Diesel','Wind energy','Petrol'],
     a:2,
     e:'Wind energy is clean and renewable, so it is a better long-term choice.'
   },
   {
-    q:'A gardener plants the same seeds in two different areas. In one area the plants grow healthy and tall, but in the other they are weak and small. What is the most logical reason?',
+    q:`A gardener plants the same seeds in two different areas. In one area the plants grow healthy and tall, but in the other they are weak and small. What is the most logical reason?`,
     o:['The quality of soil affects how well plants grow','The amount of sunlight is always the same everywhere','The seeds are different types','Plants do not need soil to grow properly'],
     a:0,
     e:'Healthy soil gives plants better support and nutrients, so growth can differ.'
   },
   {
-    q:'Assertion: Trees play an important role in maintaining environmental balance. Reason: Trees release oxygen and absorb carbon dioxide from the atmosphere. What is the correct option?',
+    q:`Assertion: Trees play an important role in maintaining environmental balance. Reason: Trees release oxygen and absorb carbon dioxide from the atmosphere. What is the correct option?`,
     o:['Both Assertion and Reason are true and Reason correctly explains Assertion','Both Assertion and Reason are true but Reason does not explain Assertion','Assertion is true but Reason is false','Assertion is false but Reason is true'],
     a:0,
     e:'Trees help balance air by releasing oxygen and taking in carbon dioxide.'
   },
   {
-    q:'Students are discussing ways to protect the environment during a class activity. Which suggestion is incorrect and harmful to the environment?',
+    q:`Students are discussing ways to protect the environment during a class activity. Which suggestion is incorrect and harmful to the environment?`,
     o:['Planting more trees in school premises','Reusing old notebooks wherever possible','Disposing waste into nearby rivers for convenience','Switching off electrical appliances when not in use'],
     a:2,
     e:'Dumping waste in rivers pollutes water and harms living things.'
   },
   {
-    q:'A village receives electricity from large wind turbines nearby. Which natural resource is being used to generate this electricity?',
+    q:`A village receives electricity from large wind turbines nearby. Which natural resource is being used to generate this electricity?`,
     o:['Coal','Wind','Gold','Soil'],
     a:1,
     e:'Wind turbines use wind energy to produce electricity.'
   },
   {
-    q:'A school installs large rotating turbines in an open field to produce electricity without using conventional fuels. Which natural resource is being used in this system?',
+    q:`A school installs large rotating turbines in an open field to produce electricity without using conventional fuels. Which natural resource is being used in this system?`,
     o:['Coal','Wind','Natural gas','Soil'],
     a:1,
     e:'This is the same idea as wind power, which is renewable and clean.'
   },
   {
-    q:'A family wants to reduce pollution while travelling 2 km to a nearby market. Which option is most environment-friendly?',
+    q:`A family wants to reduce pollution while travelling 2 km to a nearby market. Which option is most environment-friendly?`,
     o:['Use a car for one person','Walk or cycle','Keep the car engine running while waiting','Burn waste before leaving'],
     a:1,
     e:'Walking or cycling avoids fuel use and reduces pollution.'
   },
   {
-    q:'A community has to choose one project to protect natural resources. Which project will help the most?',
+    q:`A community has to choose one project to protect natural resources. Which project will help the most?`,
     o:['Increase plastic usage','Cut down trees for decoration','Plant trees and harvest rainwater','Dump waste in empty land'],
     a:2,
     e:'Planting trees and harvesting rainwater supports conservation and sustainability.'
@@ -365,9 +393,7 @@ function show(el){
   ['splash','intro','game','result'].forEach(k=>els[k].classList.remove('active'));
   el.classList.add('active');
 }
-function play(a){
-  try{a.currentTime=0;a.play()}catch(e){}
-}
+function play(a){try{a.currentTime=0;a.play()}catch(e){}}
 function burst(layer,sym,count){
   for(let i=0;i<count;i++){
     const s=document.createElement('span');
@@ -379,10 +405,8 @@ function burst(layer,sym,count){
     setTimeout(()=>s.remove(),900);
   }
 }
-function confetti(ok){
-  if(ok){burst(els.stars,'★',16)}
-  else{burst(els.cross,'✖',1)}
-}
+function confetti(ok){ ok ? burst(els.stars,'★',16) : burst(els.cross,'✖',1); }
+
 function startTimer(){
   clearInterval(t);
   timer = grade<=3 ? 60 : 45;
@@ -396,6 +420,7 @@ function startTimer(){
     }
   },1000);
 }
+
 function render(){
   answered=false;
   attempt=1;
@@ -406,7 +431,7 @@ function render(){
   els.fb.className='feedback';
   els.fb.textContent='Choose one answer to begin.';
   const x=questions[idx];
-  els.q.textContent=x.q;
+  els.q.innerHTML=x.q;
   els.stimBox.style.display=x.img?'block':'none';
   if(x.img) els.stimImg.src=x.img;
   els.opts.innerHTML='';
@@ -418,13 +443,8 @@ function render(){
     els.opts.appendChild(b);
   });
 }
-function disable(){
-  [...els.opts.querySelectorAll('button')].forEach(b=>b.disabled=true);
-}
-function mark(i,cls){
-  const b=els.opts.children[i];
-  if(b) b.classList.add(cls);
-}
+function disable(){ [...els.opts.querySelectorAll('button')].forEach(b=>b.disabled=true); }
+function mark(i,cls){ const b=els.opts.children[i]; if(b) b.classList.add(cls); }
 function reveal(){
   const x=questions[idx];
   els.fb.className='feedback bad';
@@ -491,8 +511,7 @@ function endGame(){
   show(els.result);
   els.finalPanel.style.display='block';
   els.finalScore.textContent=score+'/'+questions.length;
-  const msg=score>=11?'Excellent environmental thinking!':'Good work. Keep practicing environmental responsibility.';
-  els.finalText.textContent=msg;
+  els.finalText.textContent = score>=11 ? 'Excellent environmental thinking!' : 'Good work. Keep practicing environmental responsibility.';
 }
 document.getElementById('startBtn').onclick=()=>{show(els.game); render(); startTimer()};
 document.getElementById('restartBtn').onclick=()=>location.reload();
