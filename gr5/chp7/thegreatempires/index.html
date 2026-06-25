@@ -1,341 +1,555 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Great Empires - FIXED CBQ ENGINE</title>
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<title>The Great Empires CBQ</title>
 <style>
-body{
-  margin:0;
-  font-family:Arial;
-  background: linear-gradient(135deg, #ffd6e8, #ffeaf4);
-  overflow:hidden;
-  color:#222;
+:root{
+  --bg1:#0d1117;
+  --bg2:#121826;
+  --bg3:#1b2433;
+  --card:#121820ee;
+  --ink:#e8edf5;
+  --muted:#a8b3c7;
+  --gold:#d4af37;
+  --gold2:#f1d06b;
+  --blue:#3c78d8;
+  --red:#c94b4b;
+  --green:#3ca86b;
+  --shadow:0 18px 50px rgba(0,0,0,.42);
 }
-
-/* STAR CONFETTI */
-#confetti{
+*{box-sizing:border-box}
+html,body{
+  margin:0;height:100%;
+  font-family:Arial,Helvetica,sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 15% 15%, rgba(212,175,55,.12), transparent 22%),
+    radial-gradient(circle at 85% 20%, rgba(60,120,216,.10), transparent 20%),
+    radial-gradient(circle at 50% 90%, rgba(201,75,75,.10), transparent 18%),
+    linear-gradient(180deg,var(--bg1),var(--bg2) 52%,var(--bg3));
+  overflow-x:hidden;
+}
+body::before,body::after{
+  content:"";
   position:fixed;
-  width:100%;
-  height:100%;
+  inset:auto;
   pointer-events:none;
+  z-index:0;
+  opacity:.35;
+}
+body::before{
+  top:8%;left:6%;
+  width:160px;height:160px;
+  background:radial-gradient(circle at 35% 35%,#fff 0 8%,transparent 9%),radial-gradient(circle at 50% 50%,#fff 0 17%,transparent 18%);
+  animation:float 12s linear infinite;
+}
+body::after{
+  right:7%;bottom:8%;
+  width:200px;height:200px;
+  background:radial-gradient(circle at 30% 30%,#fff 0 7%,transparent 8%),radial-gradient(circle at 72% 45%,#fff 0 5%,transparent 6%),radial-gradient(circle at 50% 72%,#fff 0 9%,transparent 10%);
+  animation:float 15s linear infinite reverse;
+}
+@keyframes float{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-14px) rotate(8deg)}}
+#app{
+  position:relative;z-index:1;
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  padding:16px;
+}
+.screen{width:min(1040px,100%);display:none}
+.screen.active{display:block}
+.card{
+  background:var(--card);
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:26px;
+  box-shadow:var(--shadow);
   overflow:hidden;
-  z-index:999;
 }
-.star{
-  position:absolute;
-  width:8px;
-  height:8px;
-  background:gold;
-  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-  animation: fall 2s linear forwards;
+.header{
+  padding:20px 20px 14px;
+  background:linear-gradient(135deg,rgba(212,175,55,.18),rgba(60,120,216,.10),rgba(201,75,75,.10));
+  border-bottom:1px solid rgba(255,255,255,.08);
 }
-@keyframes fall{
-  from{transform:translateY(-10vh) rotate(0);}
-  to{transform:translateY(110vh) rotate(360deg);}
+.brand{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.badge{
+  display:inline-block;
+  padding:8px 12px;
+  border-radius:999px;
+  background:rgba(212,175,55,.14);
+  color:var(--gold2);
+  border:1px solid rgba(212,175,55,.35);
+  font-size:13px;
+  font-weight:800;
 }
-
-/* SPLASH */
-#splash{
-  position:fixed;
-  inset:0;
-  background:white;
+.main{padding:20px}
+h1,h2,p{margin:0 0 12px}
+h1{font-size:clamp(30px,5vw,52px);line-height:1.05}
+h2{font-size:clamp(22px,3vw,30px)}
+p{color:var(--muted);line-height:1.65;font-size:18px}
+.start-grid{
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:18px;
+  align-items:center;
+}
+.hero-box{
+  background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));
+  border:1px solid rgba(212,175,55,.20);
+  border-radius:20px;
+  padding:16px;
+  min-height:300px;
   display:flex;
   align-items:center;
   justify-content:center;
-  z-index:999;
+  position:relative;
+  overflow:hidden;
 }
-#splash img{width:220px}
-
-/* GAME */
-#game{
-  display:none;
-  padding:20px;
+.hero-box::before,.hero-box::after{
+  content:"";
+  position:absolute;
+  border-radius:50%;
+  pointer-events:none;
+}
+.hero-box::before{
+  width:180px;height:180px;
+  background:rgba(212,175,55,.12);
+  top:-50px;right:-30px;
+}
+.hero-box::after{
+  width:140px;height:140px;
+  background:rgba(60,120,216,.12);
+  bottom:-35px;left:-20px;
+}
+.hero-icons{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+  width:100%;
+  position:relative;
+  z-index:1;
+}
+.icon-card{
+  background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));
+  border:1px solid rgba(212,175,55,.18);
+  border-radius:18px;
+  padding:16px;
   text-align:center;
-}
-
-.top{
+  min-height:110px;
   display:flex;
-  justify-content:space-between;
-  font-size:20px;
-  font-weight:bold;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  box-shadow:0 8px 18px rgba(0,0,0,.18);
 }
-
-.box{
-  max-width:900px;
-  margin:auto;
-  background:white;
-  padding:25px;
-  border-radius:15px;
-  box-shadow:0 0 12px rgba(0,0,0,0.1);
+.icon{font-size:30px;line-height:1}
+.icon-card span{font-size:14px;color:#d8e2f2;font-weight:800}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.btn{
+  appearance:none;border:0;border-radius:16px;
+  padding:15px 18px;font-weight:800;font-size:16px;
+  cursor:pointer;transition:.2s transform,.2s opacity,.2s filter;
+  box-shadow:0 10px 22px rgba(0,0,0,.16);
 }
-
-#q{
-  font-size:22px;
-  font-weight:bold;
-  margin-bottom:10px;
+.btn:hover{transform:translateY(-1px)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.primary{background:linear-gradient(135deg,#7e6216,#d4af37);color:#10131a}
+.ghost{background:#1b2433;color:#e9eef7;border:1px solid rgba(212,175,55,.28)}
+.danger{background:#4a2020;color:#ffdede}
+.success{background:#173323;color:#d9ffe8}
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px
 }
-
-/* TABLE */
+.trackers{display:flex;gap:10px;flex-wrap:wrap}
+.tracker{
+  background:#151c29;
+  border:1px solid rgba(212,175,55,.22);
+  border-radius:14px;
+  padding:10px 12px;
+  font-weight:800;
+  font-size:15px;
+}
+.qbox{
+  background:rgba(10,14,21,.55);
+  border-radius:20px;
+  padding:18px;
+  border:1px solid rgba(212,175,55,.18);
+  box-shadow:0 6px 20px rgba(0,0,0,.16);
+}
+.qnum{
+  font-size:13px;font-weight:900;color:var(--gold2);
+  text-transform:uppercase;letter-spacing:.09em
+}
+.question{font-size:22px;line-height:1.55;margin-top:8px}
+.options{display:grid;gap:10px;margin-top:14px}
+.opt{
+  width:100%;
+  text-align:left;
+  background:#171f2d;
+  border:1px solid rgba(212,175,55,.16);
+  border-radius:14px;
+  padding:14px 15px;
+  color:#eef3fb;
+  font-size:17px;
+  line-height:1.45;
+}
+.opt.correct{background:#173323;border-color:rgba(60,168,107,.45)}
+.opt.wrong{background:#3d1d1d;border-color:rgba(201,75,75,.45)}
+.feedback{
+  margin-top:12px;
+  padding:12px 14px;
+  border-radius:14px;
+  display:none;
+  font-size:16px;
+}
+.feedback.show{display:block}
+.feedback.good{background:#173323;color:#d9ffe8;border:1px solid rgba(60,168,107,.35)}
+.feedback.bad{background:#3d1d1d;color:#ffdede;border:1px solid rgba(201,75,75,.35)}
+.nav{
+  display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;margin-top:14px
+}
+.timer{font-weight:900;color:var(--gold2)}
+.small{font-size:14px;color:var(--muted)}
+.final-challenge,.result-box{
+  padding:18px;
+  border-radius:18px;
+  background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));
+  border:1px solid rgba(212,175,55,.16);
+}
+.logo-splash{
+  position:fixed;inset:0;
+  background:radial-gradient(circle at top, rgba(212,175,55,.18), transparent 35%),linear-gradient(180deg,#0b0f16,#121a27);
+  display:flex;align-items:center;justify-content:center;
+  z-index:9999;transition:opacity .5s ease
+}
+.logo-splash.hide{opacity:0;pointer-events:none}
+.logo-splash img{max-width:min(340px,75vw);max-height:26vh;object-fit:contain}
+.overlay{position:fixed;inset:0;pointer-events:none;z-index:60;overflow:hidden}
+.particle{position:absolute;top:-20px;will-change:transform,opacity;animation:drop linear forwards}
+.star{width:12px;height:12px;background:#f1d06b;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
+.cross{position:absolute;width:28px;height:28px;opacity:.9}
+.cross::before,.cross::after{content:"";position:absolute;left:13px;top:0;width:4px;height:28px;background:var(--red);border-radius:3px}
+.cross::before{transform:rotate(45deg)}
+.cross::after{transform:rotate(-45deg)}
+@keyframes drop{to{transform:translateY(110vh) rotate(420deg);opacity:0}}
+.table-wrap{overflow-x:auto;margin-top:12px}
 table{
-  margin:auto;
+  width:100%;
   border-collapse:collapse;
-  margin-bottom:15px;
+  background:#111722;
+  border-radius:14px;
+  overflow:hidden
 }
 th,td{
-  border:1px solid #ccc;
+  border:1px solid rgba(212,175,55,.18);
   padding:10px;
+  text-align:center;
+  font-size:14px;
+  color:#eef3fb
 }
-th{
-  background:#ffd1e6;
+th{background:#182233;color:var(--gold2)}
+.pie-wrap{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+  margin-top:12px;
 }
-
-/* OPTIONS */
-.option{
-  display:block;
-  margin:10px 0;
-  padding:14px;
-  font-size:18px;
-  border-radius:10px;
-  background:#f7f7f7;
-  cursor:pointer;
+.pie-legend{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
 }
-.option:hover{background:#ffe3ef;}
-
-.correct{background:#bff5bf !important;}
-.wrong{background:#ffbdbd !important;}
-
-#feedback{
-  margin-top:10px;
-  font-size:16px;
-  color:#333;
+.legend-item{
+  display:flex;align-items:center;gap:8px;
+  background:#151c29;border:1px solid rgba(212,175,55,.18);
+  padding:8px 10px;border-radius:999px;font-size:13px;color:#e8edf5
 }
-
-/* RESULT */
-#result{
-  display:none;
-  padding:40px;
-}
-
-button{
-  padding:12px 20px;
-  border:none;
-  border-radius:10px;
-  background:#ff4d88;
-  color:white;
+.dot{width:12px;height:12px;border-radius:50%}
+@media(max-width:760px){
+  .start-grid{grid-template-columns:1fr}
+  .question{font-size:19px}
+  p{font-size:17px}
 }
 </style>
 </head>
-
 <body>
-
-<div id="confetti"></div>
-
-<!-- SPLASH -->
-<div id="splash">
-  <img src="assets/logo.png">
+<div class="logo-splash" id="splash">
+  <img src="assets/logo.png" alt="School logo">
 </div>
+<div class="overlay" id="overlay"></div>
 
-<!-- GAME -->
-<div id="game">
+<div id="app">
+  <section class="screen active" id="introScreen">
+    <div class="card">
+      <div class="header">
+        <div class="brand">
+          <div class="badge">Chapter-based MCQ Interactive</div>
+        </div>
+      </div>
+      <div class="main start-grid">
+        <div>
+          <h1>The Great Empires</h1>
+          <p>Think like a historian and solve questions about governance, culture, administration, and legacy.</p>
+          <div class="badges">
+            <span class="badge">Grade 5</span>
+            <span class="badge">Social Studies</span>
+            <span class="badge">The Great Empires</span>
+            <span class="badge">10 Questions</span>
+          </div>
+          <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn primary" id="startBtn">Start Quiz</button>
+            <button class="btn ghost" id="previewBtn">View Instructions</button>
+          </div>
+          <p class="small" style="margin-top:14px">One retry is allowed after the first wrong answer. After the second wrong attempt, the correct answer and explanation appear.</p>
+        </div>
+        <div class="hero-box">
+          <div class="hero-icons">
+            <div class="icon-card"><div class="icon">🏛️</div><span>Empire</span></div>
+            <div class="icon-card"><div class="icon">📜</div><span>Inscriptions</span></div>
+            <div class="icon-card"><div class="icon">👑</div><span>Rulers</span></div>
+            <div class="icon-card"><div class="icon">🛡️</div><span>Governance</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<div class="top">
-  <div id="score">Score: 0</div>
-  <div id="timer">45</div>
+  <section class="screen" id="quizScreen">
+    <div class="card">
+      <div class="header">
+        <div class="topbar">
+          <div class="badge">The Great Empires</div>
+          <div class="trackers">
+            <div class="tracker" id="scoreTracker">Score: 0</div>
+            <div class="tracker timer" id="timerTracker">45s</div>
+          </div>
+        </div>
+      </div>
+      <div class="main">
+        <div class="qbox">
+          <div class="qnum" id="qnum">Question 1 of 10</div>
+          <div class="question" id="questionText"></div>
+          <div class="grid" id="extraArea"></div>
+          <div class="options" id="options"></div>
+          <div class="feedback" id="feedback"></div>
+          <div class="nav">
+            <div class="small" id="attemptInfo">Attempt 1 of 2</div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <button class="btn danger" id="skipBtn">Skip</button>
+              <button class="btn success" id="nextBtn" disabled>Next</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" id="finalScreen">
+    <div class="card">
+      <div class="header">
+        <div class="badge">Final Challenge</div>
+      </div>
+      <div class="main">
+        <div class="final-challenge">
+          <h2>Final Challenge</h2>
+          <p id="finalChallengeText"></p>
+          <button class="btn primary" id="finalBtn">Reveal Result</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" id="resultScreen">
+    <div class="card">
+      <div class="header">
+        <div class="badge">Result Screen</div>
+      </div>
+      <div class="main result-box">
+        <h2>Your Score</h2>
+        <p id="resultText"></p>
+        <p class="small" id="resultNote"></p>
+        <button class="btn primary" id="restartBtn">Play Again</button>
+      </div>
+    </div>
+  </section>
 </div>
-
-<div class="box">
-  <div id="q"></div>
-  <div id="table"></div>
-  <div id="options"></div>
-  <div id="feedback"></div>
-</div>
-
-</div>
-
-<!-- RESULT -->
-<div id="result">
-  <h2>👑 Excellent Historian!</h2>
-  <p id="final"></p>
-  <button onclick="location.reload()">Play Again</button>
-</div>
-
-<!-- AUDIO -->
-<audio id="correctSound" src="assets/correct.mp3"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3"></audio>
-<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
 
 <script>
-
-setTimeout(()=>{
-  document.getElementById("splash").style.display="none";
-  document.getElementById("game").style.display="block";
-  loadQ();
-},5000);
-
-/* CONFETTI */
-function starBurst(){
-for(let i=0;i<20;i++){
-let s=document.createElement("div");
-s.className="star";
-s.style.left=Math.random()*100+"%";
-s.style.top="-10px";
-s.style.animationDuration=(1+Math.random())+"s";
-document.getElementById("confetti").appendChild(s);
-
-setTimeout(()=>s.remove(),2000);
-}
-}
-
-/* QUESTIONS */
-let questions=[
-{
-type:"mcq",
-q:"A ruler needs structured governance system. Which text helps most?",
-o:["Stupa","Arthashastra","Chaitya","Edict"],
-a:1,
-e:"Arthashastra explains administration."
-},
-{
-type:"table",
-q:"Study the table and answer:",
-table:{
-h:["Empire","Contribution"],
-r:[
-["Mauryan","Ashokan Pillars"],
-["Gupta","Math & Science"],
-["Mughal","Taj Mahal"],
-["Gupta","Land Revenue System"]
-]
-},
-o:["Mauryan","Gupta","Mughal","Satavahana"],
-a:1,
-e:"Gupta entry is mismatched."
-},
-{
-type:"mcq",
-q:"Which empire is called Golden Age?",
-o:["Mauryan","Gupta","Mughal","Nanda"],
-a:1,
-e:"Gupta period was highly developed."
-},
-{
-type:"mcq",
-q:"Which is NOT part of Mauryan Empire?",
-o:["Ashokan Pillars","Chanakya","Arthashastra","Taj Mahal"],
-a:3,
-e:"Taj Mahal belongs to Mughal Empire."
-},
-{
-type:"mcq",
-q:"Which promotes peaceful society?",
-o:["Tolerance","War","Conflict","Tax division"],
-a:0,
-e:"Tolerance builds harmony."
-}
+const quizData = [
+{q:'A group of students is analyzing why ancient empires became weaker as they expanded. Their teacher gives them a table showing how governance changes with distance from the capital. They notice that regions farther away show slower communication, lower tax collection, and weaker law enforcement compared to nearby regions. What is the BEST conclusion from this data?', o:['Distance improves governance efficiency','Governance becomes stronger with distance','Distance makes administration weaker due to delay and poor control','Tax collection increases in far regions'], a:2, e:'Greater distance from the capital usually made administration slower and weaker.'},
+{q:'During a class discussion, the teacher explains that the Mauryan Empire had a strong central government. However, due to the large size of the empire, communication between the capital and distant provinces took several days. Sometimes local officers made decisions on their own without waiting for the king’s instructions. What was the MAIN challenge faced by the Mauryan Empire?', o:['Lack of roads for trade','Delay in communication affecting control over provinces','Shortage of coins in the empire','No military system'], a:1, e:'The main problem was slow communication across a large territory.'},
+{q:'After the Kalinga war, Ashoka deeply changed his approach to ruling. Instead of focusing on wars and expansion, he promoted peace, moral values, and welfare of people. He also used inscriptions on rocks and pillars to spread messages across the empire. What was the MOST important impact of this change?', o:['Better communication and peaceful governance','Increase in wars','Weakening of administration','End of the empire immediately'], a:0, e:'Ashoka used inscriptions to communicate and govern more peacefully.'},
+{q:'A Gupta ruler is reviewing suggestions from his ministers. One group advises expanding the empire to gain more land and resources, while another group suggests focusing on improving education, trade systems, and administration within the existing empire. The ruler is worried that expansion may weaken control over distant regions due to communication delays. What is the MOST suitable decision for long-term stability?', o:['Expand immediately to increase land','Stop all administration work','Strengthen internal systems before expansion','Focus only on war and military power'], a:2, e:'Strong internal systems support long-term stability.'},
+{q:'A research study shows how the Gupta Empire used its resources across different fields. The data highlights that a major portion was spent on science and mathematics, followed by arts and literature. Military spending is shown as the smallest portion, while administration and trade fall in the middle range. What does this distribution MOST clearly suggest?', o:['Gupta Empire focused mainly on military conquest','Gupta Empire had no trade system','Gupta Empire ignored education completely','Gupta Empire valued knowledge and intellectual development more than warfare'], a:3, e:'The graph shows a strong focus on learning and cultural growth.'},
+{q:'A historian explains a sequence of events in an empire: the ruler becomes weak, officials start taking unfair decisions, taxes increase unfairly, farmers protest, production decreases, and finally the army becomes weak, allowing invasions. Students are asked to identify the root cause of this entire chain. What is the MOST important starting factor?', o:['Weak leadership and corruption','Farmer protests','Foreign invasion','Army weakness'], a:0, e:'Weak leadership often starts the chain of decline.'},
+{q:'During the Mughal period, rulers encouraged a blend of Persian, Central Asian, and Indian traditions. This influence is seen in language development, architecture, food habits, and administrative systems. The empire became culturally diverse due to these interactions. What is the MAIN benefit of such cultural integration?', o:['It creates confusion in society','It reduces population growth','It stops trade activities','It increases cultural richness and unity among diverse groups'], a:3, e:'Cultural blending can create richness and social unity.'},
+{q:'A large empire is facing difficulty in controlling faraway provinces. Messages from the capital take many days to reach remote regions. Because of this delay, local officers often make decisions on their own, sometimes ignoring central rules. What is the BEST solution to improve control without increasing military force?', o:['Remove all local officers','Improve communication systems and empower local governance','Stop ruling distant regions','Increase punishment only'], a:1, e:'Better communication and local governance can improve administration.'},
+{q:'A large empire is facing difficulty in managing its distant provinces. Communication from the capital takes many days, and by the time orders arrive, local conditions have already changed. Some ministers suggest increasing military control, while others suggest improving communication systems and giving more decision-making power to local governors. The emperor is trying to choose a solution that improves efficiency without increasing conflict or cost. What is the MOST effective long-term solution?', o:['Increase army presence in all regions','Stop communication with far regions','Improve communication systems and strengthen local administration','Divide the empire into separate kingdoms'], a:2, e:'Efficient governance needs communication and local administration.'},
+{q:'Different empires in Indian history left different kinds of legacies. Some are remembered for military strength, some for cultural achievements, and others for advancements in knowledge and governance systems. Even after these empires declined, many of their systems continued to influence later societies and modern governance structures. Students are asked to analyze what truly makes an empire’s influence long-lasting. What is the MOST appropriate conclusion?', o:['Only military power creates lasting impact','Empires leave no influence after they fall','Cultural, administrative, and knowledge systems create long-term impact','Only trade systems matter in history'], a:2, e:'Lasting influence comes from ideas, systems, and culture.'}
 ];
 
-let i=0,score=0,time=45,attempt=0,lock=false,interval;
+const perQuestion = 45;
+let idx = 0, score = 0, attempts = 0, answered = false, timer = perQuestion, interval = null;
+const $ = s => document.querySelector(s);
+const screens = [...document.querySelectorAll('.screen')];
 
-/* TIMER FIXED */
-function timer(){
-clearInterval(interval);
-time=45;
-document.getElementById("timer").innerText=time;
+function show(id){screens.forEach(s=>s.classList.remove('active'));$(id).classList.add('active')}
 
-interval=setInterval(()=>{
-time--;
-document.getElementById("timer").innerText=time;
-if(time==0) next();
-},1000);
+function render(){
+  answered=false;attempts=0;timer=perQuestion;
+  $('#timerTracker').textContent=`${timer}s`;
+  $('#scoreTracker').textContent=`Score: ${score}`;
+  $('#qnum').textContent=`Question ${idx+1} of ${quizData.length}`;
+  const d=quizData[idx];
+  $('#questionText').textContent=d.q;
+  $('#options').innerHTML='';
+  $('#extraArea').innerHTML='';
+  $('#feedback').className='feedback';
+  $('#feedback').textContent='';
+  $('#attemptInfo').textContent='Attempt 1 of 2';
+  $('#nextBtn').disabled=true;
+  $('#nextBtn').textContent=idx===quizData.length-1?'Finish':'Next';
+
+  if(idx===0){
+    const wrap=document.createElement('div');
+    wrap.className='table-wrap';
+    wrap.innerHTML=`<table>
+      <tr>
+        <th>Region</th><th>Distance</th><th>Communication</th><th>Tax Efficiency</th><th>Law & Order</th>
+      </tr>
+      <tr><td>A</td><td>Near</td><td>Fast</td><td>High</td><td>Strong</td></tr>
+      <tr><td>B</td><td>Medium</td><td>Moderate</td><td>Good</td><td>Moderate</td></tr>
+      <tr><td>C</td><td>Far</td><td>Slow</td><td>Low</td><td>Weak</td></tr>
+      <tr><td>D</td><td>Very Far</td><td>Very Slow</td><td>Very Low</td><td>Very Weak</td></tr>
+    </table>`;
+    $('#extraArea').appendChild(wrap);
+  }
+
+  if(idx===4){
+    const wrap=document.createElement('div');
+    wrap.className='pie-wrap';
+    wrap.innerHTML=`
+      <div class="small" style="color:#f1d06b;font-weight:800">Empire Spending Pattern</div>
+      <div style="width:100%;display:flex;justify-content:center">
+        <div style="width:min(320px,100%);aspect-ratio:1;border-radius:50%;background:conic-gradient(#4a7bd1 0 25%, #d4af37 25% 45%, #c94b4b 45% 55%, #3ca86b 55% 75%, #7d5ba6 75% 100%);border:1px solid rgba(212,175,55,.18);box-shadow:0 10px 24px rgba(0,0,0,.26)"></div>
+      </div>
+      <div class="pie-legend">
+        <div class="legend-item"><span class="dot" style="background:#4a7bd1"></span>Science & Math</div>
+        <div class="legend-item"><span class="dot" style="background:#d4af37"></span>Arts & Literature</div>
+        <div class="legend-item"><span class="dot" style="background:#c94b4b"></span>Military</div>
+        <div class="legend-item"><span class="dot" style="background:#3ca86b"></span>Administration</div>
+        <div class="legend-item"><span class="dot" style="background:#7d5ba6"></span>Trade</div>
+      </div>`;
+    $('#extraArea').appendChild(wrap);
+  }
+
+  d.o.forEach((o,i)=>{
+    const b=document.createElement('button');
+    b.className='opt';
+    b.textContent=`${String.fromCharCode(65+i)}. ${o}`;
+    b.onclick=()=>select(i,b);
+    $('#options').appendChild(b);
+  });
+
+  clearInterval(interval);
+  interval=setInterval(()=>{
+    if(answered) return;
+    timer--;
+    $('#timerTracker').textContent=`${timer}s`;
+    if(timer<=0) timeUp();
+  },1000);
 }
 
-/* LOAD */
-function loadQ(){
-lock=false;
-attempt=0;
-timer();
-
-let q=questions[i];
-
-document.getElementById("q").innerText=q.q;
-document.getElementById("options").innerHTML="";
-document.getElementById("feedback").innerText="";
-document.getElementById("table").innerHTML="";
-
-/* TABLE FIXED */
-if(q.type==="table"){
-let html="<table><tr>";
-q.table.h.forEach(h=>html+=`<th>${h}</th>`);
-html+="</tr>";
-
-q.table.r.forEach(r=>{
-html+="<tr>";
-r.forEach(c=>html+=`<td>${c}</td>`);
-html+="</tr>";
-});
-
-html+="</table>";
-document.getElementById("table").innerHTML=html;
+function chooseFeedback(type,text){
+  const f=$('#feedback');
+  f.className=`feedback show ${type}`;
+  f.textContent=text;
 }
 
-/* OPTIONS */
-q.o.forEach((op,idx)=>{
-let d=document.createElement("div");
-d.className="option";
-d.innerText=op;
-d.onclick=()=>check(idx,d);
-document.getElementById("options").appendChild(d);
-});
+function confetti(type){
+  const overlay=$('#overlay');
+  for(let i=0;i<18;i++){
+    const el=document.createElement('div');
+    el.className='particle '+(type==='good'?'star':'cross');
+    el.style.left=Math.random()*100+'vw';
+    el.style.animationDuration=(1.2+Math.random()*1.2)+'s';
+    el.style.transform=`translateY(0) rotate(${Math.random()*180}deg)`;
+    overlay.appendChild(el);
+    setTimeout(()=>el.remove(),2300);
+  }
 }
 
-/* CHECK */
-function check(ans,el){
-if(lock) return;
-
-let q=questions[i];
-
-if(ans===q.a){
-el.classList.add("correct");
-document.getElementById("correctSound").play();
-starBurst(); // ⭐ CONFETTI FIX
-score++;
-document.getElementById("score").innerText="Score: "+score;
-lock=true;
-setTimeout(next,900);
+function select(i,btn){
+  if(answered) return;
+  const d=quizData[idx];
+  attempts++;
+  if(i===d.a){
+    answered=true;score++;
+    $('#scoreTracker').textContent=`Score: ${score}`;
+    btn.classList.add('correct');
+    chooseFeedback('good','Correct! ' + d.e);
+    confetti('good');
+    $('#nextBtn').disabled=false;
+    $('#attemptInfo').textContent='Correct';
+    try{new Audio('assets/correct.mp3').play()}catch(e){}
+  } else {
+    btn.classList.add('wrong');
+    confetti('bad');
+    try{new Audio('assets/wrong.mp3').play()}catch(e){}
+    if(attempts<2){
+      chooseFeedback('bad','Try once more.');
+      $('#attemptInfo').textContent='Retry available';
+      document.querySelectorAll('.opt').forEach(b=>{if(!b.classList.contains('wrong')) b.disabled=false});
+      btn.disabled=true;
+    } else {
+      answered=true;
+      document.querySelectorAll('.opt').forEach((b,ix)=>{b.disabled=true; if(ix===d.a) b.classList.add('correct')});
+      chooseFeedback('bad','Correct answer: ' + String.fromCharCode(65+d.a) + '. ' + d.o[d.a] + ' — ' + d.e);
+      $('#nextBtn').disabled=false;
+      $('#attemptInfo').textContent='No retries left';
+    }
+  }
 }
-else{
-attempt++;
-el.classList.add("wrong");
-document.getElementById("wrongSound").play();
 
-if(attempt==2){
-document.getElementById("feedback").innerText=
-"Correct Answer: "+q.o[q.a]+" → "+q.e;
-lock=true;
-setTimeout(next,2000);
-}
-}
+function timeUp(){
+  if(answered) return;
+  answered=true;
+  document.querySelectorAll('.opt').forEach((b,ix)=>{b.disabled=true; if(ix===quizData[idx].a) b.classList.add('correct')});
+  chooseFeedback('bad','Time is up. Correct answer: ' + String.fromCharCode(65+quizData[idx].a) + '. ' + quizData[idx].o[quizData[idx].a] + ' — ' + quizData[idx].e);
+  $('#nextBtn').disabled=false;
+  $('#attemptInfo').textContent='Time up';
 }
 
-/* NEXT */
 function next(){
-i++;
-if(i<questions.length){
-loadQ();
-}else end();
+  if(idx<quizData.length-1){
+    idx++;
+    render();
+  } else {
+    show('#finalScreen');
+    $('#finalChallengeText').textContent='You completed all 10 questions on The Great Empires.';
+  }
 }
 
-/* END FIXED */
-function end(){
-clearInterval(interval);
-document.getElementById("game").style.display="none";
-document.getElementById("result").style.display="block";
-document.getElementById("clapSound").play();
-document.getElementById("final").innerText="Final Score: "+score+"/"+questions.length;
-}
-
+$('#startBtn').onclick=()=>{show('#quizScreen'); render()};
+$('#previewBtn').onclick=()=>alert('Read each question carefully. One retry is allowed after the first wrong answer.');
+$('#skipBtn').onclick=()=>{answered=true; $('#nextBtn').disabled=false; chooseFeedback('bad','Skipped. The correct answer is ' + String.fromCharCode(65+quizData[idx].a) + '. ' + quizData[idx].o[quizData[idx].a] + ' — ' + quizData[idx].e);};
+$('#nextBtn').onclick=()=>next();
+$('#finalBtn').onclick=()=>{
+  show('#resultScreen');
+  $('#resultText').textContent=`You scored ${score} out of ${quizData.length}.`;
+  $('#resultNote').textContent='Governance, administration, cultural blending, and legacy were tested.';
+  try{new Audio('assets/freesound_community-claps-44774.mp3').play()}catch(e){}
+};
+$('#restartBtn').onclick=()=>{
+  idx=0; score=0;
+  $('#nextBtn').textContent='Next';
+  show('#introScreen');
+  $('#scoreTracker').textContent='Score: 0';
+};
+setTimeout(()=>$('#splash').classList.add('hide'),5000);
 </script>
-
 </body>
 </html>
