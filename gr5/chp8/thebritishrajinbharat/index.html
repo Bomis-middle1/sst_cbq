@@ -1,358 +1,590 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>CBQ Engine v4 - Rebuilt</title>
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<title>The British Raj in India CBQ</title>
 <style>
-body{
-  margin:0;
-  font-family:Arial;
-  background: linear-gradient(135deg, #d9b3ff, #f3e6ff);
-  overflow:hidden;
-  color:#111;
+:root{
+  --bg1:#2a1c16;
+  --bg2:#4a3427;
+  --bg3:#6a4a36;
+  --card:#2f231ded;
+  --ink:#f4eadf;
+  --muted:#d6c4b5;
+  --gold:#d7b06b;
+  --gold2:#f2d39b;
+  --brown:#9e6b43;
+  --red:#c55b4f;
+  --green:#51a66f;
+  --shadow:0 18px 48px rgba(0,0,0,.38);
 }
-
-/* CONFETTI */
-#confetti{
+*{box-sizing:border-box}
+html,body{
+  margin:0;height:100%;
+  font-family:Arial,Helvetica,sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 15% 15%, rgba(255,220,170,.12), transparent 20%),
+    radial-gradient(circle at 85% 20%, rgba(255,255,255,.06), transparent 18%),
+    linear-gradient(180deg,var(--bg1),var(--bg2) 52%,var(--bg3));
+  overflow-x:hidden;
+}
+body::before,body::after{
+  content:"";
   position:fixed;
-  width:100%;
-  height:100%;
+  inset:auto;
   pointer-events:none;
+  z-index:0;
+  opacity:.34;
+}
+body::before{
+  top:8%;left:6%;
+  width:150px;height:150px;
+  background:radial-gradient(circle at 35% 35%,#fff 0 8%,transparent 9%),radial-gradient(circle at 50% 50%,#fff 0 17%,transparent 18%);
+  animation:float 12s linear infinite;
+}
+body::after{
+  right:7%;bottom:8%;
+  width:200px;height:200px;
+  background:radial-gradient(circle at 30% 30%,#fff 0 7%,transparent 8%),radial-gradient(circle at 72% 45%,#fff 0 5%,transparent 6%),radial-gradient(circle at 50% 72%,#fff 0 9%,transparent 10%);
+  animation:float 15s linear infinite reverse;
+}
+@keyframes float{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-14px) rotate(8deg)}}
+#app{
+  position:relative;z-index:1;
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  padding:16px;
+}
+.screen{width:min(1040px,100%);display:none}
+.screen.active{display:block}
+.card{
+  background:var(--card);
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:26px;
+  box-shadow:var(--shadow);
   overflow:hidden;
-  z-index:999;
 }
-
-.piece{
-  position:absolute;
-  width:10px;
-  height:10px;
-  animation: fall 2.2s linear forwards;
+.header{
+  padding:20px 20px 14px;
+  background:linear-gradient(135deg,rgba(215,176,107,.18),rgba(158,107,67,.10),rgba(255,255,255,.05));
+  border-bottom:1px solid rgba(255,255,255,.08);
 }
-
-.star{
-  background:gold;
-  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+.brand{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.badge{
+  display:inline-block;
+  padding:8px 12px;
+  border-radius:999px;
+  background:rgba(215,176,107,.14);
+  color:var(--gold2);
+  border:1px solid rgba(215,176,107,.35);
+  font-size:13px;
+  font-weight:800;
 }
-
-.circle{
-  background:#ff66cc;
-  border-radius:50%;
+.main{padding:20px}
+h1,h2,p{margin:0 0 12px}
+h1{font-size:clamp(30px,5vw,52px);line-height:1.05}
+h2{font-size:clamp(22px,3vw,30px)}
+p{color:var(--muted);line-height:1.65;font-size:18px}
+.start-grid{
+  display:grid;
+  grid-template-columns:1.08fr .92fr;
+  gap:18px;
+  align-items:center;
 }
-
-.spark{
-  background:#66ffff;
-  transform:rotate(45deg);
-}
-
-@keyframes fall{
-  from{transform:translateY(-10vh);}
-  to{transform:translateY(110vh);}
-}
-
-/* SPLASH */
-#splash{
-  position:fixed;
-  inset:0;
-  background:white;
+.hero-box{
+  background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));
+  border:1px solid rgba(215,176,107,.20);
+  border-radius:20px;
+  padding:16px;
+  min-height:300px;
   display:flex;
   align-items:center;
   justify-content:center;
-  z-index:999;
+  position:relative;
+  overflow:hidden;
 }
-#splash img{width:220px}
-
-/* GAME */
-#game{
-  display:none;
-  padding:20px;
+.hero-box::before,.hero-box::after{
+  content:"";
+  position:absolute;
+  border-radius:50%;
+  pointer-events:none;
+}
+.hero-box::before{
+  width:180px;height:180px;
+  background:rgba(215,176,107,.12);
+  top:-50px;right:-30px;
+}
+.hero-box::after{
+  width:140px;height:140px;
+  background:rgba(158,107,67,.12);
+  bottom:-35px;left:-20px;
+}
+.hero-icons{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+  width:100%;
+  position:relative;
+  z-index:1;
+}
+.icon-card{
+  background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));
+  border:1px solid rgba(215,176,107,.18);
+  border-radius:18px;
+  padding:16px;
   text-align:center;
-}
-
-.top{
+  min-height:110px;
   display:flex;
-  justify-content:space-between;
-  font-size:20px;
-  font-weight:bold;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  box-shadow:0 8px 18px rgba(0,0,0,.18);
 }
-
-.box{
-  max-width:900px;
-  margin:auto;
-  background:white;
-  padding:25px;
-  border-radius:15px;
-  box-shadow:0 0 15px rgba(0,0,0,0.15);
+.icon{font-size:30px;line-height:1}
+.icon-card span{font-size:14px;color:#f0dfcf;font-weight:800}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.btn{
+  appearance:none;border:0;border-radius:16px;
+  padding:15px 18px;font-weight:800;font-size:16px;
+  cursor:pointer;transition:.2s transform,.2s opacity,.2s filter;
+  box-shadow:0 10px 22px rgba(0,0,0,.16);
 }
-
-#q{
-  font-size:22px;
-  font-weight:bold;
-  margin-bottom:10px;
+.btn:hover{transform:translateY(-1px)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.primary{background:linear-gradient(135deg,#8b5a2b,#d7b06b);color:#1a120d}
+.ghost{background:#3b2b21;color:#f5eadf;border:1px solid rgba(215,176,107,.28)}
+.danger{background:#4d2620;color:#ffdede}
+.success{background:#23402b;color:#d9ffe8}
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px
 }
-
+.trackers{display:flex;gap:10px;flex-wrap:wrap}
+.tracker{
+  background:#30241d;
+  border:1px solid rgba(215,176,107,.22);
+  border-radius:14px;
+  padding:10px 12px;
+  font-weight:800;
+  font-size:15px;
+}
+.qbox{
+  background:rgba(18,12,9,.55);
+  border-radius:20px;
+  padding:18px;
+  border:1px solid rgba(215,176,107,.18);
+  box-shadow:0 6px 20px rgba(0,0,0,.16);
+}
+.qnum{
+  font-size:13px;font-weight:900;color:var(--gold2);
+  text-transform:uppercase;letter-spacing:.09em
+}
+.question{font-size:22px;line-height:1.55;margin-top:8px}
+.options{display:grid;gap:10px;margin-top:14px}
+.opt{
+  width:100%;
+  text-align:left;
+  background:#3a2c23;
+  border:1px solid rgba(215,176,107,.16);
+  border-radius:14px;
+  padding:14px 15px;
+  color:#f4eadf;
+  font-size:17px;
+  line-height:1.45;
+}
+.opt.correct{background:#23402b;border-color:rgba(81,166,111,.45)}
+.opt.wrong{background:#4d2620;border-color:rgba(197,91,79,.45)}
+.feedback{
+  margin-top:12px;
+  padding:12px 14px;
+  border-radius:14px;
+  display:none;
+  font-size:16px;
+}
+.feedback.show{display:block}
+.feedback.good{background:#23402b;color:#d9ffe8;border:1px solid rgba(81,166,111,.35)}
+.feedback.bad{background:#4d2620;color:#ffdede;border:1px solid rgba(197,91,79,.35)}
+.nav{
+  display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;margin-top:14px
+}
+.timer{font-weight:900;color:var(--gold2)}
+.small{font-size:14px;color:var(--muted)}
+.final-challenge,.result-box{
+  padding:18px;
+  border-radius:18px;
+  background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));
+  border:1px solid rgba(215,176,107,.16);
+}
+.logo-splash{
+  position:fixed;inset:0;
+  background:radial-gradient(circle at top, rgba(215,176,107,.18), transparent 35%),linear-gradient(180deg,#241713,#34231c);
+  display:flex;align-items:center;justify-content:center;
+  z-index:9999;transition:opacity .5s ease
+}
+.logo-splash.hide{opacity:0;pointer-events:none}
+.logo-splash img{max-width:min(340px,75vw);max-height:26vh;object-fit:contain}
+.overlay{position:fixed;inset:0;pointer-events:none;z-index:60;overflow:hidden}
+.particle{position:absolute;top:-20px;will-change:transform,opacity;animation:drop linear forwards}
+.star{width:12px;height:12px;background:#f2d39b;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
+.cross{position:absolute;width:28px;height:28px;opacity:.9}
+.cross::before,.cross::after{content:"";position:absolute;left:13px;top:0;width:4px;height:28px;background:var(--red);border-radius:3px}
+.cross::before{transform:rotate(45deg)}
+.cross::after{transform:rotate(-45deg)}
+@keyframes drop{to{transform:translateY(110vh) rotate(420deg);opacity:0}}
+.table-wrap{overflow-x:auto;margin-top:12px}
 table{
-  margin:auto;
+  width:100%;
   border-collapse:collapse;
-  margin-bottom:10px;
+  background:#1d140f;
+  border-radius:14px;
+  overflow:hidden
 }
 th,td{
-  border:1px solid #ccc;
-  padding:8px;
+  border:1px solid rgba(215,176,107,.18);
+  padding:10px;
+  text-align:center;
+  font-size:14px;
+  color:#f4eadf
 }
-th{
-  background:#e9c9ff;
-}
-
-/* OPTIONS */
-.option{
-  display:block;
-  margin:10px 0;
+th{background:#2d2018;color:var(--gold2)}
+.bar-wrap{
+  margin-top:12px;
+  background:#1d140f;
+  border:1px solid rgba(215,176,107,.18);
+  border-radius:16px;
   padding:14px;
-  font-size:18px;
-  border-radius:10px;
-  background:#f5f5f5;
-  cursor:pointer;
 }
-.option:hover{background:#eee1ff;}
-
-.correct{background:#b8f7c6 !important;}
-.wrong{background:#ffb3b3 !important;}
-
-/* RESULT */
-#result{
-  display:none;
-  padding:40px;
+.bar-chart{
+  display:flex;
+  gap:18px;
+  align-items:flex-end;
+  justify-content:space-around;
+  min-height:240px;
 }
-
-button{
-  padding:12px 18px;
-  border:none;
-  border-radius:10px;
-  background:#7a3cff;
-  color:white;
-  font-size:16px;
+.bar-col{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  width:20%;
+}
+.bar{
+  width:100%;
+  max-width:110px;
+  min-height:26px;
+  border-radius:14px 14px 6px 6px;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  color:#fff;
+  font-weight:800;
+  padding-bottom:8px;
+  box-shadow:0 10px 18px rgba(0,0,0,.24);
+}
+.bar1{height:60px;background:linear-gradient(180deg,#d7b06b,#8b5a2b)}
+.bar2{height:110px;background:linear-gradient(180deg,#cfa06f,#6e4730)}
+.bar3{height:160px;background:linear-gradient(180deg,#b57b4f,#4d3126)}
+.bar4{height:210px;background:linear-gradient(180deg,#8f5a36,#2f1c16)}
+.bar-label{font-size:13px;color:#f2e5d8;text-align:center}
+@media(max-width:760px){
+  .start-grid{grid-template-columns:1fr}
+  .question{font-size:19px}
+  p{font-size:17px}
+  .bar-chart{gap:10px}
 }
 </style>
 </head>
-
 <body>
-
-<div id="confetti"></div>
-
-<!-- SPLASH -->
-<div id="splash">
-  <img src="assets/logo.png">
+<div class="logo-splash" id="splash">
+  <img src="assets/logo.png" alt="School logo">
 </div>
+<div class="overlay" id="overlay"></div>
 
-<!-- GAME -->
-<div id="game">
+<div id="app">
+  <section class="screen active" id="introScreen">
+    <div class="card">
+      <div class="header">
+        <div class="brand">
+          <div class="badge">Chapter-based MCQ Interactive</div>
+        </div>
+      </div>
+      <div class="main start-grid">
+        <div>
+          <h1>The British Raj in India</h1>
+          <p>Explore how British rule expanded, how Indians resisted, and how national awakening grew over time.</p>
+          <div class="badges">
+            <span class="badge">Grade 5</span>
+            <span class="badge">Social Studies</span>
+            <span class="badge">The British Raj in India</span>
+            <span class="badge">11 Questions</span>
+          </div>
+          <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn primary" id="startBtn">Start Quiz</button>
+            <button class="btn ghost" id="previewBtn">View Instructions</button>
+          </div>
+          <p class="small" style="margin-top:14px">One retry is allowed after the first wrong answer. After the second wrong attempt, the correct answer and explanation appear.</p>
+        </div>
+        <div class="hero-box">
+          <div class="hero-icons">
+            <div class="icon-card"><div class="icon">🏰</div><span>British Rule</span></div>
+            <div class="icon-card"><div class="icon">⚓</div><span>Trade Ports</span></div>
+            <div class="icon-card"><div class="icon">🚩</div><span>Protest</span></div>
+            <div class="icon-card"><div class="icon">🧵</div><span>Swadeshi</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<div class="top">
-  <div id="score">Score: 0</div>
-  <div id="timer">45</div>
+  <section class="screen" id="quizScreen">
+    <div class="card">
+      <div class="header">
+        <div class="topbar">
+          <div class="badge">The British Raj in India</div>
+          <div class="trackers">
+            <div class="tracker" id="scoreTracker">Score: 0</div>
+            <div class="tracker timer" id="timerTracker">45s</div>
+          </div>
+        </div>
+      </div>
+      <div class="main">
+        <div class="qbox">
+          <div class="qnum" id="qnum">Question 1 of 11</div>
+          <div class="question" id="questionText"></div>
+          <div class="grid" id="extraArea"></div>
+          <div class="options" id="options"></div>
+          <div class="feedback" id="feedback"></div>
+          <div class="nav">
+            <div class="small" id="attemptInfo">Attempt 1 of 2</div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <button class="btn danger" id="skipBtn">Skip</button>
+              <button class="btn success" id="nextBtn" disabled>Next</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" id="finalScreen">
+    <div class="card">
+      <div class="header">
+        <div class="badge">Final Challenge</div>
+      </div>
+      <div class="main">
+        <div class="final-challenge">
+          <h2>Final Challenge</h2>
+          <p id="finalChallengeText"></p>
+          <button class="btn primary" id="finalBtn">Reveal Result</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" id="resultScreen">
+    <div class="card">
+      <div class="header">
+        <div class="badge">Result Screen</div>
+      </div>
+      <div class="main result-box">
+        <h2>Your Score</h2>
+        <p id="resultText"></p>
+        <p class="small" id="resultNote"></p>
+        <button class="btn primary" id="restartBtn">Play Again</button>
+      </div>
+    </div>
+  </section>
 </div>
-
-<div class="box">
-  <div id="q"></div>
-  <div id="table"></div>
-  <div id="options"></div>
-  <div id="feedback"></div>
-</div>
-
-</div>
-
-<!-- RESULT -->
-<div id="result">
-  <h2>🏆 Great Work!</h2>
-  <p id="final"></p>
-  <button onclick="location.reload()">Play Again</button>
-</div>
-
-<!-- AUDIO -->
-<audio id="correctSound" src="assets/correct.mp3"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3"></audio>
-<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
 
 <script>
-
-/* ---------------- ENGINE STATE ---------------- */
-let i=0,score=0,time=45,attempt=0,lock=false,interval=null;
-
-/* ---------------- CONFETTI ---------------- */
-function confetti(){
-for(let x=0;x<25;x++){
-let p=document.createElement("div");
-p.className="piece";
-
-let r=Math.random();
-if(r<0.33)p.classList.add("star");
-else if(r<0.66)p.classList.add("circle");
-else p.classList.add("spark");
-
-p.style.left=Math.random()*100+"%";
-p.style.top="-10px";
-
-document.getElementById("confetti").appendChild(p);
-setTimeout(()=>p.remove(),2200);
-}
-}
-
-/* ---------------- QUESTIONS ---------------- */
-let questions=[
-{
-q:"Which text helps in governance systems?",
-o:["Stupa","Arthashastra","Chaitya","Edict"],
-a:1,
-e:"Arthashastra explains administration."
-},
-{
-type:"table",
-q:"Study the table and answer:",
-table:{
-h:["Empire","Contribution"],
-r:[
-["Mauryan","Ashokan Pillars"],
-["Gupta","Math & Science"],
-["Mughal","Taj Mahal"],
-["Gupta","Land Revenue"]
-]
-},
-o:["Mauryan","Gupta","Mughal","Satavahana"],
-a:1,
-e:"Gupta entry is incorrect in table."
-},
-{
-q:"Which emperor promoted peace?",
-o:["Babur","Ashoka","Akbar","Shivaji"],
-a:1,
-e:"Ashoka spread Dhamma."
-},
-{
-q:"Which is NOT Mauryan?",
-o:["Ashokan Pillars","Chanakya","Arthashastra","Taj Mahal"],
-a:3,
-e:"Taj Mahal is Mughal."
-},
-{
-q:"What does Swadeshi promote?",
-o:["Foreign goods","Local goods","Taxes","War"],
-a:1,
-e:"Supports local production."
-}
+const quizData = [
+{q:'In the early 1600s, European traders began arriving in India for trade opportunities. Among them, the British East India Company slowly gained permission to trade in Indian ports. Over time, they started building warehouses and trading posts in major coastal cities. This marked the beginning of British economic presence in India. Why did the East India Company come to India initially?', o:['To rule India directly','To establish schools','To trade goods like spices and textiles','To build railways'], a:2, e:'The East India Company first came to India for trade, especially spices and textiles.'},
+{q:'In 1757, a major conflict took place between Siraj-ud-Daulah, the Nawab of Bengal, and the British East India Company. The British were led by Robert Clive. During the battle, Siraj-ud-Daulah faced betrayal from some of his own commanders. This led to a major British victory and change in power in Bengal. What was the main reason for British victory in the Battle of Plassey?', o:['Strong British army only','Help from French soldiers','Use of modern aircraft','Betrayal by Siraj-ud-Daulah’s commanders'], a:3, e:'Betrayal by some commanders helped the British win the Battle of Plassey.'},
+{q:'Siraj-ud-Daulah was the young Nawab of Bengal who tried to stop the British from expanding their control. However, internal betrayal and weak unity among his allies made his position difficult. The British used this situation cleverly to strengthen their rule in Bengal. What weakness helped the British defeat Siraj-ud-Daulah?', o:['Strong unity among his commanders','Internal betrayal in his army','Support from all Indian rulers','Advanced technology'], a:1, e:'Internal betrayal in the army weakened Siraj-ud-Daulah’s position.'},
+{q:'During British rule, farmers in India were forced to grow crops like indigo instead of food grains. These crops were sold at very low prices to British factories. Many farmers suffered from poverty and hunger as they could not grow enough food for their families. Why were Indian farmers unhappy during British rule?', o:['They got high profits','They were forced to grow cash crops','They owned large factories','They became rulers'], a:1, e:'Farmers were unhappy because they were forced to grow cash crops instead of food.'},
+{q:'Indian soldiers in the British army were given new cartridges coated with animal fat. This hurt the religious sentiments of both Hindu and Muslim soldiers. Along with other grievances like low pay and disrespect, this led to anger and rebellion against British rule. What was one major reason for the Revolt of 1857?', o:['Better salaries for soldiers','British victory celebrations','Free education system','Use of animal fat in cartridges'], a:3, e:'The cartridge issue was a major reason for the Revolt of 1857.'},
+{q:'During the Revolt of 1857, many leaders from different regions took part in fighting against the British. Leaders like Rani Lakshmibai, Nana Sahib, and Mangal Pandey became symbols of courage. They inspired people to stand against British rule. What was common among the leaders of the Revolt of 1857?', o:['They led resistance movements','They supported British rule','They worked as British officers','They avoided all conflicts'], a:0, e:'These leaders all led resistance against the British.'},
+{q:'The British divided Bengal into two parts in 1905, claiming it was for administrative convenience. However, many Indians believed it was done to weaken unity among people. This decision created widespread anger and protests across the country. Why did Indians oppose the Partition of Bengal?', o:['It improved unity','It increased trade','It divided people and weakened unity','It reduced taxes'], a:2, e:'Indians opposed it because it divided people and weakened unity.'},
+{q:'After the Partition of Bengal, Indians started the Swadeshi Movement. People boycotted British goods and promoted Indian-made products. They burned foreign cloth and encouraged spinning of khadi to support Indian industries. What was the main aim of the Swadeshi Movement?', o:['To support British goods','To promote foreign trade','To stop farming activities','To boycott British goods and use Indian products'], a:3, e:'The Swadeshi Movement aimed to boycott British goods and use Indian products.'},
+{q:'Formation of Indian National Congress. In 1885, the Indian National Congress was formed to bring Indians together and raise their voice against British rule. Early leaders believed in peaceful methods and dialogue. Later, some leaders demanded stronger actions for independence. What was the main purpose of forming the Indian National Congress?', o:['To unite Indians and demand rights','To support British policies','To start wars','To promote foreign trade'], a:0, e:'The Indian National Congress was formed to unite Indians and demand rights.'},
+{q:'Impact of World War I. During World War I, Britain involved India in the war without consulting Indian leaders. Indian soldiers were sent to fight in different parts of the world. After the war, Indians expected reforms, but dissatisfaction increased, leading to stronger freedom movements. What was the impact of World War I on India?', o:['Indians became rulers immediately','Freedom movement became stronger','British left India instantly','War had no effect on India'], a:1, e:'World War I made the freedom movement stronger in India.'},
+{q:'A teacher shows the following bar graph in class representing the number of major events during British rule in Bharat (approximate representation for learning purposes): Revolts, Movements, Protests, Congress sessions, and British policies. The graph shows that as British control increased, resistance movements in Bharat also increased in different forms such as revolts, protests, and national movements. What conclusion can be correctly drawn from the bar graph?', o:['British rule reduced all resistance in Bharat','Resistance movements increased in different forms over time','Indian people stopped reacting to British policies','Only revolts were the main form of response'], a:1, e:'The bar graph shows that resistance increased in different forms over time.'}
 ];
 
-/* ---------------- TIMER SAFE ---------------- */
-function startTimer(){
-clearInterval(interval);
-time=45;
-document.getElementById("timer").innerText=time;
+const perQuestion = 45;
+let idx = 0, score = 0, attempts = 0, answered = false, timer = perQuestion, interval = null;
+const $ = s => document.querySelector(s);
+const screens = [...document.querySelectorAll('.screen')];
 
-interval=setInterval(()=>{
-time--;
-document.getElementById("timer").innerText=time;
-if(time<=0) next();
-},1000);
+function show(id){screens.forEach(s=>s.classList.remove('active'));$(id).classList.add('active')}
+
+function render(){
+  answered=false;attempts=0;timer=perQuestion;
+  $('#timerTracker').textContent=`${timer}s`;
+  $('#scoreTracker').textContent=`Score: ${score}`;
+  $('#qnum').textContent=`Question ${idx+1} of ${quizData.length}`;
+  const d=quizData[idx];
+  $('#questionText').textContent=d.q;
+  $('#options').innerHTML='';
+  $('#extraArea').innerHTML='';
+  $('#feedback').className='feedback';
+  $('#feedback').textContent='';
+  $('#attemptInfo').textContent='Attempt 1 of 2';
+  $('#nextBtn').disabled=true;
+  $('#nextBtn').textContent=idx===quizData.length-1?'Finish':'Next';
+
+  if(idx===0){
+    const wrap=document.createElement('div');
+    wrap.className='table-wrap';
+    wrap.innerHTML=`<table>
+      <tr>
+        <th>Region</th><th>Distance</th><th>Communication</th><th>Tax Efficiency</th><th>Law & Order</th>
+      </tr>
+      <tr><td>A</td><td>Near</td><td>Fast</td><td>High</td><td>Strong</td></tr>
+      <tr><td>B</td><td>Medium</td><td>Moderate</td><td>Good</td><td>Moderate</td></tr>
+      <tr><td>C</td><td>Far</td><td>Slow</td><td>Low</td><td>Weak</td></tr>
+      <tr><td>D</td><td>Very Far</td><td>Very Slow</td><td>Very Low</td><td>Very Weak</td></tr>
+    </table>`;
+    $('#extraArea').appendChild(wrap);
+  }
+
+  if(idx===10){
+    const wrap=document.createElement('div');
+    wrap.className='bar-wrap';
+    wrap.innerHTML=`
+      <div class="small" style="color:#f2d39b;font-weight:800;margin-bottom:10px">British Rule Response Graph</div>
+      <div class="bar-chart">
+        <div class="bar-col">
+          <div class="bar bar1">1</div>
+          <div class="bar-label">Revolts<br>(1857)</div>
+        </div>
+        <div class="bar-col">
+          <div class="bar bar2">2</div>
+          <div class="bar-label">Movements<br>(Swadeshi)</div>
+        </div>
+        <div class="bar-col">
+          <div class="bar bar3">3</div>
+          <div class="bar-label">Protests<br>(Bengal)</div>
+        </div>
+        <div class="bar-col">
+          <div class="bar bar4">4</div>
+          <div class="bar-label">Congress<br>Sessions</div>
+        </div>
+        <div class="bar-col">
+          <div class="bar bar2">5</div>
+          <div class="bar-label">British<br>Policies</div>
+        </div>
+      </div>`;
+    $('#extraArea').appendChild(wrap);
+  }
+
+  d.o.forEach((o,i)=>{
+    const b=document.createElement('button');
+    b.className='opt';
+    b.textContent=`${String.fromCharCode(65+i)}. ${o}`;
+    b.onclick=()=>select(i,b);
+    $('#options').appendChild(b);
+  });
+
+  clearInterval(interval);
+  interval=setInterval(()=>{
+    if(answered) return;
+    timer--;
+    $('#timerTracker').textContent=`${timer}s`;
+    if(timer<=0) timeUp();
+  },1000);
 }
 
-/* ---------------- LOAD QUESTION ---------------- */
-function load(){
-lock=false;
-attempt=0;
-
-let q=questions[i];
-
-document.getElementById("q").innerText=q.q;
-document.getElementById("options").innerHTML="";
-document.getElementById("feedback").innerText="";
-document.getElementById("table").innerHTML="";
-
-/* TABLE SAFE RENDER */
-if(q.type==="table"){
-let html="<table><tr>";
-q.table.h.forEach(h=>html+=`<th>${h}</th>`);
-html+="</tr>";
-
-q.table.r.forEach(r=>{
-html+="<tr>";
-r.forEach(c=>html+=`<td>${c}</td>`);
-html+="</tr>";
-});
-
-html+="</table>";
-document.getElementById("table").innerHTML=html;
+function chooseFeedback(type,text){
+  const f=$('#feedback');
+  f.className=`feedback show ${type}`;
+  f.textContent=text;
 }
 
-/* OPTIONS */
-q.o.forEach((op,idx)=>{
-let d=document.createElement("div");
-d.className="option";
-d.innerText=op;
-d.onclick=()=>check(idx,d);
-document.getElementById("options").appendChild(d);
-});
-
-startTimer();
+function confetti(type){
+  const overlay=$('#overlay');
+  for(let i=0;i<18;i++){
+    const el=document.createElement('div');
+    el.className='particle '+(type==='good'?'star':'cross');
+    el.style.left=Math.random()*100+'vw';
+    el.style.animationDuration=(1.2+Math.random()*1.2)+'s';
+    el.style.transform=`translateY(0) rotate(${Math.random()*180}deg)`;
+    overlay.appendChild(el);
+    setTimeout(()=>el.remove(),2300);
+  }
 }
 
-/* ---------------- CHECK ---------------- */
-function check(ans,el){
-if(lock) return;
-
-let q=questions[i];
-
-if(ans===q.a){
-el.classList.add("correct");
-document.getElementById("correctSound").play();
-confetti();
-
-score++;
-document.getElementById("score").innerText="Score: "+score;
-
-lock=true;
-setTimeout(next,800);
+function select(i,btn){
+  if(answered) return;
+  const d=quizData[idx];
+  attempts++;
+  if(i===d.a){
+    answered=true;score++;
+    $('#scoreTracker').textContent=`Score: ${score}`;
+    btn.classList.add('correct');
+    chooseFeedback('good','Correct! ' + d.e);
+    confetti('good');
+    $('#nextBtn').disabled=false;
+    $('#attemptInfo').textContent='Correct';
+    try{new Audio('assets/correct.mp3').play()}catch(e){}
+  } else {
+    btn.classList.add('wrong');
+    confetti('bad');
+    try{new Audio('assets/wrong.mp3').play()}catch(e){}
+    if(attempts<2){
+      chooseFeedback('bad','Try once more.');
+      $('#attemptInfo').textContent='Retry available';
+      document.querySelectorAll('.opt').forEach(b=>{if(!b.classList.contains('wrong')) b.disabled=false});
+      btn.disabled=true;
+    } else {
+      answered=true;
+      document.querySelectorAll('.opt').forEach((b,ix)=>{b.disabled=true; if(ix===d.a) b.classList.add('correct')});
+      chooseFeedback('bad','Correct answer: ' + String.fromCharCode(65+d.a) + '. ' + d.o[d.a] + ' — ' + d.e);
+      $('#nextBtn').disabled=false;
+      $('#attemptInfo').textContent='No retries left';
+    }
+  }
 }
-else{
-attempt++;
-el.classList.add("wrong");
-document.getElementById("wrongSound").play();
 
-if(attempt===2){
-document.getElementById("feedback").innerText=
-"Correct Answer: "+q.o[q.a]+" → "+q.e;
-lock=true;
-setTimeout(next,1800);
-}
-}
+function timeUp(){
+  if(answered) return;
+  answered=true;
+  document.querySelectorAll('.opt').forEach((b,ix)=>{b.disabled=true; if(ix===quizData[idx].a) b.classList.add('correct')});
+  chooseFeedback('bad','Time is up. Correct answer: ' + String.fromCharCode(65+quizData[idx].a) + '. ' + quizData[idx].o[quizData[idx].a] + ' — ' + quizData[idx].e);
+  $('#nextBtn').disabled=false;
+  $('#attemptInfo').textContent='Time up';
 }
 
-/* ---------------- NEXT SAFE ---------------- */
 function next(){
-clearInterval(interval);
-
-i++;
-if(i<questions.length){
-load();
-}else end();
+  if(idx<quizData.length-1){
+    idx++;
+    render();
+  } else {
+    show('#finalScreen');
+    $('#finalChallengeText').textContent='You completed all 11 questions on The British Raj in India.';
+  }
 }
 
-/* ---------------- END ---------------- */
-function end(){
-clearInterval(interval);
-document.getElementById("game").style.display="none";
-document.getElementById("result").style.display="block";
-document.getElementById("clapSound").play();
-document.getElementById("final").innerText="Score: "+score+"/"+questions.length;
-}
-
-/* ---------------- START ---------------- */
-setTimeout(()=>{
-document.getElementById("splash").style.display="none";
-document.getElementById("game").style.display="block";
-load();
-},5000);
-
+$('#startBtn').onclick=()=>{show('#quizScreen'); render()};
+$('#previewBtn').onclick=()=>alert('Read each question carefully. One retry is allowed after the first wrong answer.');
+$('#skipBtn').onclick=()=>{answered=true; $('#nextBtn').disabled=false; chooseFeedback('bad','Skipped. The correct answer is ' + String.fromCharCode(65+quizData[idx].a) + '. ' + quizData[idx].o[quizData[idx].a] + ' — ' + quizData[idx].e);};
+$('#nextBtn').onclick=()=>next();
+$('#finalBtn').onclick=()=>{
+  show('#resultScreen');
+  $('#resultText').textContent=`You scored ${score} out of ${quizData.length}.`;
+  $('#resultNote').textContent='Trade, rebellion, nationalism, and British policy were tested.';
+  try{new Audio('assets/claps.mp3').play()}catch(e){}
+};
+$('#restartBtn').onclick=()=>{
+  idx=0; score=0;
+  $('#nextBtn').textContent='Next';
+  show('#introScreen');
+  $('#scoreTracker').textContent='Score: 0';
+};
+setTimeout(()=>$('#splash').classList.add('hide'),5000);
 </script>
-
 </body>
 </html>
