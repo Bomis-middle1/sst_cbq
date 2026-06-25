@@ -1,1 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<title>Weather and Climate CBQ</title>
+<style>
+:root{--bg1:#dff4ff;--bg2:#f7fbff;--card:#ffffffdd;--ink:#16324f;--muted:#4f6b82;--accent:#3c8dbc;--good:#25a55b;--bad:#e35d5b;--shadow:0 14px 40px rgba(10,40,70,.14)}
+*{box-sizing:border-box} html,body{margin:0;height:100%;font-family:Arial,Helvetica,sans-serif;color:var(--ink);background:linear-gradient(180deg,var(--bg1),var(--bg2));overflow-x:hidden}
+body::before,body::after{content:"";position:fixed;inset:auto;pointer-events:none;z-index:0;opacity:.55}
+body::before{top:8%;left:5%;width:120px;height:120px;background:radial-gradient(circle at 35% 35%,#fff 0 10%,transparent 11%),radial-gradient(circle at 50% 50%,#fff 0 20%,transparent 21%);filter:blur(.2px);animation:float 11s linear infinite}
+body::after{right:7%;bottom:10%;width:160px;height:160px;background:radial-gradient(circle at 30% 30%,#fff 0 8%,transparent 9%),radial-gradient(circle at 70% 45%,#fff 0 6%,transparent 7%),radial-gradient(circle at 50% 70%,#fff 0 10%,transparent 11%);animation:float 14s linear infinite reverse}
+@keyframes float{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-14px) rotate(7deg)}}
+#app{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
+.screen{width:min(980px,100%);display:none}.screen.active{display:block}
+.card{background:var(--card);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.5);border-radius:22px;box-shadow:var(--shadow);overflow:hidden}
+.header{padding:18px 18px 10px;background:linear-gradient(135deg,#eff9ff,#ffffff)}
+.brand{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand img{height:54px;max-width:180px;object-fit:contain}
+.pill{background:#eaf6ff;color:#175279;padding:8px 12px;border-radius:999px;font-size:13px;font-weight:700}
+.main{padding:18px}
+h1,h2,p{margin:0 0 12px} h1{font-size:clamp(26px,4vw,40px)} h2{font-size:clamp(20px,3vw,28px)} p{color:var(--muted);line-height:1.5}
+.grid{display:grid;gap:14px}.two{grid-template-columns:1fr 1fr}
+.btn{appearance:none;border:0;border-radius:14px;padding:14px 16px;font-weight:700;cursor:pointer;transition:.2s transform,.2s opacity,.2s background;box-shadow:0 8px 18px rgba(60,141,188,.18)}
+.btn:hover{transform:translateY(-1px)}.btn:disabled{opacity:.6;cursor:not-allowed}
+.primary{background:linear-gradient(135deg,#2f86c4,#55b3d9);color:#fff}.ghost{background:#eef6fb;color:#19506f}.danger{background:#ffecec;color:#b64040}.success{background:#e7fff0;color:#1f7a44}
+.start-hero{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;align-items:center}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0}.badge{padding:8px 10px;border-radius:999px;background:#f1f8fd;color:#2f5f7c;font-size:13px;font-weight:700}
+img.hero{width:100%;max-height:300px;object-fit:cover;border-radius:18px;border:1px solid #d9edf7}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.trackers{display:flex;gap:10px;flex-wrap:wrap}.tracker{background:#f3fbff;border:1px solid #d7edf8;border-radius:14px;padding:10px 12px;font-weight:700}
+.qbox{background:#fff;border-radius:18px;padding:16px;border:1px solid #e3eef5;box-shadow:0 6px 20px rgba(20,60,90,.06)}
+.qnum{font-size:13px;font-weight:800;color:#2d6e94;text-transform:uppercase;letter-spacing:.08em}
+.question{font-size:20px;line-height:1.5;margin-top:6px}
+.options{display:grid;gap:10px;margin-top:14px}.opt{width:100%;text-align:left;background:#f9fcfe;border:1px solid #dcecf5;border-radius:14px;padding:13px 14px;color:#18354c;font-size:16px}
+.opt.correct{background:#eafaf0;border-color:#84d3a1}.opt.wrong{background:#fff0f0;border-color:#eea8a6}
+.feedback{margin-top:12px;padding:12px 14px;border-radius:14px;display:none}.feedback.show{display:block}.feedback.good{background:#eafaf0;color:#18673a}.feedback.bad{background:#fff0f0;color:#a23b3a}
+.nav{display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;margin-top:14px}
+.final-challenge,.result-box{padding:18px;border-radius:18px;background:linear-gradient(180deg,#ffffff,#f7fcff);border:1px solid #dcebf5}
+.timer{font-weight:800;color:#0f5f8e}.small{font-size:13px;color:var(--muted)}
+.logo-splash{position:fixed;inset:0;background:rgba(230,246,255,.98);display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s ease}.logo-splash.hide{opacity:0;pointer-events:none}
+.logo-splash img{max-width:min(320px,70vw);max-height:25vh;object-fit:contain}
+.overlay{position:fixed;inset:0;pointer-events:none;z-index:50;overflow:hidden}
+.particle{position:absolute;top:-20px;will-change:transform,opacity;animation:drop linear forwards}
+.star{width:12px;height:12px;background:#ffd84d;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
+.cross{position:absolute;width:28px;height:28px;opacity:.9}.cross::before,.cross::after{content:"";position:absolute;left:13px;top:0;width:4px;height:28px;background:var(--bad);border-radius:3px}.cross::before{transform:rotate(45deg)}.cross::after{transform:rotate(-45deg)}
+@keyframes drop{to{transform:translateY(110vh) rotate(420deg);opacity:0}}
+@media(max-width:760px){.two,.start-hero{grid-template-columns:1fr}.question{font-size:18px}.brand img{height:46px}}
+</style>
+</head>
+<body>
+<div class="logo-splash" id="splash"><img src="assets/logo.png" alt="Innovine logo"></div>
+<div class="overlay" id="overlay"></div>
+<div id="app">
+  <section class="screen active" id="introScreen">
+    <div class="card">
+      <div class="header">
+        <div class="brand">
+          <img src="assets/logo.png" alt="Innovine logo">
+          <div class="pill">Chapter-based MCQ Interactive</div>
+        </div>
+      </div>
+      <div class="main start-hero">
+        <div>
+          <h1>Weather and Climate</h1>
+          <p>Test your understanding with competency-based questions that move from simple differences to real-life climate decisions.</p>
+          <div class="badges">
+            <span class="badge" id="gradeBadge">Grade 5</span>
+            <span class="badge" id="subjectBadge">Social Studies</span>
+            <span class="badge" id="topicBadge">Weather and Climate</span>
+            <span class="badge" id="countBadge">10 Questions</span>
+          </div>
+          <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn primary" id="startBtn">Start Quiz</button>
+            <button class="btn ghost" id="previewBtn">View Instructions</button>
+          </div>
+          <p class="small" style="margin-top:12px">One retry is allowed after the first wrong answer. After the second wrong answer, the correct answer and a brief explanation appear.</p>
+        </div>
+        <div>
+          <img class="hero" src="assets/picture1.png" alt="Weather and Climate question image">
+        </div>
+      </div>
+    </div>
+  </section>
 
+  <section class="screen" id="quizScreen">
+    <div class="card">
+      <div class="header">
+        <div class="topbar">
+          <div class="brand" style="flex:1">
+            <img src="assets/logo.png" alt="Innovine logo">
+            <div class="pill" id="chapterTitle">Weather and Climate</div>
+          </div>
+          <div class="trackers">
+            <div class="tracker" id="scoreTracker">Score: 0</div>
+            <div class="tracker timer" id="timerTracker">45s</div>
+          </div>
+        </div>
+      </div>
+      <div class="main">
+        <div class="qbox">
+          <div class="qnum" id="qnum">Question 1 of 10</div>
+          <div class="question" id="questionText"></div>
+          <div class="grid" id="extraArea"></div>
+          <div class="options" id="options"></div>
+          <div class="feedback" id="feedback"></div>
+          <div class="nav">
+            <div class="small" id="attemptInfo">Attempt 1 of 2</div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <button class="btn danger" id="skipBtn">Skip</button>
+              <button class="btn success" id="nextBtn" disabled>Next</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" id="finalScreen">
+    <div class="card">
+      <div class="header">
+        <div class="brand">
+          <img src="assets/logo.png" alt="Innovine logo">
+          <div class="pill">Final Challenge</div>
+        </div>
+      </div>
+      <div class="main">
+        <div class="final-challenge">
+          <h2>Final Challenge</h2>
+          <p id="finalChallengeText"></p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+            <button class="btn primary" id="finalBtn">Reveal Result</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" id="resultScreen">
+    <div class="card">
+      <div class="header">
+        <div class="brand">
+          <img src="assets/logo.png" alt="Innovine logo">
+          <div class="pill">Result Screen</div>
+        </div>
+      </div>
+      <div class="main result-box">
+        <h2>Your Score</h2>
+        <p id="resultText"></p>
+        <p class="small" id="resultNote"></p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+          <button class="btn primary" id="restartBtn">Play Again</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+<script>
+const quizData = [
+{q:'During a morning school assembly, the principal shows students a weather report on the classroom screen. It shows that today it is 32°C and sunny, but the next day it may rain with thunderstorms. One student, Arjun, asks why weather keeps changing so quickly even when the place is the same. What is the MOST correct understanding Arjun should develop?', o:['Weather refers to short-term atmospheric conditions that change frequently','Weather changes because climate changes every hour','Climate changes every day but weather stays the same','Weather and climate mean exactly the same thing'], a:0, e:'Weather is what we experience for a short time, so it can change from hour to hour or day to day.'},
+{q:'In a classroom activity, students are asked to compare two places: Jaipur and Kerala. They notice that Jaipur is very hot and dry, while Kerala is warm but receives heavy rainfall throughout the year. Some students think this difference is due to daily weather. What is the BEST explanation?', o:['Both places have same climate but different weather','Jaipur and Kerala have different climates','Weather alone decides rainfall in a region','Climate changes every week'], a:1, e:'Long-term patterns like temperature and rainfall show that the two places have different climates.'},
+{q:'During a geography discussion, the teacher explains that places near the Equator receive more direct sunlight than polar regions. A student wonders why countries like India are warmer compared to countries like Russia. What is the MOST appropriate conclusion?', o:['India is closer to the Moon','Equator receives slanted sunlight','Sun rays are more direct near the Equator, making it warmer','Russia has more deserts'], a:2, e:'Direct sunlight gives more heat, so places nearer the Equator are usually warmer.'},
+{q:'Students are comparing weather and climate in a group activity. They are given the following table. One student is confused and says both are the same because both talk about rain, sun, and temperature. What is the BEST correction?', o:['Weather and climate are same because both use temperature','Weather is more important than climate','Climate changes every hour','Weather is short-term and climate is long-term pattern of weather'], a:3, e:'Weather is the day-to-day condition, while climate is the long-term pattern of weather in a region.'},
+{q:'A teacher shows students a map of India where coastal regions like Mumbai and Chennai are shown with moderate temperatures, while Rajasthan is shown as extremely hot and dry. She asks students to explain why such differences exist. What is the BEST reasoning?', o:['All places on Earth receive equal rainfall','Mumbai is located in deserts','Rajasthan is closer to the Equator','Distance from sea affects temperature and climate'], a:3, e:'Sea keeps coastal places more moderate, while inland areas can be hotter and drier.'},
+{q:'In a science activity, students observe that when they go higher on a hill during a school picnic, the air becomes cooler compared to the ground level. Some students think it is because of wind only. What is the BEST scientific explanation?', o:['Height does not affect temperature','Temperature decreases with altitude','Wind always cools all places equally','Hills produce cold air'], a:1, e:'As altitude increases, temperature usually decreases, so higher places are cooler.'},
+{q:'During a geography lesson, the teacher shows students a diagram of a coastal area. A picture is shown below. What important concept does this diagram mainly explain about coastal regions?', o:['Movement of ocean currents','Change of seasons','Sea breeze and land breeze due to temperature difference','Formation of clouds over mountains'], a:2, e:'Coastal areas often have breezes because land and sea heat and cool at different speeds.'},
+{q:'During a monsoon discussion, students observe that Mumbai receives heavy rainfall while cities in western Rajasthan receive very little rainfall. A student says it is because clouds avoid deserts. What is the BEST correction?', o:['Clouds avoid deserts intentionally','Rajasthan is closer to the sea','Moist winds lose water before reaching inland dry regions','Rainfall is equal everywhere'], a:2, e:'Moist winds may drop rain near the coast and become drier as they move inland.'},
+{q:'A teacher explains that climates are classified into tropical, dry, temperate, mountain, and polar. A student wonders why places like the Himalayas have snow even though India is a warm country. What is the BEST explanation?', o:['High altitude causes low temperature even in warm countries','Himalayas are artificial ice zones','Snow is created by rainfall only','India has only cold climate'], a:0, e:'Mountain regions stay cold because temperature decreases with height.'},
+{q:'During revision, students are planning a school trip and need to decide what type of clothing to carry. One group checks daily weather forecast, while another group studies the long-term climate of the region. What is the MOST appropriate understanding?', o:['Weather helps in short-term planning like daily clothing choice','Climate is more useful for daily decisions than weather','Climate changes every day during trips','Weather is not useful in real life'], a:0, e:'Weather is useful for immediate choices like clothing, travel, and outdoor activities.'}
+];
+const grade = 5;
+const subject = 'Social Studies';
+const topic = 'Weather and Climate';
+const perQuestion = grade <= 3 ? 60 : 45;
+let idx = 0, score = 0, attempts = 0, answered = false, timer = perQuestion, interval = null;
+const $ = s => document.querySelector(s);
+const screens = [...document.querySelectorAll('.screen')];
+function show(id){screens.forEach(s=>s.classList.remove('active'));$(id).classList.add('active')}
+function render(){
+  answered=false;attempts=0;timer=perQuestion;
+  $('#timerTracker').textContent=`${timer}s`;$('#scoreTracker').textContent=`Score: ${score}`;
+  $('#qnum').textContent=`Question ${idx+1} of ${quizData.length}`;
+  const d=quizData[idx];
+  $('#questionText').textContent=d.q;
+  $('#options').innerHTML='';$('#extraArea').innerHTML='';
+  $('#feedback').className='feedback';$('#feedback').textContent='';
+  $('#attemptInfo').textContent='Attempt 1 of 2';
+  $('#nextBtn').disabled=true;
+  $('#nextBtn').textContent=idx===quizData.length-1?'Finish':'Next';
+
+  if(idx===6){
+    const img=document.createElement('img');
+    img.src='assets/picture1.png';img.alt='Question image';
+    img.style.width='100%';img.style.borderRadius='14px';img.style.border='1px solid #dbeaf4';
+    $('#extraArea').appendChild(img);
+  }
+  if(idx===3){
+    const box=document.createElement('div');
+    box.className='qbox';
+    box.innerHTML=`<div class="small" style="margin-bottom:8px;font-weight:800;color:#2d6e94">Aspect | Weather | Climate</div><div class="small">Time | Changes daily | Observed over 30+ years</div><div class="small">Example | Rain today | Hot desert region</div><div class="small">Study | Meteorology | Climatology</div>`;
+    $('#extraArea').appendChild(box);
+  }
+
+  d.o.forEach((o,i)=>{
+    const b=document.createElement('button');
+    b.className='opt';
+    b.textContent=`${String.fromCharCode(65+i)}. ${o}`;
+    b.onclick=()=>select(i,b);
+    $('#options').appendChild(b);
+  });
+
+  clearInterval(interval);
+  interval=setInterval(()=>{
+    if(answered)return;
+    timer--;
+    $('#timerTracker').textContent=`${timer}s`;
+    if(timer<=0) timeUp();
+  },1000);
+}
+function chooseFeedback(type,text){const f=$('#feedback');f.className=`feedback show ${type}`;f.textContent=text}
+function confetti(type){
+  const overlay=$('#overlay');
+  for(let i=0;i<18;i++){
+    const el=document.createElement('div');
+    el.className='particle '+(type==='good'?'star':'cross');
+    el.style.left=Math.random()*100+'vw';
+    el.style.animationDuration=(1.2+Math.random()*1.2)+'s';
+    el.style.transform=`translateY(0) rotate(${Math.random()*180}deg)`;
+    overlay.appendChild(el);
+    setTimeout(()=>el.remove(),2300);
+  }
+}
+function select(i,btn){
+  if(answered) return;
+  const d=quizData[idx];
+  attempts++;
+  if(i===d.a){
+    answered=true;score++;
+    $('#scoreTracker').textContent=`Score: ${score}`;
+    btn.classList.add('correct');
+    chooseFeedback('good','Correct! ' + d.e);
+    confetti('good');
+    $('#nextBtn').disabled=false;
+    $('#attemptInfo').textContent='Correct';
+    try{new Audio('assets/correct.mp3').play()}catch(e){}
+  } else {
+    btn.classList.add('wrong');
+    confetti('bad');
+    try{new Audio('assets/wrong.mp3').play()}catch(e){}
+    if(attempts<2){
+      chooseFeedback('bad','Try once more. Think about the main idea in the question.');
+      $('#attemptInfo').textContent='Retry available';
+      document.querySelectorAll('.opt').forEach(b=>{if(!b.classList.contains('wrong')) b.disabled=false});
+      btn.disabled=true;
+    } else {
+      answered=true;
+      document.querySelectorAll('.opt').forEach((b,ix)=>{b.disabled=true; if(ix===d.a) b.classList.add('correct')});
+      chooseFeedback('bad','Correct answer: ' + String.fromCharCode(65+d.a) + '. ' + d.o[d.a] + ' — ' + d.e);
+      $('#nextBtn').disabled=false;
+      $('#attemptInfo').textContent='No retries left';
+    }
+  }
+}
+function timeUp(){
+  if(answered) return;
+  answered=true;
+  document.querySelectorAll('.opt').forEach((b,ix)=>{b.disabled=true; if(ix===quizData[idx].a) b.classList.add('correct')});
+  chooseFeedback('bad','Time is up. Correct answer: ' + String.fromCharCode(65+quizData[idx].a) + '. ' + quizData[idx].o[quizData[idx].a] + ' — ' + quizData[idx].e);
+  $('#nextBtn').disabled=false;
+  $('#attemptInfo').textContent='Time up';
+}
+function next(){
+  if(idx<quizData.length-1){
+    idx++;
+    render();
+  } else {
+    show('#finalScreen');
+    $('#finalChallengeText').textContent = `You completed ${quizData.length} competency-based questions on ${topic}. One last check: name one factor that affects climate in a place.`;
+  }
+}
+$('#startBtn').onclick=()=>{show('#quizScreen'); render()};
+$('#previewBtn').onclick=()=>alert('Read each question carefully. One retry is allowed after the first wrong answer.');
+$('#skipBtn').onclick=()=>{answered=true; $('#nextBtn').disabled=false; chooseFeedback('bad','Skipped. The correct answer is ' + String.fromCharCode(65+quizData[idx].a) + '. ' + quizData[idx].o[quizData[idx].a] + ' — ' + quizData[idx].e);};
+$('#nextBtn').onclick=()=>next();
+$('#finalBtn').onclick=()=>{
+  show('#resultScreen');
+  $('#resultText').textContent=`You scored ${score} out of ${quizData.length}.`;
+  $('#resultNote').textContent='Strong understanding of weather, climate, altitude, rainfall, and coastal effects.';
+  try{new Audio('assets/applause.mp3').play()}catch(e){}
+};
+$('#restartBtn').onclick=()=>{idx=0; score=0; $('#nextBtn').textContent='Next'; show('#introScreen'); $('#scoreTracker').textContent='Score: 0'};
+setTimeout(()=>$('#splash').classList.add('hide'),5000);
+</script>
+</body>
+</html>
