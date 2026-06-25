@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Backbone of Indian Democracy — Constitutional Quest</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Georgia','Times New Roman',serif}
+:root{
+  --charcoal:#1a1c1e;
+  --deep-gray:#2d3135;
+  --gold-leaf:#c5a059;
+  --parchment:#fbf8f3;
+  --parchment-dark:#eedfc2;
+  --text-main:#2b2d2f;
+  --success-gold:#8c763d;
+  --success-bg:#f5f0e1;
+  --alert-red:#9d2a2a;
+  --alert-bg:#fdf2f2;
+}
+body{background:linear-gradient(135deg,#121315,#1a1c1e);min-height:100vh;color:var(--text-main);padding:20px;display:flex;align-items:center;justify-content:center}
+
+/* ---- Component Elements ---- */
+.hidden { display: none !important; }
+.charter-card { background: var(--parchment); width: 100%; max-width: 660px; padding: 40px; border-radius: 4px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); border: 1px solid var(--parchment-dark); outline: 12px double var(--gold-leaf); outline-offset: -20px; position: relative; }
+.center { text-align: center; }
+.seal-tag { display: inline-block; background: transparent; color: var(--gold-leaf); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; padding: 4px 10px; border: 1px solid var(--gold-leaf); margin-bottom: 16px; font-family: 'Inter', sans-serif; }
+
+/* ---- Welcome Panel Graphic ---- */
+#splash{position:fixed;top:0;left:0;width:100%;height:100%;background:#ffffff;display:flex;justify-content:center;align-items:center;z-index:99999;transition:opacity .3s ease}
+.splash-box{width:290px;max-width:80vw}
+.splash-box img{width:100%;height:auto;display:block}
+
+/* ---- Dashboard Indicators ---- */
+.charter-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; font-size:12px; font-weight:700; color:var(--deep-gray); border-bottom:1px solid var(--parchment-dark); padding-bottom:12px; font-family:'Inter',sans-serif; text-transform:uppercase; letter-spacing:1px }
+.header-node span { color: var(--gold-leaf); }
+
+/* ---- Linear Grid Progress ---- */
+.grid-progress{display:flex;gap:5px;margin-bottom:24px}
+.node-block{height:4px;flex:1;background:rgba(197,160,89,0.2);transition:all .3s ease}
+.node-block.active{background:var(--charcoal);height:6px}
+.node-block.filled{background:var(--gold-leaf)}
+
+/* ---- Text & Options Blocks ---- */
+h2{font-size:18px;line-height:1.6;color:var(--charcoal);margin-bottom:22px;font-weight:700}
+.deck-options{display:flex;flex-direction:column;gap:12px}
+.option-row{background:rgba(197,160,89,0.04);border:1px solid var(--parchment-dark);border-radius:2px;padding:16px 20px;cursor:pointer;font-size:15px;line-height:1.5;transition:all .2s ease;display:flex;align-items:start;gap:14px}
+.option-row:hover{background:rgba(197,160,89,0.1);border-color:var(--gold-leaf)}
+.prefix-lbl{font-family:'Inter',sans-serif;font-weight:700;color:var(--gold-leaf);font-size:12px;margin-top:2px}
+
+/* ---- Feedback Messaging ---- */
+.verdict-alert{margin-top:20px;padding:16px;border-radius:2px;font-size:14.5px;line-height:1.5;font-family:sans-serif}
+.verdict-correct{background:var(--success-bg);color:var(--success-gold);border:1px solid rgba(140,118,61,0.2)}
+.verdict-wrong{background:var(--alert-bg);color:var(--alert-red);border:1px solid rgba(157,42,42,0.15)}
+
+button.action-btn{width:100%;background:var(--charcoal);color:var(--parchment);border:1px solid var(--gold-leaf);padding:15px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;cursor:pointer;margin-top:20px;transition:all .2s;font-family:'Inter',sans-serif}
+button.action-btn:hover{background:var(--deep-gray);color:white}
+
+/* ---- Screen Vibration Alert FX ---- */
+#screen-vibe{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(157,42,42,0.06);pointer-events:none;opacity:0;z-index:99;transition:opacity .15s}
+#screen-vibe.vibe-active{opacity:1}
+
+.sparkle{position:fixed;pointer-events:none;animation:fadeup 0.9s cubic-bezier(0.25, 1, 0.5, 1) forwards;z-index:999;font-size:20px}
+@keyframes fadeup{0%{transform:translateY(0) scale(0.6);opacity:1}100%{transform:translateY(-70px) scale(1.2);opacity:0}}
+</style>
+</head>
+<body>
+
+<audio id="sound-correct" src="assets/correct.mp3"></audio>
+<audio id="sound-wrong" src="assets/wrong.mp3"></audio>
+<audio id="sound-complete" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<div id="screen-vibe"></div>
+
+<div id="splash">
+  <div class="center">
+    <div class="splash-box">
+      <img src="assets/innovine-logo.png" alt="Innovine Core Logo" onerror="this.style.display='none'; document.getElementById('text-logo-fallback').style.display='block';">
+      <h2 id="text-logo-fallback" style="display:none;color:var(--gold-leaf);letter-spacing:2px;font-family:sans-serif">INNOVINE LEARNING</h2>
+    </div>
+  </div>
+</div>
+
+<div id="panel-start" class="charter-card center hidden">
+  <div class="seal-tag">Constitutional Study</div>
+  <h1 style="color:var(--charcoal);font-size:24px;margin-bottom:12px;font-weight:700">📜 The Backbone of Indian Democracy</h1>
+  <p style="color:var(--text-main);font-size:15px;line-height:1.6;margin-bottom:26px">Analyze foundational rules, the historical framework of the drafting assembly, comparative structural principles, and the active duties of citizenship.</p>
+  <div style="font-size:44px;margin-bottom:24px">🖋️</div>
+  <button class="action-btn" onclick="startCharterQuest()">Commence Constitutional Review</button>
+</div>
+
+<div id="panel-quest" class="charter-card hidden">
+  <div class="charter-header">
+    <div class="header-node">📜 Provision: <span id="lbl-index">1</span>/10</div>
+    <div class="header-node">⏳ Timer: <span id="lbl-clock">45</span>s</div>
+    <div class="header-node">⚜️ Ledger Score: <span id="lbl-score">0</span></div>
+  </div>
+  <div class="grid-progress" id="progress-grid"></div>
+  <h2 id="quest-body"></h2>
+  <div class="deck-options" id="quest-options"></div>
+  <div id="quest-feedback"></div>
+  <button id="btn-next" class="action-btn hidden" onclick="stepNext()">Verify & Advance Axis →</button>
+</div>
+
+<div id="panel-summary" class="charter-card center hidden">
+  <div style="font-size:54px;margin-bottom:16px" id="summary-badge"></div>
+  <h1 id="summary-heading" style="color:var(--charcoal);margin-bottom:10px;font-weight:700"></h1>
+  <p id="summary-para" style="color:var(--text-main);font-size:15px;margin-bottom:24px"></p>
+  <div class="seal-tag" id="summary-honorific"></div>
+  <br><br>
+  <button class="action-btn" onclick="window.location.reload()">Re-verify Master Rulebook</button>
+</div>
+
+<script>
+window.addEventListener('DOMContentLoaded',()=>{
+  setTimeout(()=>{
+    const spScreen = document.getElementById('splash');
+    spScreen.style.opacity = '0';
+    setTimeout(()=>{
+      spScreen.style.display = 'none';
+      document.getElementById('panel-start').classList.remove('hidden');
+    },300);
+  },1600);
+});
+
+const cbqDataset = [
+  {
+    q: "A state legislative assembly passes a rapid traffic regulation making it instantly illegal to drive private vehicles on Sundays to combat air pollution. However, three months later, no traffic departments have updated their physical checkpoints or issued fines, and the state's High Court has just issued a notice stating the rule unfairly violates citizens' structural liberty without a fair alternative. Which breakdown across the organs of governance is correctly identified here?",
+    o: ["The Legislature failed because it is the specific duty of lawmakers to stand on the streets and physically block vehicles.","The Executive failed to implement and enforce the passed law, while the Judiciary is actively executing its role to interpret the validity of the law and protect citizen liberties.","The Judiciary failed because it is not permitted to question or review any regulatory guidelines passed by a state level assembly.","The Central Government failed because single citizenship means individual states are legally prohibited from passing local traffic codes."],
+    a: 1,
+    e: "The Legislature frames the rules, the Executive branch must actively put them into daily practice, and the Judiciary reviews their validity against constitutional parameters."
+  },
+  {
+    q: "An Indian legal research committee is updating local data systems. They want to introduce a set of non-enforceable welfare benchmarks for regional municipal councils to ensure cleaner drinking water and subsidized crèches for working mothers, while ensuring the independent municipal courts cannot be sued if the local council temporarily runs out of funds. Which historical design combination borrowed by the makers of the Indian Constitution perfectly matches this architectural framework?",
+    o: ["Parliamentary Accountability (UK) combined with Liberty, Equality, and Fraternity (France).","Fundamental Duties (USSR) combined with Universal Adult Franchise.","Directive Principles of State Policy (Ireland) combined with an Independent Judiciary (USA).","Collective Civilisational Heritage combined with Sovereign Absolute Autonomy."],
+    a: 2,
+    e: "Directive Principles (Ireland) provide non-court-enforceable welfare guidelines, while an Independent Judiciary (USA) ensures courts function without political interference."
+  },
+  {
+    q: "A housing cooperative society passes a mandatory internal by-law stating that all tenants moving into the complex must sign a declaration confirming they belong to a specific regional community and speak only the dominant state language, arguing this preserves 'community harmony.' A prospective buyer is denied an apartment based entirely on this rule. Which constitutional protections have been violated by the housing society's arbitrary restriction?",
+    o: ["Right to Equality and Freedom of Movement and Residence, because discrimination based on place of birth or origin is explicitly prohibited, and single citizenship guarantees equal rights across all states.","Right against Exploitation, because denying an apartment is classified legally as forced child labor under Article 24.","Cultural and Educational Rights, because minority groups are prohibited from living inside urban housing societies.","The Directive Principles of State Policy, because housing societies are legally enforceable courts of law under Article 32."],
+    a: 0,
+    e: "Denying equal access to housing based on regional identity or language directly compromises the Right to Equality and the fundamental freedom of residence within a single-citizenship framework."
+  },
+  {
+    q: "During a heated debate regarding international trade policies, a diplomat states that India's focus on global climate pacts, sending medical aid to smaller foreign nations during crises, and treating global immigrants with baseline human dignity is a modern post-1992 invention. Which philosophical pillar from India's civilisational heritage directly refutes the diplomat's claim, proving these values are structurally ancient?",
+    o: ["The Chola period village sabha structural layout, which focused entirely on industrial maritime tax collections.","Vasudhaiva Kutumbakam ('The world is one family'), an ancient philosophical principle that directly inspired global peace, cross-border fraternity, and shared responsibility.","The calligraphic design layout of the original handwritten copy of the Constitution sealed in helium cases.","The introduction of the Panchayati Raj system through the 42nd Constitutional Amendment Act."],
+    a: 1,
+    e: "Vasudhaiva Kutumbakam translates directly to 'the world is one family,' anchoring India's ancient values of global fraternity long before modern geopolitical structures developed."
+  },
+  {
+    q: "Review the following structural matching chart compiled by a student mapping out definitions from the Preamble: 1. Sovereign -> Complete independence; 2. Socialist -> Active state welfare; 3. Secular -> Strict official national religion; 4. Republic -> Highest office chosen via hereditary dynastic line. Which of the student's matrix pairings contain fatal conceptual errors?",
+    o: ["1 and 2","2 and 3","3 and 4","1 and 4"],
+    a: 2,
+    e: "Secularism means the state treats all faiths with equal respect without a national religion, and a Republic requires an elected head of state rather than a hereditary monarch."
+  },
+  {
+    q: "Assertion (A): Dr. B. R. Ambedkar designated the Right to Constitutional Remedies (Article 32) as the 'heart and soul' of the entire Constitution. Reason (R): A Fundamental Right becomes practically meaningless unless citizens possess a direct, legally enforceable mechanism to approach the Supreme Court or High Courts if their basic freedoms are compromised. Choose the correct logical option:",
+    o: ["Both (A) and (R) are true, and (R) is the correct explanation of (A).","Both (A) and (R) are true, but (R) is NOT the correct explanation of (A).","(A) is true, but (R) is false.","(A) is false, but (R) is true."],
+    a: 0,
+    e: "Without an institutional path to seek a remedy from the courts (Article 32), all other listed rights remain purely theoretical words on paper."
+  },
+  {
+    q: "In 1950, internet access, data tracking, and digital identities did not exist. In the modern era, data leaks and digital tracking have direct impacts on citizens' freedom of expression and personal life. How does the framework of the Indian Constitution handle this modern technological reality?",
+    o: ["It cannot handle it; the entire document must be completely discarded and rewritten from scratch every time a new machine is invented.","It treats the Constitution as a static historic artifact that can only be altered by a ruling Governor-General.","Through the framework of constitutional amendments and dynamic judicial interpretations, allowing the master rulebook to adapt and protect rights against modern challenges.","By applying the Flag Code of India to declare all digital communication networks as unconstitutional."],
+    a: 2,
+    e: "The Constitution is a living, dynamic document that constantly updates its specific scopes via amendments to tackle evolving societal and technical demands."
+  },
+  {
+    q: "Consider Country Green, where citizens hold two separate passports—one for the individual state province they are born in, and one for the federal central capital. Now consider India, where a person born in Uttarakhand moving to a workplace in Tamil Nadu holds identical national rights, obeys the same central penal codes, and does not require a secondary state-level passport or distinct local citizenship. What core structural feature of the Indian Constitution does this comparison illuminate?",
+    o: ["The application of Directive Principles over Fundamental Rights.","Single Citizenship, which consciously fosters national integration, absolute equality of movement, and unity across a highly diverse demographic landscape.","A classical Unicameral Assembly that eliminates all state governments.","A standard Absolute Monarchy based on hereditary administrative successions."],
+    a: 1,
+    e: "Unlike multi-citizenship federal setups, India's single citizenship structure guarantees that every individual is a full citizen of the entire nation, enjoying identical protections anywhere in the country."
+  },
+  {
+    q: "A group of citizens stages a peaceful sit-in protest inside a public park to express their dissatisfaction with an infrastructure project. While leaving the park, some individuals smash public benches, throw trash into the local river, and deface historical statues located at the park gates. How does the Constitution evaluate the actions of this group?",
+    o: ["Their actions are fully protected because the Right to Freedom of Speech and Expression allows citizens to destroy public property during protests.","They successfully exercised their Fundamental Rights under Article 19, but structurally violated their Fundamental Duties to safeguard public property, avoid violence, and protect the natural environment.","They violated the Preamble's sovereign status because public benches are owned by foreign corporate entities.","Their actions are completely valid because the Directive Principles are fully enforceable by local police forces."],
+    a: 1,
+    e: "Exercising a right (peaceful expression) does not absolve a citizen of their constitutional responsibilities (Fundamental Duties) to protect public assets and ecosystems from harm."
+  },
+  {
+    q: "Based on the historic 2004 Supreme Court judgment in the Naveen Jindal case, an ordinary citizen decides to hoist the Indian tricolour on top of their residential roof on a standard, non-holiday Tuesday. If the citizen wishes to protect their action using this chapter’s legal history, what argument should they present?",
+    o: ["Hoisting the national flag with due dignity is an expression of patriotism that falls directly under the Fundamental Right to Freedom of Speech and Expression (Article 19(1)(a)), and static guidelines cannot overrule a citizen's basic constitutional freedom.","The flag must be taken down because it can only be displayed when a helium-filled casing is installed on the roof.","The constituent assembly has 299 members who personally approved individual household flags in 1946.","Hoisting a flag is a mandatory Directive Principle that all citizens must execute every 24 hours under penalty of law."],
+    a: 0,
+    e: "The landmark Supreme Court ruling explicitly connected respectful flag display with the fundamental right to free expression, creating a binding precedent that protects everyday citizens."
+  }
+];
+
+let currIdx=0, totalScore=0, currentAttempts=0, timerTick=45, loopClock;
+
+function startCharterQuest(){
+  document.getElementById('panel-start').classList.add('hidden');
+  document.getElementById('panel-quest').classList.remove('hidden');
+  generateNodes();
+  displayProvision();
+}
+
+function generateNodes(){
+  const trackGrid = document.getElementById('progress-grid');
+  trackGrid.innerHTML = '';
+  for(let i=0; i<cbqDataset.length; i++){
+    let node = document.createElement('div');
+    node.className = 'node-block';
+    trackGrid.appendChild(node);
+  }
+}
+
+function displayProvision(){
+  currentAttempts = 0;
+  timerTick = 45;
+  document.getElementById('lbl-clock').textContent = timerTick;
+  document.getElementById('lbl-index').textContent = currIdx + 1;
+  document.getElementById('quest-feedback').innerHTML = '';
+  document.getElementById('btn-next').classList.add('hidden');
+  
+  const blocks = document.querySelectorAll('.node-block');
+  blocks.forEach((b,i)=>{
+    if(i===currIdx) b.className = 'node-block active';
+    else if(i<currIdx) b.className = 'node-block filled';
+    else b.className = 'node-block';
+  });
+
+  document.getElementById('quest-body').textContent = cbqDataset[currIdx].q;
+  const areaOptions = document.getElementById('quest-options');
+  areaOptions.innerHTML = '';
+
+  const prefixes = ['A','B','C','D'];
+  cbqDataset[currIdx].o.forEach((val,i)=>{
+    let row = document.createElement('div');
+    row.className = 'option-row';
+    row.innerHTML = `<span class="prefix-lbl">${prefixes[i]}.</span><span>${val}</span>`;
+    row.onclick = (e) => crossCheckInput(i, row, e);
+    areaOptions.appendChild(row);
+  });
+
+  clearInterval(loopClock);
+  loopClock = setInterval(()=>{
+    timerTick--;
+    document.getElementById('lbl-clock').textContent = timerTick;
+    if(timerTick<=0){
+      clearInterval(loopClock);
+      revealCorrectPath();
+    }
+  },1000);
+}
+
+function crossCheckInput(chosen, rowElement, event){
+  const blockData = cbqDataset[currIdx];
+  if(chosen === blockData.a){
+    if(currentAttempts === 0){
+      totalScore++;
+      document.getElementById('lbl-score').textContent = totalScore;
+    }
+    playSoundFile('sound-correct');
+    emitSparkles(event);
+    document.getElementById('quest-feedback').innerHTML = `<div class="verdict-alert verdict-correct"><b>✔️ Constitutional Alignment Confirmed.</b> ${blockData.e}</div>`;
+    freezeSelections();
+    clearInterval(loopClock);
+    document.getElementById('btn-next').classList.remove('hidden');
+  } else {
+    if(currentAttempts === 0){
+      currentAttempts = 1;
+      playSoundFile('sound-wrong');
+      activateVibeFX();
+      document.getElementById('quest-feedback').innerHTML = `<div class="verdict-alert verdict-wrong"><b>⚠️ Arbitrary Interpretation.</b> This choice fails to align with explicit constitutional provisions or case precedents. Try once more.</div>`;
+      rowElement.style.borderColor = 'var(--alert-red)';
+      rowElement.style.background = 'var(--alert-bg)';
+    } else {
+      revealCorrectPath();
+    }
+  }
+}
+
+function revealCorrectPath(){
+  freezeSelections();
+  clearInterval(loopClock);
+  const blockData = cbqDataset[currIdx];
+  const prefixes = ['A','B','C','D'];
+  document.getElementById('quest-feedback').innerHTML = `<div class="verdict-alert verdict-wrong"><b>🔎 Baseline Provision Settled.</b> The legally valid interpretation is <b>${prefixes[blockData.a]}. ${blockData.o[blockData.a]}</b>.<br><br>${blockData.e}</div>`;
+  document.getElementById('btn-next').classList.remove('hidden');
+}
+
+function freezeSelections(){
+  document.querySelectorAll('.option-row').forEach(r => r.onclick = null);
+}
+
+function stepNext(){
+  currIdx++;
+  if(currIdx < cbqDataset.length){
+    displayProvision();
+  } else {
+    compileFinalVerdict();
+  }
+}
+
+function compileFinalVerdict(){
+  document.getElementById('panel-quest').classList.add('hidden');
+  document.getElementById('panel-summary').classList.remove('hidden');
+  
+  const bElement = document.getElementById('summary-badge');
+  const hElement = document.getElementById('summary-heading');
+  const pElement = document.getElementById('summary-para');
+  const rElement = document.getElementById('summary-honorific');
+
+  pElement.textContent = `You correctly evaluated ${totalScore} out of ${cbqDataset.length} analytical constitutional parameters.`;
+
+  if(totalScore >= 9){
+    bElement.textContent = '⚖️';
+    hElement.textContent = 'Guardian of the Republic';
+    rElement.textContent = 'Calligraphic Original Signatory Grade';
+    playSoundFile('sound-complete');
+  } else if(totalScore >= 6){
+    bElement.textContent = '📜';
+    hElement.textContent = 'Constituent Assembly Delegate';
+    rElement.textContent = 'Uttaramerur Sabha Elector Rank';
+  } else {
+    bElement.textContent = '🖋️';
+    hElement.textContent = 'Civic Apprentice Scholar';
+    rElement.textContent = 'Drafting Committee Base Level';
+  }
+}
+
+function playSoundFile(elementId){
+  try{
+    const file = document.getElementById(elementId);
+    file.currentTime = 0;
+    file.play();
+  } catch(err){}
+}
+
+function activateVibeFX(){
+  const sVibe = document.getElementById('screen-vibe');
+  sVibe.classList.add('vibe-active');
+  setTimeout(()=>sVibe.classList.remove('vibe-active'),200);
+}
+
+function emitSparkles(e){
+  const sparks = ['⚖️','📜','✨','🖋️'];
+  for(let i=0; i<6; i++){
+    let sp = document.createElement('div');
+    sp.className = 'sparkle';
+    sp.textContent = sparks[i % sparks.length];
+    sp.style.left = (e.clientX ? e.clientX : window.innerWidth/2) + (Math.random()*40 - 20) + 'px';
+    sp.style.top = (e.clientY ? e.clientY : window.innerHeight/2) + (Math.random()*40 - 20) + 'px';
+    document.body.appendChild(sp);
+    setTimeout(()=>sp.remove(),900);
+  }
+}
+</script>
+</body>
+</html>
