@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pilgrimage Paths and Sacred Lands — Exploration Quest</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',system-ui,sans-serif}
+:root{
+  --forest:#1b4332;
+  --teal:#2d6a4f;
+  --marigold:#d48c00;
+  --marigold-light:#fffbeb;
+  --stone:#f4f6f5;
+  --charcoal:#2d312e;
+  --good:#2a7b4c;
+  --good-bg:#e8f5e9;
+  --bad:#b71c1c;
+  --bad-bg:#ffebee;
+}
+body{background:linear-gradient(135deg,#0d2818,#1b4332);min-height:100vh;color:var(--charcoal);padding:20px;display:flex;align-items:center;justify-content:center}
+
+/* ---- Utility ---- */
+.hidden { display: none !important; }
+.card { background: white; width: 100%; max-width: 650px; padding: 35px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.3); border-top: 8px solid var(--marigold); position: relative; }
+.center { text-align: center; }
+.badge { display: inline-block; background: var(--marigold-light); color: var(--marigold); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; padding: 6px 12px; border-radius: 999px; margin-bottom: 12px; border: 1px solid rgba(212,140,0,0.2); }
+
+/* ---- Splash Screen ---- */
+#splash{position:fixed;top:0;left:0;width:100%;height:100%;background:#ffffff;display:flex;justify-content:center;align-items:center;z-index:99999;transition:opacity .4s ease}
+.splash-logo{width:280px;max-width:75vw}
+.splash-logo img{width:100%;height:auto;display:block}
+
+/* ---- UI Header / Metrics ---- */
+.header-stats{display:flex;justify-content:between;align-items:center;margin-bottom:20px;font-size:13px;font-weight:600;color:#666;border-bottom:1px solid #eee;padding-bottom:12px}
+.stat-box{background:var(--stone);padding:6px 12px;border-radius:6px;display:flex;align-items:center;gap:6px}
+.stat-box span{color:var(--teal);font-weight:700}
+
+/* ---- Progress Dot Indicators ---- */
+.progress-container{display:flex;gap:6px;margin-bottom:20px}
+.dot{height:6px;flex:1;background:#e0e0e0;border-radius:999px;transition:all .3s ease}
+.dot.active{background:var(--teal)}
+.dot.completed{background:var(--marigold)}
+
+/* ---- Question Components ---- */
+h2{font-size:18px;line-height:1.5;color:var(--forest);margin-bottom:18px;font-weight:600}
+.option-wrapper{display:flex;flex-direction:column;gap:12px}
+.opt{background:var(--stone);border:2px solid transparent;border-radius:10px;padding:14px 18px;cursor:pointer;font-size:15px;line-height:1.4;transition:all .2s ease;display:flex;align-items:start;gap:12px}
+.opt:hover{background:#e9f0ec;border-color:var(--teal)}
+.opt-prefix{background:white;color:var(--teal);font-weight:700;font-size:12px;width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 4px rgba(0,0,0,0.05)}
+
+/* ---- Interactive Feedback ---- */
+.alert-box{margin-top:16px;padding:14px;border-radius:10px;font-size:14px;line-height:1.5}
+.alert-success{background:var(--good-bg);color:var(--good);border:1px solid rgba(42,123,76,0.15)}
+.alert-danger{background:var(--bad-bg);color:var(--bad);border:1px solid rgba(183,28,28,0.15)}
+
+button.action-btn{width:100%;background:var(--teal);color:white;border:none;padding:14px;font-size:15px;font-weight:600;border-radius:10px;cursor:pointer;margin-top:18px;transition:background .2s;display:flex;justify-content:center;align-items:center;gap:8px}
+button.action-btn:hover{background:var(--forest)}
+
+/* ---- Screen Visual FX ---- */
+#error-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(183,28,28,0.12);pointer-events:none;opacity:0;z-index:99;transition:opacity .2s}
+#error-overlay.flash-active{opacity:1}
+
+.particle{position:fixed;pointer-events:none;animation:rise 1s ease-out forwards;z-index:999;font-size:24px}
+@keyframes rise{0%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(-80px) scale(1.4);opacity:0}}
+</style>
+</head>
+<body>
+
+<audio id="snd-right" src="assets/correct.mp3"></audio>
+<audio id="snd-wrong" src="assets/wrong.mp3"></audio>
+<audio id="snd-end" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<div id="error-overlay"></div>
+
+<div id="splash">
+  <div class="center">
+    <div class="splash-logo">
+      <img src="assets/innovine-logo.png" alt="Innovine Learning Logo" onerror="this.style.display='none'; document.getElementById('fallback-logo').style.display='block';">
+      <h2 id="fallback-logo" style="display:none;color:var(--teal);letter-spacing:1px">INNOVINE LEARNING</h2>
+    </div>
+  </div>
+</div>
+
+<div id="panel-start" class="card center hidden">
+  <div class="badge">Geography & Culture</div>
+  <h1 style="color:var(--forest);font-size:26px;margin-bottom:12px">🗺️ Pilgrimage Paths & Sacred Lands</h1>
+  <p style="color:#555;font-size:15px;line-height:1.6;margin-bottom:24px">Embark on a geographical exploration through India's sacred river basins, biodiversity networks, global sanctuaries, and spatial trade ecosystems.</p>
+  <div style="font-size:50px;margin-bottom:24px">🌿</div>
+  <button class="action-btn" onclick="launchQuest()">Begin Exploration Quest</button>
+</div>
+
+<div id="panel-quest" class="card hidden">
+  <div class="header-stats">
+    <div class="stat-box">💫 Progress: <span id="lbl-index">1</span>/10</div>
+    <div class="stat-box">⏳ Limit: <span id="lbl-timer">45</span>s</div>
+    <div class="stat-box">🏆 Score: <span id="lbl-score">0</span></div>
+  </div>
+  <div class="progress-container" id="indicators-box"></div>
+  <h2 id="quest-text"></h2>
+  <div class="option-wrapper" id="options-box"></div>
+  <div id="feedback-box"></div>
+  <button id="btn-submit" class="action-btn hidden" onclick="advanceStep()">Next Boundary Component →</button>
+</div>
+
+<div id="panel-end" class="card center hidden">
+  <div style="font-size:56px;margin-bottom:14px" id="end-visual"></div>
+  <h1 id="end-title" style="color:var(--forest);margin-bottom:8px"></h1>
+  <p id="end-subtitle" style="color:#555;margin-size:15px;margin-bottom:20px"></p>
+  <div class="badge" id="end-rank" style="border-color:var(--marigold)"></div>
+  <br><br>
+  <button class="action-btn" onclick="window.location.reload()">Re-chart Geography</button>
+</div>
+
+<script>
+// Prevent content loading blocks, clear loader safely
+window.addEventListener('DOMContentLoaded',()=>{
+  setTimeout(()=>{
+    const sp = document.getElementById('splash');
+    sp.style.opacity = '0';
+    setTimeout(()=>{
+      sp.style.display = 'none';
+      document.getElementById('panel-start').classList.remove('hidden');
+    },400);
+  },1800);
+});
+
+const dataset = [
+  {
+    q: "An ancient banyan tree in a quiet village becomes protected and treated with deep reverence by the entire community over generations. What does this transformation best demonstrate?",
+    o: ["How ordinary landscapes transform into sacred memory through shared beliefs and emotional bonds.","The strict enforcement of state-level commercial timber laws.","A complete rejection of oral traditions and local folklore.","The uniform distribution of industrial resources across rural districts."],
+    a: 0,
+    e: "Sacredness is often created when a community attaches symbolic, spiritual, or historical meaning to a natural feature, weaving it into their collective identity."
+  },
+  {
+    q: "According to ancient historical narratives and scriptures, a specific site in Haryana is remembered as the battlefield of the epic Mahabharata war where the Bhagavad Gita was spoken. Which site is this?",
+    o: ["Ayodhya","Vrindavan","Kurukshetra","Chitrakoot"],
+    a: 2,
+    e: "Kurukshetra in Haryana is recognized across scriptures as the sacred landscape where Lord Krishna delivered his foundational philosophical discourse to Arjuna."
+  },
+  {
+    q: "The Kamakhya Temple in Assam stands on a hill where a part of the goddess Shakti is believed to have fallen. This narrative designates it as which specific type of sacred site?",
+    o: ["A Buddhist Monastic Circuit","A Shakti Pitha","A Sikh Temporal Takht","A Secular Stepwell Resort"],
+    a: 1,
+    e: "Shakti Pithas represent a vast network of holy shrines scattered across the subcontinent, linked together by the mythic tradition of the divine feminine."
+  },
+  {
+    q: "Which river is uniquely distinguished in Indian sacred geography because it is believed to be born from the sweat of Lord Shiva, making even its circumambulation (parikrama) profoundly powerful?",
+    o: ["The Yamuna River","The Ganga River","The Narmada River","The Godavari River"],
+    a: 2,
+    e: "The Narmada River is considered highly sacred due to its mythic origin from Shiva, drawing thousands of pilgrims annually to walk its entire length."
+  },
+  {
+    q: "Devotees visiting the Annamalai Hills in Tamil Nadu perform 'Girivalam', walking barefoot completely around the mountain. This ritual is a direct practical expression of which concept?",
+    o: ["Parikrama (Circumambulation)","Transnational Migration","Deforestation","Urban Stepwell Engineering"],
+    a: 0,
+    e: "Parikrama refers to circling a holy object, hill, or river in reverence, treating the natural feature itself as the physical center of divine worship."
+  },
+  {
+    q: "In Maharashtra, traditional patches of forest called 'Devrai' are left completely untouched by local village communities due to spiritual beliefs. What vital environmental role do these groves play?",
+    o: ["They serve as state-sanctioned zones for chemical waste management.","They act as traditional safe havens that preserve local biodiversity and rare species.","They provide raw timber for nearby industrial textile hubs.","They function exclusively as international commercial tourist resorts."],
+    a: 1,
+    e: "Cultural and religious taboos prevent tree cutting or hunting within these groves, allowing plants and animals to live safely and functioning as highly effective community-led conservation zones."
+  },
+  {
+    q: "How does the active Wari pilgrimage to Pandharpur in Maharashtra differ fundamentally from simple temple-focused visits?",
+    o: ["It focuses on single-file silent meditation inside isolated caves.","It emphasizes a collective journey of walking for days, singing devotional songs, and serving fellow pilgrims.","It completely prohibits any form of music or public gatherings.","It is managed entirely by international maritime trade networks."],
+    a: 1,
+    e: "The sacredness of the Wari is created through the active, shared experience of community travel, the singing of abhangs, and mutual service along the road, rather than just visiting a building."
+  },
+  {
+    q: "The traditional Char Dham network connects Badrinath (North), Dwarka (West), Puri (East), and Rameswaram (South). What was a key national outcome of this expansive network?",
+    o: ["It caused distant provinces to form isolated, hostile political factions.","It encouraged people to cross regions, exchange customs, and visually comprehend India's geographic diversity.","It concentrated all spiritual sites within a single mountain range.","It discouraged merchants from setting up markets along trade lines."],
+    a: 1,
+    e: "By traveling to the four corners of India, historical pilgrims interacted with different cultures and languages, creating a sense of national integration and shared values."
+  },
+  {
+    q: "A pilgrim on the Panj Takht Circuit travels from Punjab to Bihar, and down to Maharashtra. How does this journey embody the concept of 'unity in diversity'?",
+    o: ["The pilgrim experiences identical local languages and food styles at every single stop.","The pilgrim encounters vastly different regional cultures, yet finds them tied together by a shared spiritual thread.","It demonstrates that sacred networks are restricted entirely to one single state.","It proves that religious travel is entirely disconnected from regional history."],
+    a: 1,
+    e: "While moving through different geographical terrains with distinct languages, clothing, and food, the shared historical and spiritual context of the Takhts creates a unifying thread for the traveler."
+  },
+  {
+    q: "A Central Pollution Control Board (CPCB) report highlighted that over 50% of monitoring stations along the Ganga recorded water unfit for drinking or bathing. What primary ethical lesson does this point out regarding sacred geography?",
+    o: ["Spiritual reverence must be backed by active environmental responsibility to truly protect sacred ecosystems.","Natural water bodies possess an infinite capacity to self-purify without human care.","Religious offerings made of plastic are entirely biodegradable.","The river's water quality has improved dramatically due to increased over-tourism."],
+    a: 0,
+    e: "Worshipping a river as a divine mother is structurally insufficient unless it is paired with active ecological ethics, waste regulation, and personal responsibility to prevent pollution."
+  }
+];
+
+let idx=0, score=0, attempts=0, clock=45, countdown;
+
+function launchQuest(){
+  document.getElementById('panel-start').classList.add('hidden');
+  document.getElementById('panel-quest').classList.remove('hidden');
+  initDots();
+  renderStep();
+}
+
+function initDots(){
+  const box = document.getElementById('indicators-box');
+  box.innerHTML = '';
+  for(let i=0;i<dataset.length;i++){
+    let d = document.createElement('div');
+    d.className = 'dot';
+    box.appendChild(d);
+  }
+}
+
+function renderStep(){
+  attempts = 0;
+  clock = 45;
+  document.getElementById('lbl-timer').textContent = clock;
+  document.getElementById('lbl-index').textContent = idx + 1;
+  document.getElementById('feedback-box').innerHTML = '';
+  document.getElementById('btn-submit').classList.add('hidden');
+  
+  // Highlight indicator dots
+  const dots = document.querySelectorAll('.dot');
+  dots.forEach((d,i)=>{
+    if(i===idx) d.className = 'dot active';
+    else if(i<idx) d.className = 'dot completed';
+    else d.className = 'dot';
+  });
+
+  document.getElementById('quest-text').textContent = dataset[idx].q;
+  const opBox = document.getElementById('options-box');
+  opBox.innerHTML = '';
+
+  const prefixes = ['A','B','C','D'];
+  dataset[idx].o.forEach((str,i)=>{
+    let btn = document.createElement('div');
+    btn.className = 'opt';
+    btn.innerHTML = `<span class="opt-prefix">${prefixes[i]}</span><span>${str}</span>`;
+    btn.onclick = (e) => evaluateChoice(i, btn, e);
+    opBox.appendChild(btn);
+  });
+
+  clearInterval(countdown);
+  countdown = setInterval(()=>{
+    clock--;
+    document.getElementById('lbl-timer').textContent = clock;
+    if(clock<=0){
+      clearInterval(countdown);
+      revealAnswer();
+    }
+  },1000);
+}
+
+function evaluateChoice(choice, element, event){
+  const item = dataset[idx];
+  if(choice === item.a){
+    if(attempts === 0){
+      score++;
+      document.getElementById('lbl-score').textContent = score;
+    }
+    triggerAudio('snd-right');
+    spawnFX(event);
+    document.getElementById('feedback-box').innerHTML = `<div class="alert-box alert-success"><b>✔️ Magnificent Analysis!</b> ${item.e}</div>`;
+    lockCurrentStep();
+    clearInterval(countdown);
+    document.getElementById('btn-submit').classList.remove('hidden');
+  } else {
+    if(attempts === 0){
+      attempts = 1;
+      triggerAudio('snd-wrong');
+      flashScreen();
+      document.getElementById('feedback-box').innerHTML = `<div class="alert-box alert-danger"><b>⚠️ Local legend misalignment.</b> Re-evaluate the map data and attempt one more choice!</div>`;
+      element.style.borderColor = 'var(--bad)';
+      element.style.background = '#fdf2f2';
+    } else {
+      revealAnswer();
+    }
+  }
+}
+
+function revealAnswer(){
+  lockCurrentStep();
+  clearInterval(countdown);
+  const item = dataset[idx];
+  const prefixes = ['A','B','C','D'];
+  document.getElementById('feedback-box').innerHTML = `<div class="alert-box alert-danger"><b>🔎 Survey Concluded.</b> The baseline configuration is <b>${prefixes[item.a]}. ${item.o[item.a]}</b>.<br><br>${item.e}</div>`;
+  document.getElementById('btn-submit').classList.remove('hidden');
+}
+
+function lockCurrentStep(){
+  document.querySelectorAll('.opt').forEach(el => el.onclick = null);
+}
+
+function advanceStep(){
+  idx++;
+  if(idx < dataset.length){
+    renderStep();
+  } else {
+    terminateQuest();
+  }
+}
+
+function terminateQuest(){
+  document.getElementById('panel-quest').classList.add('hidden');
+  document.getElementById('panel-end').classList.remove('hidden');
+  
+  const icon = document.getElementById('end-visual');
+  const title = document.getElementById('end-title');
+  const sub = document.getElementById('end-subtitle');
+  const rank = document.getElementById('end-rank');
+
+  sub.textContent = `You accurately calculated ${score} out of ${dataset.length} spatial and cultural parameters.`;
+
+  if(score >= 9){
+    icon.textContent = '🔱';
+    title.textContent = 'Grand Eco-Cartographer';
+    rank.textContent = 'Mawphlang Sacred Heritage Rank';
+    triggerAudio('snd-end');
+  } else if(score >= 6){
+    icon.textContent = '🏞️';
+    title.textContent = 'Sacred Route Surveyor';
+    rank.textContent = 'Dakshin Ganga Explorer Rank';
+  } else {
+    icon.textContent = '📜';
+    title.textContent = 'Novice Pilgrim Apprentice';
+    rank.textContent = 'Base Station Level';
+  }
+}
+
+function triggerAudio(id){
+  try{
+    const s = document.getElementById(id);
+    s.currentTime = 0;
+    s.play();
+  } catch(err){}
+}
+
+function flashScreen(){
+  const ov = document.getElementById('error-overlay');
+  ov.classList.add('flash-active');
+  setTimeout(()=>ov.classList.remove('flash-active'),250);
+}
+
+function spawnFX(e){
+  const particles = ['🌿','💧','✨','⛰️'];
+  for(let i=0;i<6;i++){
+    let p = document.createElement('div');
+    p.className = 'particle';
+    p.textContent = particles[i % particles.length];
+    p.style.left = (e.clientX ? e.clientX : window.innerWidth/2) + (Math.random()*40 - 20) + 'px';
+    p.style.top = (e.clientY ? e.clientY : window.innerHeight/2) + (Math.random()*40 - 20) + 'px';
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),1000);
+  }
+}
+</script>
+</body>
+</html>
