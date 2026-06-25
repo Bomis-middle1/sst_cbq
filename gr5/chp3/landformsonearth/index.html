@@ -1,1 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Grade 5 CBQ - Landforms on Earth</title>
+<style>
+:root{
+  --bg1:#2a1a12;
+  --bg2:#4a2f1c;
+  --bg3:#6b4428;
+  --panel:#2c1c15ee;
+  --panel2:#382218ee;
+  --text:#fff6ee;
+  --muted:#e3c8b6;
+  --accent:#ffcf8b;
+  --accent2:#ffd9a8;
+  --good:#5fd18a;
+  --bad:#ff8a8a;
+  --shadow:0 24px 60px rgba(0,0,0,.38);
+}
+*{box-sizing:border-box}
+html,body{
+  margin:0;height:100%;
+  font-family:Arial,Helvetica,sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(circle at 15% 15%, rgba(255,207,139,.12), transparent 18%),
+    radial-gradient(circle at 85% 15%, rgba(255,217,168,.08), transparent 16%),
+    radial-gradient(circle at 50% 85%, rgba(0,0,0,.16), transparent 22%),
+    linear-gradient(160deg,var(--bg1),var(--bg2) 52%, var(--bg3));
+  overflow-x:hidden;
+}
+body:before{
+  content:"";
+  position:fixed;inset:0;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255,255,255,.18) 0 1px, transparent 1.5px) 0 0/52px 52px,
+    radial-gradient(circle at 70% 30%, rgba(255,255,255,.10) 0 1px, transparent 1.5px) 0 0/72px 72px;
+  opacity:.22;
+  pointer-events:none;
+  z-index:0;
+}
+.rock{
+  position:fixed;
+  pointer-events:none;
+  z-index:0;
+  opacity:.14;
+  filter:blur(.2px);
+}
+.rock.r1{left:-40px;bottom:-20px;width:240px;height:240px;border-radius:45% 55% 50% 50%;background:linear-gradient(145deg,#1f120d,#53321f)}
+.rock.r2{right:-30px;top:16%;width:180px;height:180px;border-radius:45% 55% 60% 40%;background:linear-gradient(145deg,#1f120d,#69422a)}
+.rock.r3{left:14%;top:8%;width:110px;height:110px;border-radius:38% 62% 56% 44%;background:linear-gradient(145deg,#1f120d,#7d5237)}
 
+#splash,#intro,#game,#result{
+  position:relative;
+  z-index:1;
+  min-height:100vh;
+  display:none;
+  padding:16px;
+}
+#splash.active,#intro.active,#game.active,#result.active{
+  display:flex;align-items:center;justify-content:center;
+}
+.panel{
+  width:min(980px,100%);
+  background:linear-gradient(180deg,var(--panel),var(--panel2));
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:28px;
+  box-shadow:var(--shadow);
+  padding:18px;
+}
+.splash-box{text-align:center;padding:34px 18px}
+.logo-wrap{
+  width:174px;height:174px;margin:0 auto 16px;display:grid;place-items:center;
+  border-radius:36px;
+  background:radial-gradient(circle at 30% 24%, rgba(255,255,255,.96), rgba(255,207,139,.12));
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),0 18px 40px rgba(0,0,0,.24);
+}
+.logo-wrap img{max-width:72%;max-height:72%;object-fit:contain;display:block}
+.brand{font-weight:800;color:var(--accent);letter-spacing:.7px}
+.title{font-size:clamp(26px,4vw,42px);margin:8px 0 10px;line-height:1.15}
+.sub{font-size:clamp(15px,2.1vw,18px);margin:0 auto;max-width:860px;line-height:1.6;color:var(--muted)}
+.btnrow{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+.btn{
+  border:none;border-radius:16px;padding:14px 18px;font-weight:700;font-size:16px;cursor:pointer;
+  color:#3c210f;background:linear-gradient(135deg,#ffd77d,#fff0b4);
+  box-shadow:0 10px 24px rgba(255,215,125,.18);
+}
+.btn:active{transform:scale(.98)}
+
+.topbar{
+  display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:12px;
+}
+.chip{
+  background:#27160f;border:1px solid rgba(255,255,255,.08);border-radius:999px;padding:10px 14px;
+  font-weight:700;color:var(--text);box-shadow:0 8px 18px rgba(0,0,0,.18);
+}
+.progress{
+  height:12px;border-radius:999px;background:#4f3121;overflow:hidden;border:1px solid rgba(255,255,255,.06);
+}
+.bar{height:100%;width:0%;background:linear-gradient(90deg,#ffd08f,#ffb86b);border-radius:inherit;transition:width .25s ease}
+.card{
+  background:linear-gradient(180deg,#2f1e16,#231610);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:24px;
+  box-shadow:0 12px 30px rgba(0,0,0,.18);
+}
+.quiz-card{padding:18px}
+.qmeta{
+  display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px;font-weight:700;color:var(--muted)
+}
+.question{
+  font-size:clamp(18px,2.5vw,24px);
+  line-height:1.5;
+  margin:8px 0 14px;
+}
+.qhtml{line-height:1.55}
+.stimulus{display:none;margin:12px 0 14px}
+.stimulus img{
+  width:100%;max-height:320px;object-fit:contain;border-radius:18px;background:#251610;
+  border:1px solid rgba(255,255,255,.08);box-shadow:0 10px 24px rgba(0,0,0,.22);
+}
+.table-wrap{overflow-x:auto;margin:12px 0}
+.qtable{
+  width:100%;min-width:540px;border-collapse:collapse;text-align:center;color:#fff7ee;background:#2a1911;
+  border-radius:12px;overflow:hidden;
+}
+.qtable th,.qtable td{border:1px solid rgba(255,255,255,.12);padding:10px}
+.qtable thead tr{background:#5a3722}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.opt{
+  border:1px solid rgba(255,255,255,.10);background:#321f17;color:var(--text);border-radius:18px;padding:14px 14px;
+  text-align:left;min-height:64px;cursor:pointer;font-size:16px;line-height:1.35;
+  box-shadow:0 8px 18px rgba(0,0,0,.16);transition:.18s transform,.18s border-color,.18s box-shadow;
+}
+.opt:hover{transform:translateY(-1px)}
+.opt:disabled{cursor:default;opacity:.92}
+.opt.correct{background:#1c3a28;border-color:#5fd18a}
+.opt.wrong{background:#421e1e;border-color:#ff8a8a}
+.feedback{
+  margin-top:12px;min-height:50px;padding:12px 14px;border-radius:16px;background:#24140f;
+  border:1px dashed rgba(255,255,255,.12);line-height:1.45;color:var(--muted);
+}
+.feedback.good{background:#173123;border-color:#64d491;color:#e7ffe9}
+.feedback.bad{background:#3b1a1a;border-color:#ff9999;color:#ffe1e1}
+.final{text-align:center}
+.medal{font-size:72px;line-height:1}
+.scorebig{font-size:clamp(34px,6vw,56px);font-weight:800;margin:8px 0;color:#ffd77d}
+.cross,.stars{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden}
+.cross span,.stars span{position:absolute;animation:pop 850ms ease-out forwards}
+.cross span{font-size:34px;color:#ff8a8a}
+.stars span{font-size:28px;color:#ffd77d}
+@keyframes pop{0%{transform:scale(.4) translateY(0);opacity:1}100%{transform:scale(1.2) translateY(-36px);opacity:0}}
+@media (max-width:860px){
+  .options{grid-template-columns:1fr}
+  .panel{padding:14px}
+  .logo-wrap{width:140px;height:140px}
+}
+</style>
+</head>
+<body>
+<div class="rock r1"></div>
+<div class="rock r2"></div>
+<div class="rock r3"></div>
+
+<div id="splash" class="active">
+  <div class="panel splash-box">
+    <div class="logo-wrap">
+      <img src="assets/logo.png" alt="Logo" onerror="this.style.display='none'" />
+    </div>
+    <div class="brand">Innovine</div>
+    <div class="title">Chapter 3: Landforms on Earth</div>
+  </div>
+</div>
+
+<div id="intro">
+  <div class="panel">
+    <div class="title" style="margin-top:0">Instructions for Students</div>
+    <div class="sub" style="max-width:none;text-align:left">
+      <ul>
+        <li>Read each question carefully and choose the best answer.</li>
+        <li>You get 2 attempts for every question.</li>
+        <li>After the first wrong answer, try once more.</li>
+        <li>After the second wrong answer, the correct answer will be shown.</li>
+      </ul>
+    </div>
+    <div class="btnrow"><button class="btn" id="startBtn">Start Quiz</button></div>
+  </div>
+</div>
+
+<div id="game">
+  <div class="panel">
+    <div class="topbar">
+      <div class="chip" id="scoreChip">Score: 0</div>
+      <div class="chip" id="timerChip">Time: 45s</div>
+      <div class="chip" id="attemptChip">Attempt: 1/2</div>
+      <div class="chip" id="qChip">Question 1/11</div>
+    </div>
+    <div class="progress"><div class="bar" id="bar"></div></div>
+
+    <div class="card quiz-card" style="margin-top:14px">
+      <div class="qmeta">
+        <span>Chapter 3: Landforms on Earth</span>
+        <span id="difficultyTag">Level 1</span>
+      </div>
+      <div class="question qhtml" id="questionText"></div>
+      <div class="stimulus" id="stimulusBox"><img id="stimulusImg" alt="Question image" /></div>
+      <div class="table-wrap" id="tableWrap" style="display:none"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback">Choose one answer to begin.</div>
+    </div>
+  </div>
+</div>
+
+<div id="result">
+  <div class="panel final" id="finalPanel">
+    <div class="medal">🏞️</div>
+    <div class="title">Quiz Complete</div>
+    <div class="scorebig" id="finalScore">0/11</div>
+    <p class="sub" id="finalText"></p>
+    <div class="btnrow"><button class="btn" id="restartBtn">Play Again</button></div>
+  </div>
+</div>
+
+<div class="cross" id="crossLayer"></div>
+<div class="stars" id="starsLayer"></div>
+
+<audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
+
+<script>
+const questions = [
+{q:`During a science exhibition, students build a model showing how rainwater flows down from a high mountain region. Over time, they notice small pieces of rock breaking away from the mountain surface and getting carried downhill by flowing water. The teacher explains that this slow change happens continuously in nature.
+What is the BEST explanation of what is happening to the mountain surface?`,o:['The mountain is forming new rocks instantly','The mountain is undergoing weathering due to natural forces','The mountain is becoming an ocean','The mountain is growing taller due to erosion'],a:1,e:'Weathering breaks rocks into smaller pieces due to natural forces.'},
+{q:`A group of students visits a village near a large river. They observe that farmers there grow very healthy crops without using much artificial fertiliser. The teacher explains that every year, when the river floods, it leaves behind fine soil that improves fertility of the land.
+What process is mainly responsible for making this soil so fertile?`,o:['Weathering of rocks in fields','Formation of mountains','Evaporation of river water','Deposition of river sediments'],a:3,e:'River sediments are deposited on the land and make it fertile.'},
+{q:`Sumita reads in her geography book that some landforms are slowly shaped when wind, water, or ice removes soil and rocks from one place and carries them to another. She tries to connect this idea with a real-life example she saw near a sea coast where waves keep hitting the shore and slowly change its shape.
+What is the MOST appropriate conclusion?`,o:['Landforms change only due to earthquakes','Rivers do not affect landforms','Erosion can change the shape of land over time','Landforms remain exactly the same forever'],a:2,e:'Erosion removes and carries away material, changing landforms over time.'},
+{q:`During a classroom discussion, the teacher explains that deserts are not just empty sandy places but also have special animals and plants that survive extreme heat and very little water. Students are surprised to learn that deserts also contain valuable minerals beneath the surface.
+What is the BEST understanding about deserts?`,o:['Deserts have unique ecosystems and natural resources','Deserts are only useful for tourism','Deserts are completely lifeless','Deserts are always covered in snow'],a:0,e:'Deserts have life adapted to harsh conditions and may contain resources.'},
+{type:'table',intro:'Study the table carefully and answer the following:',afterTable:'A government is planning to build a new agricultural hub with maximum crop production.<br>Which landform should they choose and WHY?',tableData:true,o:['Mountains – because they are high','Plains – because they are fertile and flat','Plateaus – because they are rocky','Deserts – because they are dry'],a:1,e:'Plains are fertile and flat, so they are best for farming.'},
+{q:`While studying a river system, students observe that rocks are being broken into smaller pieces at the top of the mountains due to heat changes between day and night. These small pieces later get carried away by flowing water.
+What TWO processes are being shown here in sequence?`,o:['Weathering and erosion','Deposition and condensation','Evaporation and rainfall','Folding and faulting'],a:0,e:'Weathering breaks the rocks, and erosion carries them away.'},
+{q:`A coastal town notices that its beach is slowly shrinking every year. Large waves hit the shore and carry sand back into the sea, changing the coastline over time. The teacher explains that this is a natural process that reshapes land.
+What is the MOST accurate explanation?`,o:['The beach is growing due to deposition','Rivers are creating deserts','Mountains are forming near the coast','The sea is causing erosion of the coastline'],a:3,e:'Wave action causes erosion of the coastline.'},
+{q:`A student is confused between plains and plateaus. The teacher explains that one is low and flat while the other is flat but raised high above surrounding land.
+What is the BEST way to distinguish them?`,o:['Plains are high and rocky','Plateaus are flat and lower than plains','Plains are low flat areas; plateaus are elevated flat areas','Both are exactly the same'],a:2,e:'Plains are low and flat, while plateaus are raised flat areas.'},
+{q:`During a geography project, students study how rivers like the Ganga carry soil from mountains and deposit it in plains, creating very fertile land over time. They realise that this process is very important for farming communities.
+What is the MAIN reason plains are fertile?`,o:['Wind deposits lava','River deposits rich soil over time','Mountains melt into soil','Oceans create fertile land'],a:1,e:'Rivers deposit rich soil that makes plains fertile.'},
+{q:`A student observes different landforms in a 3D model: mountains, deserts, valleys, and plains. The teacher explains that all these landforms are not created suddenly but are shaped slowly by natural forces like wind, water, and movement of Earth.
+What is the MOST correct understanding?`,o:['Landforms are man-made structures','Landforms change instantly every day','Landforms are shaped over long periods by natural processes','Landforms do not change at all'],a:2,e:'Landforms are shaped slowly over long periods by natural processes.'},
+{type:'image',q:`Look at the picture showing a river flowing from mountains through valleys and reaching plains. The diagram also shows soil being carried and deposited along the way.
+What concept is BEST shown in this picture?`,img:'assets/picture1.png',o:['River erosion and deposition shaping landforms','Movement of glaciers in oceans','Formation of deserts due to wind','Volcanic eruption creating mountains instantly'],a:0,e:'The picture shows river erosion and deposition shaping landforms.'}
+];
+
+const tableHTML = `
+<table class="qtable">
+  <thead>
+    <tr>
+      <th>Landform</th>
+      <th>Key Feature</th>
+      <th>Human Use Example</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Mountains</td><td>High, cold, rocky</td><td>Tourism, water sources</td></tr>
+    <tr><td>Plains</td><td>Flat and fertile land</td><td>Farming, settlements</td></tr>
+    <tr><td>Plateaus</td><td>Raised flat surface</td><td>Mining, industries</td></tr>
+    <tr><td>Deserts</td><td>Dry, sandy, low rainfall</td><td>Limited farming, tourism</td></tr>
+  </tbody>
+</table>`;
+
+let idx=0, score=0, attempt=1, timer=45, t=null, answered=false;
+
+const els = {
+  splash:document.getElementById('splash'),
+  intro:document.getElementById('intro'),
+  game:document.getElementById('game'),
+  result:document.getElementById('result'),
+  finalPanel:document.getElementById('finalPanel'),
+  q:document.getElementById('questionText'),
+  opts:document.getElementById('options'),
+  fb:document.getElementById('feedback'),
+  score:document.getElementById('scoreChip'),
+  timer:document.getElementById('timerChip'),
+  attempt:document.getElementById('attemptChip'),
+  qchip:document.getElementById('qChip'),
+  bar:document.getElementById('bar'),
+  stimBox:document.getElementById('stimulusBox'),
+  stimImg:document.getElementById('stimulusImg'),
+  tableWrap:document.getElementById('tableWrap'),
+  finalScore:document.getElementById('finalScore'),
+  finalText:document.getElementById('finalText'),
+  cross:document.getElementById('crossLayer'),
+  stars:document.getElementById('starsLayer'),
+  correct:document.getElementById('correctSound'),
+  wrong:document.getElementById('wrongSound'),
+  clap:document.getElementById('clapSound')
+};
+
+function show(el){['splash','intro','game','result'].forEach(k=>els[k].classList.remove('active')); el.classList.add('active')}
+function play(a){try{a.currentTime=0;a.play()}catch(e){}}
+function burst(layer,sym,count){
+  for(let i=0;i<count;i++){
+    const s=document.createElement('span');
+    s.textContent=sym;
+    s.style.left=Math.random()*100+'vw';
+    s.style.top=Math.random()*100+'vh';
+    s.style.animationDelay=(Math.random()*120)+'ms';
+    layer.appendChild(s);
+    setTimeout(()=>s.remove(),900);
+  }
+}
+function confetti(ok){ ok ? burst(els.stars,'★',16) : burst(els.cross,'✖',1); }
+
+function startTimer(){
+  clearInterval(t);
+  timer=45;
+  els.timer.textContent='Time: '+timer+'s';
+  t=setInterval(()=>{
+    timer--;
+    els.timer.textContent='Time: '+timer+'s';
+    if(timer<=0){ clearInterval(t); lockAnswer(-1,true); }
+  },1000);
+}
+
+function render(){
+  answered=false;
+  attempt=1;
+  els.attempt.textContent='Attempt: 1/2';
+  els.qchip.textContent='Question '+(idx+1)+'/'+questions.length;
+  els.score.textContent='Score: '+score;
+  els.bar.style.width=((idx)/questions.length*100)+'%';
+  els.fb.className='feedback';
+  els.fb.textContent='Choose one answer to begin.';
+  els.tableWrap.innerHTML='';
+  els.tableWrap.style.display='none';
+  els.stimBox.style.display='none';
+
+  const x=questions[idx];
+  const old = document.getElementById('tableAfter');
+  if(old) old.remove();
+
+  if(x.type==='table'){
+    els.q.innerHTML=x.intro;
+    els.tableWrap.innerHTML=tableHTML;
+    els.tableWrap.style.display='block';
+    els.q.insertAdjacentHTML('afterend', `<div class="question qhtml" id="tableAfter" style="margin-top:-2px;margin-bottom:10px;">${x.afterTable}</div>`);
+  } else {
+    els.q.innerHTML=x.q;
+    if(x.type==='image' && x.img){
+      els.stimBox.style.display='block';
+      els.stimImg.src=x.img;
+    }
+  }
+
+  els.opts.innerHTML='';
+  x.o.forEach((op,i)=>{
+    const b=document.createElement('button');
+    b.className='opt';
+    b.textContent=String.fromCharCode(65+i)+'. '+op;
+    b.onclick=()=>lockAnswer(i,false);
+    els.opts.appendChild(b);
+  });
+}
+function disable(){ [...els.opts.querySelectorAll('button')].forEach(b=>b.disabled=true); }
+function mark(i,cls){ const b=els.opts.children[i]; if(b) b.classList.add(cls); }
+function reveal(){
+  const x=questions[idx];
+  els.fb.className='feedback bad';
+  els.fb.innerHTML='Correct answer: <b>'+String.fromCharCode(65+x.a)+'. '+x.o[x.a]+'</b><br>'+x.e;
+  mark(x.a,'correct');
+  disable();
+  answered=true;
+  setTimeout(next,1800);
+}
+function lockAnswer(i,timeout){
+  if(answered) return;
+  const x=questions[idx];
+  if(timeout){
+    disable();
+    els.fb.className='feedback bad';
+    els.fb.innerHTML='Time is up. Correct answer: <b>'+String.fromCharCode(65+x.a)+'. '+x.o[x.a]+'</b><br>'+x.e;
+    mark(x.a,'correct');
+    answered=true;
+    setTimeout(next,1800);
+    return;
+  }
+  if(i===x.a){
+    score++;
+    els.score.textContent='Score: '+score;
+    els.fb.className='feedback good';
+    els.fb.textContent='Correct! '+x.e;
+    mark(i,'correct');
+    disable();
+    play(els.correct);
+    play(els.clap);
+    confetti(true);
+    answered=true;
+    clearInterval(t);
+    setTimeout(next,1500);
+  } else {
+    mark(i,'wrong');
+    play(els.wrong);
+    confetti(false);
+    if(attempt===1){
+      attempt=2;
+      els.attempt.textContent='Attempt: 2/2';
+      els.fb.className='feedback bad';
+      els.fb.textContent='Not quite. Try once more.';
+      els.opts.children[i].disabled=true;
+    } else {
+      clearInterval(t);
+      reveal();
+      play(els.correct);
+    }
+  }
+}
+function next(){
+  idx++;
+  if(idx<questions.length){
+    els.bar.style.width=((idx)/questions.length*100)+'%';
+    render();
+    startTimer();
+  } else endGame();
+}
+function endGame(){
+  clearInterval(t);
+  show(els.result);
+  els.finalPanel.style.display='block';
+  els.finalScore.textContent=score+'/'+questions.length;
+  els.finalText.textContent = score>=8 ? 'Excellent work on landforms!' : 'Good work. Keep practicing landforms and natural processes.';
+}
+document.getElementById('startBtn').onclick=()=>{show(els.game); render(); startTimer()};
+document.getElementById('restartBtn').onclick=()=>location.reload();
+show(els.splash);
+setTimeout(()=>show(els.intro),4000);
+</script>
+</body>
+</html>
