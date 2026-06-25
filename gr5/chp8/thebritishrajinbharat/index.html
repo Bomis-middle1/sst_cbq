@@ -6,18 +6,18 @@
 <title>The British Raj in India CBQ</title>
 <style>
 :root{
-  --bg1:#1d1511;
-  --bg2:#36251c;
-  --bg3:#5a4030;
-  --card:#231913f0;
-  --ink:#f7efe6;
+  --bg1:#1b1410;
+  --bg2:#312118;
+  --bg3:#4b3427;
+  --card:#221913f2;
+  --ink:#f8f1e7;
   --muted:#d8c7b8;
   --gold:#d8b06a;
   --gold2:#f4d7a0;
-  --olive:#75855b;
+  --olive:#6f8155;
   --red:#c55b4f;
   --green:#52a66d;
-  --shadow:0 18px 48px rgba(0,0,0,.38);
+  --shadow:0 18px 48px rgba(0,0,0,.40);
 }
 *{box-sizing:border-box}
 html,body{
@@ -26,7 +26,7 @@ html,body{
   color:var(--ink);
   background:
     radial-gradient(circle at 12% 16%, rgba(248,220,176,.12), transparent 18%),
-    radial-gradient(circle at 85% 20%, rgba(117,133,91,.10), transparent 18%),
+    radial-gradient(circle at 85% 20%, rgba(111,129,85,.10), transparent 18%),
     radial-gradient(circle at 50% 92%, rgba(213,175,107,.10), transparent 18%),
     linear-gradient(180deg,var(--bg1),var(--bg2) 52%,var(--bg3));
   overflow-x:hidden;
@@ -70,7 +70,7 @@ body::after{
 }
 .header{
   padding:18px 20px 14px;
-  background:linear-gradient(135deg,rgba(216,176,106,.16),rgba(117,133,91,.08),rgba(255,255,255,.04));
+  background:linear-gradient(135deg,rgba(216,176,106,.16),rgba(111,129,85,.08),rgba(255,255,255,.04));
   border-bottom:1px solid rgba(255,255,255,.08);
 }
 .header-row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
@@ -102,8 +102,8 @@ p{color:var(--muted);line-height:1.65;font-size:18px}
   background:
     linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01)),
     radial-gradient(circle at 20% 20%, rgba(244,215,160,.12), transparent 20%),
-    radial-gradient(circle at 80% 30%, rgba(117,133,91,.10), transparent 18%),
-    linear-gradient(135deg,#291d17,#3a2920 55%,#4f3729);
+    radial-gradient(circle at 80% 30%, rgba(111,129,85,.10), transparent 18%),
+    linear-gradient(135deg,#261a15,#3a2920 55%,#4f3729);
   box-shadow:0 12px 26px rgba(0,0,0,.24);
   position:relative;
   overflow:hidden;
@@ -116,15 +116,6 @@ p{color:var(--muted);line-height:1.65;font-size:18px}
   border:1px solid rgba(244,215,160,.14);
   border-radius:18px;
 }
-.poster-map{
-  position:absolute;
-  inset:0;
-  background:
-    radial-gradient(circle at 30% 40%, rgba(255,255,255,.08) 0 2px, transparent 3px),
-    radial-gradient(circle at 60% 60%, rgba(255,255,255,.06) 0 2px, transparent 3px),
-    radial-gradient(circle at 70% 25%, rgba(255,255,255,.05) 0 2px, transparent 3px);
-  opacity:.65;
-}
 .poster-content{
   position:relative;
   z-index:1;
@@ -132,30 +123,17 @@ p{color:var(--muted);line-height:1.65;font-size:18px}
   display:flex;
   flex-direction:column;
   justify-content:space-between;
-  gap:14px;
 }
 .poster-title{
-  font-size:28px;
+  font-size:31px;
   font-weight:900;
   color:#fff6e8;
   letter-spacing:.02em;
 }
 .poster-sub{
   color:#e4d4c2;
-  max-width:28ch;
+  max-width:30ch;
   font-size:16px;
-}
-.poster-seal{
-  width:92px;height:92px;
-  border-radius:50%;
-  border:2px solid rgba(244,215,160,.45);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:var(--gold2);
-  font-weight:900;
-  background:rgba(0,0,0,.18);
-  box-shadow:0 0 0 10px rgba(244,215,160,.05);
 }
 .badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 .btn{
@@ -326,11 +304,10 @@ th{background:#2d2018;color:var(--gold2)}
       <div class="main start-grid">
         <div>
           <h1>The British Raj in India</h1>
-          <p>Test your understanding of trade, resistance, and the rise of nationalism during British rule.</p>
+          <p>A chapter quiz on British rule, resistance, and India’s freedom struggle.</p>
           <div class="badges">
             <span class="badge">Grade 5</span>
             <span class="badge">Social Studies</span>
-            <span class="badge">11 MCQs</span>
           </div>
           <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap">
             <button class="btn primary" id="startBtn">Start Quiz</button>
@@ -339,15 +316,10 @@ th{background:#2d2018;color:var(--gold2)}
           <p class="small" style="margin-top:14px">One retry is allowed after the first wrong answer. After the second wrong attempt, the correct answer and explanation appear.</p>
         </div>
         <div class="poster">
-          <div class="poster-map"></div>
           <div class="poster-content">
             <div>
-              <div class="poster-title">British Raj</div>
-              <div class="poster-sub">A sepia-style history poster theme with stronger contrast and a more unique intro layout.</div>
-            </div>
-            <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap">
-              <div class="poster-seal">1885</div>
-              <div class="small" style="max-width:18ch;color:#eddcc9">Trade, rule, protest, and nationalism.</div>
+              <div class="poster-title">The British Raj in India</div>
+              <div class="poster-sub">A sepia-style history layout with a stronger contrast and a cleaner intro screen.</div>
             </div>
           </div>
         </div>
@@ -417,17 +389,17 @@ th{background:#2d2018;color:var(--gold2)}
 
 <script>
 const quizData = [
-{q:'In the early 1600s, European traders began arriving in India for trade opportunities. Among them, the British East India Company slowly gained permission to trade in Indian ports. Over time, they started building warehouses and trading posts in major coastal cities. This marked the beginning of British economic presence in India. Why did the East India Company come to India initially?', o:['To rule India directly','To establish schools','To trade goods like spices and textiles','To build railways'], a:2, e:'The East India Company first came to India for trade, especially spices and textiles.'},
-{q:'In 1757, a major conflict took place between Siraj-ud-Daulah, the Nawab of Bengal, and the British East India Company. The British were led by Robert Clive. During the battle, Siraj-ud-Daulah faced betrayal from some of his own commanders. This led to a major British victory and change in power in Bengal. What was the main reason for British victory in the Battle of Plassey?', o:['Strong British army only','Help from French soldiers','Use of modern aircraft','Betrayal by Siraj-ud-Daulah’s commanders'], a:3, e:'Betrayal by some commanders helped the British win the Battle of Plassey.'},
-{q:'Siraj-ud-Daulah was the young Nawab of Bengal who tried to stop the British from expanding their control. However, internal betrayal and weak unity among his allies made his position difficult. The British used this situation cleverly to strengthen their rule in Bengal. What weakness helped the British defeat Siraj-ud-Daulah?', o:['Strong unity among his commanders','Internal betrayal in his army','Support from all Indian rulers','Advanced technology'], a:1, e:'Internal betrayal in the army weakened Siraj-ud-Daulah’s position.'},
-{q:'During British rule, farmers in India were forced to grow crops like indigo instead of food grains. These crops were sold at very low prices to British factories. Many farmers suffered from poverty and hunger as they could not grow enough food for their families. Why were Indian farmers unhappy during British rule?', o:['They got high profits','They were forced to grow cash crops','They owned large factories','They became rulers'], a:1, e:'Farmers were unhappy because they were forced to grow cash crops instead of food.'},
-{q:'Indian soldiers in the British army were given new cartridges coated with animal fat. This hurt the religious sentiments of both Hindu and Muslim soldiers. Along with other grievances like low pay and disrespect, this led to anger and rebellion against British rule. What was one major reason for the Revolt of 1857?', o:['Better salaries for soldiers','British victory celebrations','Free education system','Use of animal fat in cartridges'], a:3, e:'The cartridge issue was a major reason for the Revolt of 1857.'},
-{q:'During the Revolt of 1857, many leaders from different regions took part in fighting against the British. Leaders like Rani Lakshmibai, Nana Sahib, and Mangal Pandey became symbols of courage. They inspired people to stand against British rule. What was common among the leaders of the Revolt of 1857?', o:['They led resistance movements','They supported British rule','They worked as British officers','They avoided all conflicts'], a:0, e:'These leaders all led resistance against the British.'},
-{q:'The British divided Bengal into two parts in 1905, claiming it was for administrative convenience. However, many Indians believed it was done to weaken unity among people. This decision created widespread anger and protests across the country. Why did Indians oppose the Partition of Bengal?', o:['It improved unity','It increased trade','It divided people and weakened unity','It reduced taxes'], a:2, e:'Indians opposed it because it divided people and weakened unity.'},
-{q:'After the Partition of Bengal, Indians started the Swadeshi Movement. People boycotted British goods and promoted Indian-made products. They burned foreign cloth and encouraged spinning of khadi to support Indian industries. What was the main aim of the Swadeshi Movement?', o:['To support British goods','To promote foreign trade','To stop farming activities','To boycott British goods and use Indian products'], a:3, e:'The Swadeshi Movement aimed to boycott British goods and use Indian products.'},
-{q:'Formation of Indian National Congress. In 1885, the Indian National Congress was formed to bring Indians together and raise their voice against British rule. Early leaders believed in peaceful methods and dialogue. Later, some leaders demanded stronger actions for independence. What was the main purpose of forming the Indian National Congress?', o:['To unite Indians and demand rights','To support British policies','To start wars','To promote foreign trade'], a:0, e:'The Indian National Congress was formed to unite Indians and demand rights.'},
-{q:'Impact of World War I. During World War I, Britain involved India in the war without consulting Indian leaders. Indian soldiers were sent to fight in different parts of the world. After the war, Indians expected reforms, but dissatisfaction increased, leading to stronger freedom movements. What was the impact of World War I on India?', o:['Indians became rulers immediately','Freedom movement became stronger','British left India instantly','War had no effect on India'], a:1, e:'World War I made the freedom movement stronger in India.'},
-{q:'A teacher shows the following bar graph in class representing the number of major events during British rule in Bharat (approximate representation for learning purposes): Revolts, Movements, Protests, Congress sessions, and British policies. The graph shows that as British control increased, resistance movements in Bharat also increased in different forms such as revolts, protests, and national movements. What conclusion can be correctly drawn from the bar graph?', o:['British rule reduced all resistance in Bharat','Resistance movements increased in different forms over time','Indian people stopped reacting to British policies','Only revolts were the main form of response'], a:1, e:'The bar graph shows that resistance increased in different forms over time.'}
+{q:'In the early 1600s, European traders began arriving in India for trade opportunities. Among them, the British East India Company slowly gained permission to trade in Indian ports. Over time, they started building warehouses and trading posts in major coastal cities. Why did the East India Company come to India initially?', o:['To rule India directly','To establish schools','To trade goods like spices and textiles','To build railways'], a:2, e:'The East India Company first came to India for trade, especially spices and textiles.'},
+{q:'In 1757, a major conflict took place between Siraj-ud-Daulah, the Nawab of Bengal, and the British East India Company. The British were led by Robert Clive. During the battle, Siraj-ud-Daulah faced betrayal from some of his own commanders. What was the main reason for British victory in the Battle of Plassey?', o:['Strong British army only','Help from French soldiers','Use of modern aircraft','Betrayal by Siraj-ud-Daulah’s commanders'], a:3, e:'Betrayal by some commanders helped the British win the Battle of Plassey.'},
+{q:'Siraj-ud-Daulah was the young Nawab of Bengal who tried to stop the British from expanding their control. However, internal betrayal and weak unity among his allies made his position difficult. What weakness helped the British defeat Siraj-ud-Daulah?', o:['Strong unity among his commanders','Internal betrayal in his army','Support from all Indian rulers','Advanced technology'], a:1, e:'Internal betrayal in the army weakened Siraj-ud-Daulah’s position.'},
+{q:'During British rule, farmers in India were forced to grow crops like indigo instead of food grains. These crops were sold at very low prices to British factories. Why were Indian farmers unhappy during British rule?', o:['They got high profits','They were forced to grow cash crops','They owned large factories','They became rulers'], a:1, e:'Farmers were unhappy because they were forced to grow cash crops instead of food.'},
+{q:'Indian soldiers in the British army were given new cartridges coated with animal fat. This hurt the religious sentiments of both Hindu and Muslim soldiers. What was one major reason for the Revolt of 1857?', o:['Better salaries for soldiers','British victory celebrations','Free education system','Use of animal fat in cartridges'], a:3, e:'The cartridge issue was a major reason for the Revolt of 1857.'},
+{q:'During the Revolt of 1857, many leaders from different regions took part in fighting against the British. Leaders like Rani Lakshmibai, Nana Sahib, and Mangal Pandey became symbols of courage. What was common among the leaders of the Revolt of 1857?', o:['They led resistance movements','They supported British rule','They worked as British officers','They avoided all conflicts'], a:0, e:'These leaders all led resistance against the British.'},
+{q:'The British divided Bengal into two parts in 1905, claiming it was for administrative convenience. However, many Indians believed it was done to weaken unity among people. Why did Indians oppose the Partition of Bengal?', o:['It improved unity','It increased trade','It divided people and weakened unity','It reduced taxes'], a:2, e:'Indians opposed it because it divided people and weakened unity.'},
+{q:'After the Partition of Bengal, Indians started the Swadeshi Movement. People boycotted British goods and promoted Indian-made products. What was the main aim of the Swadeshi Movement?', o:['To support British goods','To promote foreign trade','To stop farming activities','To boycott British goods and use Indian products'], a:3, e:'The Swadeshi Movement aimed to boycott British goods and use Indian products.'},
+{q:'In 1885, the Indian National Congress was formed to bring Indians together and raise their voice against British rule. What was the main purpose of forming the Indian National Congress?', o:['To unite Indians and demand rights','To support British policies','To start wars','To promote foreign trade'], a:0, e:'The Indian National Congress was formed to unite Indians and demand rights.'},
+{q:'During World War I, Britain involved India in the war without consulting Indian leaders. After the war, Indians expected reforms, but dissatisfaction increased. What was the impact of World War I on India?', o:['Indians became rulers immediately','Freedom movement became stronger','British left India instantly','War had no effect on India'], a:1, e:'World War I made the freedom movement stronger in India.'},
+{q:'A teacher shows a bar graph representing major events during British rule in Bharat, including revolts, movements, protests, Congress sessions, and British policies. What conclusion can be correctly drawn from the bar graph?', o:['British rule reduced all resistance in Bharat','Resistance movements increased in different forms over time','Indian people stopped reacting to British policies','Only revolts were the main form of response'], a:1, e:'The bar graph shows that resistance increased in different forms over time.'}
 ];
 
 const perQuestion = 45;
