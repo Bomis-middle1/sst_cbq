@@ -1,3 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CBQ Engine - Black Theme</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:#000;
+  color:#fff;
+  overflow:hidden;
+}
+
+/* SPLASH */
+#splash{
+  position:fixed;
+  inset:0;
+  background:#000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+}
+#splash img{
+  width:220px;
+}
+
+/* GAME */
+#game{
+  display:none;
+  padding:20px;
+  text-align:center;
+}
+
+.top{
+  display:flex;
+  justify-content:space-between;
+  font-size:20px;
+  font-weight:bold;
+  color:#fff;
+}
+
+.box{
+  max-width:900px;
+  margin:auto;
+  background:#111;
+  padding:25px;
+  border-radius:15px;
+  box-shadow:0 0 10px rgba(255,255,255,0.1);
+}
+
+#q{
+  font-size:22px;
+  font-weight:bold;
+  margin-bottom:10px;
+}
+
+/* TABLE */
+table{
+  margin:auto;
+  border-collapse:collapse;
+  margin-bottom:15px;
+  color:#fff;
+}
+th,td{
+  border:1px solid #444;
+  padding:10px;
+}
+th{
+  background:#222;
+}
+
+/* OPTIONS */
+.option{
+  display:block;
+  margin:10px 0;
+  padding:14px;
+  font-size:18px;
+  border-radius:10px;
+  background:#1a1a1a;
+  border:1px solid #333;
+  cursor:pointer;
+}
+.option:hover{
+  background:#333;
+}
+
+.correct{background:#1f6f3b !important;}
+.wrong{background:#7a1f1f !important;}
+
+#feedback{
+  margin-top:10px;
+  font-size:16px;
+  color:#fff;
+}
+
+/* RESULT */
+#result{
+  display:none;
+  padding:40px;
+  text-align:center;
+}
+
+button{
+  padding:12px 18px;
+  border:none;
+  border-radius:10px;
+  background:#fff;
+  color:#000;
+  font-size:16px;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <img src="assets/logo.png">
+</div>
+
+<!-- GAME -->
+<div id="game">
+
+<div class="top">
+  <div id="score">Score: 0</div>
+  <div id="timer">45</div>
+</div>
+
+<div class="box">
+  <div id="q"></div>
+  <div id="table"></div>
+  <div id="options"></div>
+  <div id="feedback"></div>
+</div>
+
+</div>
+
+<!-- RESULT -->
+<div id="result">
+  <h2>Great Job 👏</h2>
+  <p id="final"></p>
+  <button onclick="location.reload()">Play Again</button>
+</div>
+
+<!-- AUDIO -->
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+
 <script>
 
 let i=0,score=0,time=45,attempt=0,lock=false,interval;
@@ -208,3 +361,6 @@ load();
 },5000);
 
 </script>
+
+</body>
+</html>
