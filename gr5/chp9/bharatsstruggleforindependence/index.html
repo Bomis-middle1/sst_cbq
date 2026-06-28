@@ -1,156 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>CBQ Engine - Black Theme</title>
-
-<style>
-body{
-  margin:0;
-  font-family:Arial;
-  background:#000;
-  color:#fff;
-  overflow:hidden;
-}
-
-/* SPLASH */
-#splash{
-  position:fixed;
-  inset:0;
-  background:#000;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:999;
-}
-#splash img{
-  width:220px;
-}
-
-/* GAME */
-#game{
-  display:none;
-  padding:20px;
-  text-align:center;
-}
-
-.top{
-  display:flex;
-  justify-content:space-between;
-  font-size:20px;
-  font-weight:bold;
-  color:#fff;
-}
-
-.box{
-  max-width:900px;
-  margin:auto;
-  background:#111;
-  padding:25px;
-  border-radius:15px;
-  box-shadow:0 0 10px rgba(255,255,255,0.1);
-}
-
-#q{
-  font-size:22px;
-  font-weight:bold;
-  margin-bottom:10px;
-}
-
-/* TABLE */
-table{
-  margin:auto;
-  border-collapse:collapse;
-  margin-bottom:15px;
-  color:#fff;
-}
-th,td{
-  border:1px solid #444;
-  padding:10px;
-}
-th{
-  background:#222;
-}
-
-/* OPTIONS */
-.option{
-  display:block;
-  margin:10px 0;
-  padding:14px;
-  font-size:18px;
-  border-radius:10px;
-  background:#1a1a1a;
-  border:1px solid #333;
-  cursor:pointer;
-}
-.option:hover{
-  background:#333;
-}
-
-.correct{background:#1f6f3b !important;}
-.wrong{background:#7a1f1f !important;}
-
-#feedback{
-  margin-top:10px;
-  font-size:16px;
-  color:#fff;
-}
-
-/* RESULT */
-#result{
-  display:none;
-  padding:40px;
-  text-align:center;
-}
-
-button{
-  padding:12px 18px;
-  border:none;
-  border-radius:10px;
-  background:#fff;
-  color:#000;
-  font-size:16px;
-  cursor:pointer;
-}
-</style>
-</head>
-
-<body>
-
-<!-- SPLASH -->
-<div id="splash">
-  <img src="assets/logo.png">
-</div>
-
-<!-- GAME -->
-<div id="game">
-
-<div class="top">
-  <div id="score">Score: 0</div>
-  <div id="timer">45</div>
-</div>
-
-<div class="box">
-  <div id="q"></div>
-  <div id="table"></div>
-  <div id="options"></div>
-  <div id="feedback"></div>
-</div>
-
-</div>
-
-<!-- RESULT -->
-<div id="result">
-  <h2>Great Job 👏</h2>
-  <p id="final"></p>
-  <button onclick="location.reload()">Play Again</button>
-</div>
-
-<!-- AUDIO -->
-<audio id="correctSound" src="assets/correct.mp3"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3"></audio>
-<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
-
 <script>
 
 let i=0,score=0,time=45,attempt=0,lock=false,interval;
@@ -171,37 +18,101 @@ if(time<=0) next();
 /* QUESTIONS */
 let questions=[
 {
-q:"Which leader is associated with non-violence?",
-o:["Bhagat Singh","Mahatma Gandhi","Subhas Bose","Tilak"],
+q:"Read the passage. Arjun visited a museum where he saw photographs of a leader who believed that people should always fight injustice peacefully. The display explained that truth and non-violence inspired millions to join the freedom struggle. Who is the leader described above?",
+o:["Bhagat Singh","Mahatma Gandhi","Chandrasekhar Azad","Surya Sen"],
 a:1,
 e:"Gandhi promoted Ahimsa."
 },
 {
-type:"table",
-q:"Study the table:",
-table:{
-h:["Year","Event"],
-r:[
-["1919","Jallianwala Bagh"],
-["1930","Salt March"],
-["1942","Quit India"]
-]
-},
-o:["1919","1930","1942","All"],
+q:"Read the newspaper report. \"The government has passed a law allowing people to be arrested without a trial. Citizens across Bharat have begun protesting against this unfair law.\" Which law is being referred to?",
+o:["Salt Law","Rowlatt Act","Forest Law","Education Act"],
 a:1,
-e:"Salt March happened in 1930."
+e:"The Rowlatt Act allowed detention without trial."
 },
 {
-q:"Which movement promoted boycott of British goods?",
-o:["Swadeshi","Revolt 1857","Partition","Trade Act"],
-a:0,
+q:"Read the passage. Many people had gathered peacefully at Jallianwala Bagh in Amritsar. Suddenly, British troops opened fire on the unarmed crowd. The incident shocked the entire country. Why did this event increase public anger against British rule?",
+o:["British soldiers distributed free food.","Peaceful people were fired upon.","The meeting was cancelled.","The festival ended peacefully."],
+a:1,
+e:"The massacre of unarmed people caused outrage."
+},
+{
+q:"A school organises a Freedom Exhibition. One group decorates its stall with spinning wheels (charkhas), Khadi clothes, and posters encouraging people to boycott British goods. Which movement is the group representing?",
+o:["Quit India Movement","Revolutionary Movement","Non-Cooperation Movement","Revolt of 1857"],
+a:2,
 e:"Swadeshi encouraged local goods."
 },
 {
-q:"Which event increased anger against British?",
-o:["Peace meeting fired","Free food given","No protest","Festival"],
+q:"Assertion (A): Gandhi ended the Non-Cooperation Movement in 1922. Reason (R): Violence broke out at Chauri Chaura during the movement. A. Both A and R are true, and R is the correct explanation of A. B. Both A and R are true, but R is not the correct explanation of A. C. A is true, but R is false. D. A is false, but R is true.",
+o:["Both A and R are true, and R is the correct explanation of A.","Both A and R are true, but R is not the correct explanation of A.","A is true, but R is false.","A is false, but R is true."],
 a:0,
-e:"Jallianwala Bagh massacre."
+e:"Gandhi withdrew the movement after the Chauri Chaura violence."
+},
+{
+q:"Read the situation. A young freedom fighter believes that British rule can only be ended through armed struggle. He wishes to join an organisation that follows revolutionary methods instead of non-violent protests. Which organisation is he most likely to join?",
+o:["Satyagraha Ashram","Hindustan Republican Association","Swadeshi Movement","Indian Civil Service"],
+a:1,
+e:"The Hindustan Republican Association used revolutionary methods."
+},
+{
+type:"table",
+q:"Read the timeline. Which option correctly shows the sequence of these events?",
+table:{
+h:["Year","Event"],
+r:[
+["1919","Jallianwala Bagh Massacre"],
+["1930","Salt March"],
+["1942","Quit India Movement"]
+]
+},
+o:["Jallianwala Bagh Massacre → Salt March → Quit India Movement","Quit India Movement → Salt March → Jallianwala Bagh Massacre","Salt March → Jallianwala Bagh Massacre → Quit India Movement","Jallianwala Bagh Massacre → Quit India Movement → Salt March"],
+a:0,
+e:"The sequence follows the years shown in the timeline."
+},
+{
+q:"A student sees a photograph of Mahatma Gandhi walking with followers towards the seashore to make salt in protest against an unfair British law. Which movement does this photograph represent?",
+o:["Non-Cooperation Movement","Quit India Movement","Civil Disobedience Movement","Revolutionary Movement"],
+a:2,
+e:"The Salt March was part of the Civil Disobedience Movement."
+},
+{
+type:"table",
+q:"Study the table. Based on the table, which event took place after the Salt March?",
+table:{
+h:["Year","Event"],
+r:[
+["1919","Jallianwala Bagh Massacre"],
+["1921","Non-Cooperation Movement"],
+["1930","Salt March"],
+["1942","Quit India Movement"]
+]
+},
+o:["Jallianwala Bagh Massacre","Non-Cooperation Movement","Quit India Movement","None of these"],
+a:2,
+e:"Quit India Movement happened after the Salt March."
+},
+{
+q:"Read the speech. \"The time has come for the British to leave India. We must unite and continue our struggle until our country becomes free.\" Which movement is this speech most likely referring to?",
+o:["Swadeshi Movement","Civil Disobedience Movement","Quit India Movement","Revolt of 1857"],
+a:2,
+e:"The speech matches the Quit India Movement."
+},
+{
+q:"A student is arranging important events of India's freedom struggle in chronological order. Which event should be placed last on the timeline?",
+o:["Jallianwala Bagh Massacre","Non-Cooperation Movement","Quit India Movement","Arrival of Gandhi in India"],
+a:2,
+e:"Quit India Movement is the latest event listed."
+},
+{
+q:"Read the diary entry. \"Today our country finally became independent. While everyone celebrated freedom, many families were sad because the country had been divided into two separate nations.\" Which historical event is described in the diary?",
+o:["Civil Disobedience Movement","Partition of Bharat","Rowlatt Act","Salt March"],
+a:1,
+e:"The diary describes the Partition of Bharat."
+},
+{
+q:"A group of students wants to protest against an unfair school rule. They decide to remain peaceful, refuse to use the rule, and avoid damaging any property. Which principle of Mahatma Gandhi are they following?",
+o:["Violent protest","Non-violence and peaceful resistance","Armed revolution","Military action"],
+a:1,
+e:"They are following non-violence and peaceful resistance."
 }
 ];
 
@@ -297,6 +208,3 @@ load();
 },5000);
 
 </script>
-
-</body>
-</html>
