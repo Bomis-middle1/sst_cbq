@@ -9,8 +9,10 @@ body{
   margin:0;
   font-family:Arial;
   overflow:hidden;
-  color:#fff;
-  background:#000;
+  color:#111; /* Changed to dark text for contrast against light backgrounds */
+  /* Tricolour Gradient Background */
+  background: linear-gradient(135deg, #FF9933 0%, #FFFFFF 50%, #128807 100%);
+  height: 100vh;
 }
 
 /* SPLASH */
@@ -39,15 +41,19 @@ body{
   justify-content:space-between;
   font-size:22px;
   font-weight:bold;
+  color: #000080; /* Ashoka Chakra Navy Blue */
+  max-width: 900px;
+  margin: 0 auto 15px auto;
 }
 
 .box{
   max-width:900px;
   margin:auto;
-  background:#111;
+  background: rgba(255, 255, 255, 0.95); /* Semi-transparent clean white box */
   padding:25px;
   border-radius:15px;
-  box-shadow:0 0 10px rgba(255,255,255,0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  border: 2px solid #000080; /* Navy Blue Accent Border */
 }
 
 #q{
@@ -56,6 +62,7 @@ body{
   margin-bottom:15px;
   line-height: 1.4;
   white-space: pre-line;
+  color: #222;
 }
 
 /* TABLE STYLING */
@@ -63,15 +70,16 @@ body{
   width: 80%;
   margin: 15px auto;
   border-collapse: collapse;
-  background: #222;
+  background: #fff;
+  color: #000;
 }
 .q-table th, .q-table td {
-  border: 1px solid #444;
+  border: 1px solid #ccc;
   padding: 10px;
   text-align: left;
 }
 .q-table th {
-  background: #333;
+  background: #f2f2f2;
 }
 
 .option{
@@ -80,21 +88,36 @@ body{
   padding:14px;
   font-size:18px;
   border-radius:10px;
-  background:#1a1a1a;
-  border:1px solid #333;
+  background:#f9f9f9;
+  border:1px solid #ddd;
   cursor:pointer;
   text-align: left;
+  color: #333;
+  transition: 0.2s ease;
 }
 
-.option:hover{background:#333;}
+.option:hover{
+  background:#eee;
+  border-color: #000080;
+}
 
-.correct{background:#1f6f3b !important;}
-.wrong{background:#7a1f1f !important;}
+/* Clear distinction for correctness */
+.correct{
+  background:#128807 !important; 
+  color: #fff !important;
+  border-color: #128807 !important;
+}
+.wrong{
+  background:#b32424 !important; 
+  color: #fff !important;
+  border-color: #b32424 !important;
+}
 
 #feedback{
   margin-top:10px;
   font-size:16px;
-  color:#fff;
+  color:#b32424;
+  font-weight: bold;
 }
 
 /* RESULT */
@@ -102,16 +125,37 @@ body{
   display:none;
   text-align:center;
   padding:40px;
+  background: rgba(255, 255, 255, 0.95);
+  max-width: 500px;
+  margin: 100px auto;
+  border-radius: 15px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  border: 3px solid #000080;
+}
+
+#result h2 {
+  color: #FF9933;
+  font-size: 32px;
+}
+
+#final {
+  font-size: 24px;
+  color: #128807;
+  font-weight: bold;
 }
 
 button{
   padding:12px 18px;
   border:none;
   border-radius:10px;
-  background:#fff;
-  color:#000;
+  background:#000080;
+  color:#fff;
   font-size:16px;
   cursor:pointer;
+  font-weight: bold;
+}
+button:hover {
+  background: #000066;
 }
 </style>
 </head>
@@ -169,7 +213,7 @@ if(time<=0) next();
 },1000);
 }
 
-/* 12 CBQ QUESTIONS (UPDATED) */
+/* 12 CBQ QUESTIONS */
 const questions=[
 {
 q:"Emma is visiting Bengaluru for the first time. She wants to greet local people and ask for directions using the language commonly spoken there.\n\nWhich language should Emma learn?",
@@ -240,7 +284,7 @@ e:"Northern India includes the Himalayan mountain ranges, valleys, and snowscape
 q:"A travel company receives the following request from a family:\n\"We would like to visit a famous white marble monument located in Agra during our holiday.\"\n\nWhich place should the travel company recommend?",
 o:["Gateway of India","Taj Mahal","Meenakshi Temple","Jaisalmer Fort"],
 a:1,
-e:"The Taj Mahal is the world-famous white marble monument in Agra."
+e:"The Summary text shows the Taj Mahal is the world-famous white marble monument in Agra."
 },
 {
 q:"A class is preparing a display board for Independence Day. The teacher asks students to choose pictures and ideas that best represent India's Unity in Diversity.\n\nWhich set should they select?",
