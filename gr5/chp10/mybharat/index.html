@@ -1,381 +1,481 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>My Bharat CBQ</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter: Unity in Diversity (My Bharat)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght=500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* TRI-COLOR PALETTE */
+            --bharat-saffron: #FF9933; 
+            --bharat-white: #FFFFFF;
+            --bharat-green: #138808; 
+            --ash-blue: #000080; 
+            --card-base: #F9FBF9; 
+            --text-dark: #1E293B;
+            --wrong-red: #D90429;
+            --font-head: 'Fredoka One', cursive;
+            --font-body: 'Quicksand', sans-serif;
+        }
 
-<style>
-body{
-  margin:0;
-  font-family:Arial;
-  overflow:hidden;
-  color:#111; /* Changed to dark text for contrast against light backgrounds */
-  /* Tricolour Gradient Background */
-  background: linear-gradient(135deg, #FF9933 0%, #FFFFFF 50%, #128807 100%);
-  height: 100vh;
-}
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-/* SPLASH */
-#splash{
-  position:fixed;
-  inset:0;
-  background:#000;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:999;
-}
-#splash img{
-  width:220px;
-}
+        body {
+            font-family: var(--font-body);
+            background: linear-gradient(135deg, #FFF3E0 0%, #E8F5E9 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
 
-/* GAME */
-#game{
-  display:none;
-  padding:20px;
-  text-align:center;
-}
+        /* --- BRANDING OVERLAY (5 Seconds Rule) --- */
+        #brand-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #FFFFFF;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.6s ease-out;
+        }
+        #brand-overlay img {
+            max-width: 200px;
+            height: auto;
+            margin-bottom: 25px;
+        }
+        .load-container {
+            width: 180px; height: 8px; background: #E2E8F0; border-radius: 4px; overflow: hidden;
+        }
+        .load-progress {
+            width: 0%; height: 100%; background: var(--bharat-saffron);
+            animation: progress 5s linear forwards;
+        }
+        @keyframes progress { to { width: 100%; } }
 
-.top{
-  display:flex;
-  justify-content:space-between;
-  font-size:22px;
-  font-weight:bold;
-  color: #000080; /* Ashoka Chakra Navy Blue */
-  max-width: 900px;
-  margin: 0 auto 15px auto;
-}
+        /* --- CONTAINER --- */
+        .game-container {
+            width: 100%;
+            max-width: 650px;
+            position: relative;
+        }
+        
+        .card {
+            background-color: var(--card-base);
+            border-radius: 30px;
+            padding: 25px;
+            box-shadow: 0 16px 0px var(--ash-blue), 0 25px 40px rgba(0, 0, 128, 0.1);
+            border: 6px solid #FFFFFF;
+            max-height: 92vh;
+            overflow-y: auto;
+        }
 
-.box{
-  max-width:900px;
-  margin:auto;
-  background: rgba(255, 255, 255, 0.95); /* Semi-transparent clean white box */
-  padding:25px;
-  border-radius:15px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-  border: 2px solid #000080; /* Navy Blue Accent Border */
-}
+        .screen { display: none; }
+        .screen.active { display: block; }
 
-#q{
-  font-size:24px;
-  font-weight:bold;
-  margin-bottom:15px;
-  line-height: 1.4;
-  white-space: pre-line;
-  color: #222;
-}
+        /* --- TYPOGRAPHY --- */
+        h1 {
+            font-family: var(--font-head);
+            font-size: 2.2rem;
+            color: var(--ash-blue);
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .intro-p { font-size: 1.15rem; color: var(--text-dark); text-align: center; line-height: 1.6; margin-bottom: 25px; }
+        .meta-text { font-size: 0.9rem; color: var(--bharat-saffron); text-align: center; margin-bottom: 5px; font-weight: 700; letter-spacing: 1px; }
 
-/* TABLE STYLING */
-.q-table {
-  width: 80%;
-  margin: 15px auto;
-  border-collapse: collapse;
-  background: #fff;
-  color: #000;
-}
-.q-table th, .q-table td {
-  border: 1px solid #ccc;
-  padding: 10px;
-  text-align: left;
-}
-.q-table th {
-  background: #f2f2f2;
-}
+        /* ACTION BUTTONS */
+        .btn {
+            display: block;
+            width: 100%;
+            background: linear-gradient(135deg, var(--bharat-saffron) 0%, #FFA726 100%);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 20px;
+            font-family: var(--font-head);
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            text-align: center;
+            box-shadow: 0 6px 0px #C75200;
+            margin-top: 15px;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 0px #C75200; }
+        .btn:active { transform: translateY(4px); box-shadow: 0 2px 0px #C75200; }
 
-.option{
-  display:block;
-  margin:10px 0;
-  padding:14px;
-  font-size:18px;
-  border-radius:10px;
-  background:#f9f9f9;
-  border:1px solid #ddd;
-  cursor:pointer;
-  text-align: left;
-  color: #333;
-  transition: 0.2s ease;
-}
+        /* --- TRACKERS --- */
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 4px dashed #CBD5E1;
+        }
+        .tracker-item {
+            font-weight: 700;
+            color: var(--text-dark);
+            font-size: 1.1rem;
+        }
+        .q-count { color: var(--bharat-saffron); font-family: var(--font-head); }
+        .s-count { color: var(--bharat-green); font-family: var(--font-head); }
 
-.option:hover{
-  background:#eee;
-  border-color: #000080;
-}
+        /* --- QUESTION TEXT --- */
+        h2.question-title {
+            font-size: 1.15rem;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            line-height: 1.5;
+            font-weight: 700;
+            background: #F1F5F9;
+            padding: 15px;
+            border-radius: 15px;
+            border-left: 6px solid var(--bharat-saffron);
+        }
 
-/* Clear distinction for correctness */
-.correct{
-  background:#128807 !important; 
-  color: #fff !important;
-  border-color: #128807 !important;
-}
-.wrong{
-  background:#b32424 !important; 
-  color: #fff !important;
-  border-color: #b32424 !important;
-}
+        /* --- SELECTION TILES --- */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .option-tile {
+            background-color: #FFFFFF;
+            border: 3px solid #E2E8F0;
+            padding: 14px;
+            border-radius: 15px;
+            text-align: left;
+            font-family: var(--font-body);
+            font-weight: 700;
+            font-size: 1.05rem;
+            cursor: pointer;
+            color: var(--text-dark);
+            box-shadow: 0 4px 0px #CBD5E1;
+            width: 100%;
+        }
+        .option-tile:hover:not(:disabled) {
+            border-color: var(--bharat-saffron);
+            background-color: #FFFDEB;
+        }
 
-#feedback{
-  margin-top:10px;
-  font-size:16px;
-  color:#b32424;
-  font-weight: bold;
-}
+        .option-tile.correct {
+            background-color: #E8F5E9 !important;
+            color: var(--bharat-green) !important;
+            border-color: var(--bharat-green) !important;
+            box-shadow: 0 4px 0px #0E6506 !important;
+        }
+        .option-tile.wrong {
+            background-color: #FFEBEE !important;
+            color: var(--wrong-red) !important;
+            border-color: var(--wrong-red) !important;
+            box-shadow: 0 4px 0px #800016 !important;
+        }
 
-/* RESULT */
-#result{
-  display:none;
-  text-align:center;
-  padding:40px;
-  background: rgba(255, 255, 255, 0.95);
-  max-width: 500px;
-  margin: 100px auto;
-  border-radius: 15px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  border: 3px solid #000080;
-}
+        /* --- FEEDBACK BOXES --- */
+        .feedback-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 1rem;
+            line-height: 1.5;
+            display: none;
+        }
+        .feedback-box.retry {
+            background-color: #FFF9E6; color: #664D03; border: 3px solid var(--bharat-saffron);
+        }
+        .feedback-box.reveal {
+            background-color: #E8F5E9; color: var(--bharat-green); border: 3px solid var(--bharat-green);
+        }
 
-#result h2 {
-  color: #FF9933;
-  font-size: 32px;
-}
-
-#final {
-  font-size: 24px;
-  color: #128807;
-  font-weight: bold;
-}
-
-button{
-  padding:12px 18px;
-  border:none;
-  border-radius:10px;
-  background:#000080;
-  color:#fff;
-  font-size:16px;
-  cursor:pointer;
-  font-weight: bold;
-}
-button:hover {
-  background: #000066;
-}
-</style>
+        /* --- SUMMARY MEDAL --- */
+        .score-medal {
+            background: radial-gradient(circle, #FFE082 0%, var(--bharat-saffron) 100%);
+            color: white;
+            font-family: var(--font-head);
+            font-size: 3.5rem;
+            width: 120px; height: 120px;
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            margin: 20px auto;
+            box-shadow: 0 8px 20px rgba(255, 153, 51, 0.3);
+            border: 5px solid #FFFFFF;
+        }
+        .badge {
+            font-family: var(--font-head); font-size: 1.6rem; color: var(--ash-blue); text-align: center; margin-bottom: 15px;
+        }
+    </style>
 </head>
-
 <body>
 
-<div id="splash">
-  <img src="assets/logo.png">
-</div>
+    <div id="brand-overlay">
+        <img src="gr5/chp10/mybharat/assets/logo.png" alt="Logo" onerror="this.style.display='none';">
+        <div class="load-container">
+            <div class="load-progress"></div>
+        </div>
+    </div>
 
-<div id="game">
+    <div class="game-container">
+        <div class="card">
+            
+            <div id="scr-intro" class="screen active">
+                <p class="meta-text">CHAPTER: UNITY IN DIVERSITY</p>
+                <h1>My Bharat! 🇮🇳</h1>
+                <p class="intro-p">Discover the unique heritage, vibrant cultures, languages, and incredible geographical landmarks that unite our majestic country!</p>
+                <button class="btn" onclick="initGame()">Start Exploration! 🚀</button>
+            </div>
 
-<div class="top">
-  <div id="score">Score: 0</div>
-  <div id="timer">45</div>
-</div>
+            <div id="scr-quiz" class="screen">
+                <div class="game-header">
+                    <div class="tracker-item">🗺️ Q: <span class="q-count" id="curr-idx">1</span> / 12</div>
+                    <div class="tracker-item">🏆 Score: <span class="s-count" id="score-label">0</span></div>
+                </div>
 
-<div class="box">
-  <div id="q"></div>
-  <div id="options"></div>
-  <div id="feedback"></div>
-</div>
+                <h2 class="question-title" id="question-text">Loading heritage records...</h2>
+                
+                <div class="options-grid" id="options-holder"></div>
 
-</div>
+                <div id="feedback-panel" class="feedback-box"></div>
+                
+                <button class="btn" id="next-action-btn" style="display: none;" onclick="advanceQueue()">Next Challenge ➡️</button>
+            </div>
 
-<div id="result">
-  <h2>🇮🇳 Excellent!</h2>
-  <p id="final"></p>
-  <button onclick="location.reload()">Play Again</button>
-</div>
+            <div id="scr-over" class="screen">
+                <p class="meta-text">EXPLORATION COMPLETE!</p>
+                <h1>Proud Explorer! 🌟</h1>
+                <div class="score-medal" id="medal-score">0</div>
+                <div class="badge" id="evaluation-badge">Bharat Eco-Ranger</div>
+                <p id="evaluation-msg" style="text-align: center; color: var(--text-dark); margin-bottom: 20px; line-height: 1.5;"></p>
+                <button class="btn" onclick="location.reload()">Explore Again 🔄</button>
+            </div>
 
-<audio id="correctSound" src="assets/correct.mp3"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3"></audio>
-<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+        </div>
+    </div>
 
-<script>
+    <audio id="snd-yes" src="gr5/chp10/mybharat/assets/correct.mp3" preload="auto"></audio>
+    <audio id="snd-no" src="gr5/chp10/mybharat/assets/wrong.mp3" preload="auto"></audio>
+    <audio id="snd-cheer" src="gr5/chp10/mybharat/assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
 
-let i=0;
-let score=0;
-let time=45;
-let attempt=0;
-let lock=false;
-let interval;
+    <script>
+        const coreQuiz = [
+            {
+                q: "Emma is visiting Bengaluru for the first time. She wants to greet local people and ask for directions using the language commonly spoken there.<br><br>Which language should Emma learn?",
+                o: ["Marathi", "Kannada", "Tamil", "Telugu"],
+                c: 1,
+                x: "Kannada is the state language widely spoken in Bengaluru, Karnataka."
+            },
+            {
+                q: "Read the travel brochure text:<br><i>\"Visit one of the Seven Wonders of the World. This beautiful white marble monument is located in Agra and attracts visitors from all over the world.\"</i><br><br>In which state is this monument located?",
+                o: ["Rajasthan", "Maharashtra", "Uttar Pradesh", "Gujarat"],
+                c: 2,
+                x: "Agra and its legendary monument, the Taj Mahal, are located in Uttar Pradesh."
+            },
+            {
+                q: "Study the state features list:<br>• Kerala – Backwaters<br>• Rajasthan – Desert<br>• West Bengal – Sundarbans<br>• Punjab – Backwaters<br><br>Which pair contains incorrect information?",
+                o: ["Kerala – Backwaters", "Rajasthan – Desert", "West Bengal – Sundarbans", "Punjab – Backwaters"],
+                c: 3,
+                x: "Punjab is known as the land of five rivers, while backwaters are unique to states like Kerala."
+            },
+            {
+                q: "An exchange student visits a school in Gujarat. During the morning assembly, students welcome the guest in their state's main language before presenting a cultural programme.<br><br>Which language are the students most likely speaking?",
+                o: ["Gujarati", "Bengali", "Punjabi", "Malayalam"],
+                c: 0,
+                x: "Gujarati is the official language spoken in the state of Gujarat."
+            },
+            {
+                q: "A history club is planning an educational trip for students to learn about magnificent forts, palaces, and the royal heritage of India.<br><br>Which state should they choose?",
+                o: ["Kerala", "Rajasthan", "Goa", "Assam"],
+                c: 1,
+                x: "Rajasthan is world-famous for its historic palaces, mighty desert forts, and royal history."
+            },
+            {
+                q: "Read the description:<br><i>A family decorates their home with lamps, lights, and colourful rangoli. They celebrate the victory of good over evil by sharing sweets with neighbours.</i><br><br>Which festival are they celebrating?",
+                o: ["Eid", "Christmas", "Diwali", "Navroz"],
+                c: 2,
+                x: "Diwali is the festival of lights where people illuminate their homes and build beautiful rangolis."
+            },
+            {
+                q: "A student prepares the following list for a heritage quiz:<br>• Meenakshi Temple – Tamil Nadu<br>• Gateway of India – Mumbai<br>• Hawa Mahal – Jaipur<br>• Taj Mahal – Chennai<br><br>Which pair is incorrect?",
+                o: ["Meenakshi Temple – Tamil Nadu", "Gateway of India – Mumbai", "Hawa Mahal – Jaipur", "Taj Mahal – Chennai"],
+                c: 3,
+                x: "The Taj Mahal is located in Agra, not Chennai."
+            },
+            {
+                q: "Read the travel diary entry:<br><i>\"Today I reached Port Blair. I learnt that it is the capital city of one of India's Union Territories surrounded by the sea.\"</i><br><br>Which Union Territory is the traveller visiting?",
+                o: ["Ladakh", "Delhi", "Puducherry", "Andman and Nicobar Islands"],
+                c: 3,
+                x: "Port Blair is the scenic capital city of the Andaman and Nicobar Islands territory."
+            },
+            {
+                q: "<b>Assertion (A):</b> India is known as a diverse country.<br><b>Reason (R):</b> People across India speak different languages and follow different traditions while living together.",
+                o: [
+                    "Both A and R are true, and R is the correct explanation of A.",
+                    "Both A and R are true, but R is not the correct explanation of A.",
+                    "A is true, but R is false.",
+                    "A is false, but R is true."
+                ],
+                c: 0,
+                x: "India’s diversity stems directly from the harmonious co-existence of different customs, scripts, languages, and rituals."
+            },
+            {
+                q: "Read the situation:<br>Riya wants to spend her summer vacation in a place with snow-covered mountains, cool weather, and beautiful valleys.<br><br>Which region of India should she visit?",
+                o: ["Northern India", "Southern India", "Western India", "Coastal India"],
+                c: 0,
+                x: "Northern India is home to the majestic, snowy Himalayan mountains and scenic valleys."
+            },
+            {
+                q: "A travel company receives the following request from a family:<br><i>\"We would like to visit a famous white marble monument located in Agra during our holiday.\"</i><br><br>Which place should the travel company recommend?",
+                o: ["Gateway of India", "Taj Mahal", "Meenakshi Temple", "Jaisalmer Fort"],
+                c: 1,
+                x: "The Taj Mahal is the iconic monument built of pure white marble in Agra."
+            },
+            {
+                q: "A class is preparing a display board for Independence Day. The teacher asks students to choose pictures and ideas that best represent India's Unity in Diversity.<br><br>Which set should they select?",
+                o: [
+                    "One language and one festival only",
+                    "One state and one city only",
+                    "Different languages, festivals, clothes, food, and traditions living together peacefully",
+                    "Only famous monuments"
+                ],
+                c: 2,
+                x: "Unity in Diversity is best represented by the peaceful blending of multiple distinct cultural roots into one unique community."
+            }
+        ];
 
-/* TIMER FIXED */
-function startTimer(){
-clearInterval(interval);
-time=45;
-document.getElementById("timer").innerText=time;
+        let playHead = 0; 
+        let points = 0;
+        let attempts = 0;
 
-interval=setInterval(()=>{
-time--;
-document.getElementById("timer").innerText=time;
-if(time<=0) next();
-},1000);
-}
+        const sndYes = document.getElementById('snd-yes');
+        const sndNo = document.getElementById('snd-no');
+        const sndCheer = document.getElementById('snd-cheer');
 
-/* 12 CBQ QUESTIONS */
-const questions=[
-{
-q:"Emma is visiting Bengaluru for the first time. She wants to greet local people and ask for directions using the language commonly spoken there.\n\nWhich language should Emma learn?",
-o:["Marathi","Kannada","Tamil","Telugu"],
-a:1,
-e:"Kannada is the official and most widely spoken language in Bengaluru."
-},
-{
-q:"\"Visit one of the Seven Wonders of the World. This beautiful white marble monument is located in Agra and attracts visitors from all over the world.\"\n\nIn which state is this monument located?",
-o:["Rajasthan","Maharashtra","Uttar Pradesh","Gujarat"],
-a:2,
-e:"Agra and the Taj Mahal are located in Uttar Pradesh."
-},
-{
-q:"Study the table below:\n<table class='q-table'><tr><th>State</th><th>Famous Feature</th></tr><tr><td>Kerala</td><td>Backwaters</td></tr><tr><td>Rajasthan</td><td>Desert</td></tr><tr><td>West Bengal</td><td>Sundarbans</td></tr><tr><td>Punjab</td><td>Backwaters</td></tr></table>\nWhich row contains incorrect information?",
-o:["Kerala – Backwaters","Rajasthan – Desert","West Bengal – Sundarbans","Punjab – Backwaters"],
-a:3,
-e:"Punjab is known as the land of five rivers; it is not known for backwaters."
-},
-{
-q:"An exchange student visits a school in Gujarat. During the morning assembly, students welcome the guest in their state's main language before presenting a cultural programme.\n\nWhich language are the students most likely speaking?",
-o:["Gujarati","Bengali","Punjabi","Malayalam"],
-a:0,
-e:"Gujarati is the official and principal language spoken in Gujarat."
-},
-{
-q:"A history club is planning an educational trip for students to learn about magnificent forts, palaces, and the royal heritage of India.\n\nWhich state should they choose?",
-o:["Kerala","Rajasthan","Goa","Assam"],
-a:1,
-e:"Rajasthan is world-famous for its historic palaces, royal heritage, and forts."
-},
-{
-q:"A family decorates their home with lamps, lights, and colourful rangoli. They celebrate the victory of good over evil by sharing sweets with neighbours.\n\nWhich festival are they celebrating?",
-o:["Eid","Christmas","Diwali","Navroz"],
-a:2,
-e:"Diwali is celebrated with lamps, rangoli, and sweets to symbolise light over darkness."
-},
-{
-q:"A student prepares the following list for a heritage quiz:\n\n• Meenakshi Temple – Tamil Nadu\n• Gateway of India – Mumbai\n• Hawa Mahal – Jaipur\n• Taj Mahal – Chennai\n\nWhich pair is incorrect?",
-o:["Meenakshi Temple – Tamil Nadu","Gateway of India – Mumbai","Hawa Mahal – Jaipur","Taj Mahal – Chennai"],
-a:3,
-e:"The Taj Mahal is located in Agra, not Chennai."
-},
-{
-q:"\"Today I reached Port Blair. I learnt that it is the capital city of one of India's Union Territories surrounded by the sea.\"\n\nWhich Union Territory is the traveller visiting?",
-o:["Ladakh","Delhi","Puducherry","Andman and Nicobar Islands"],
-a:3,
-e:"Port Blair is the capital city of the Andaman and Nicobar Islands."
-},
-{
-q:"Assertion (A): India is known as a diverse country.\nReason (R): People across India speak different languages and follow different traditions while living together.",
-o:[
-  "Both A and R are true, and R is the correct explanation of A.",
-  "Both A and R are true, but R is not the correct explanation of A.",
-  "A is true, but R is false.",
-  "A is false, but R is true."
-],
-a:0,
-e:"Both statements are correct; the coexistence of different languages and cultures proves its diversity."
-},
-{
-q:"Riya wants to spend her summer vacation in a place with snow-covered mountains, cool weather, and beautiful valleys.\n\nWhich region of India should she visit?",
-o:["Northern India","Southern India","Western India","Coastal India"],
-a:0,
-e:"Northern India includes the Himalayan mountain ranges, valleys, and snowscapes."
-},
-{
-q:"A travel company receives the following request from a family:\n\"We would like to visit a famous white marble monument located in Agra during our holiday.\"\n\nWhich place should the travel company recommend?",
-o:["Gateway of India","Taj Mahal","Meenakshi Temple","Jaisalmer Fort"],
-a:1,
-e:"The Summary text shows the Taj Mahal is the world-famous white marble monument in Agra."
-},
-{
-q:"A class is preparing a display board for Independence Day. The teacher asks students to choose pictures and ideas that best represent India's Unity in Diversity.\n\nWhich set should they select?",
-o:[
-  "One language and one festival only",
-  "One state and one city only",
-  "Different languages, festivals, clothes, food, and traditions living together peacefully",
-  "Only famous monuments"
-],
-a:2,
-e:"Unity in diversity is perfectly displayed when various regional backgrounds coexist harmoniously."
-}
-];
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const overlay = document.getElementById('brand-overlay');
+                if(overlay) {
+                    overlay.style.opacity = '0';
+                    setTimeout(() => overlay.style.display = 'none', 600);
+                }
+            }, 5000);
+        });
 
-/* LOAD QUESTION */
-function load(){
-clearInterval(interval);
-lock=false;
-attempt=0;
-startTimer();
+        function initGame() {
+            document.getElementById('scr-intro').classList.remove('active');
+            document.getElementById('scr-quiz').classList.add('active');
+            playHead = 0; 
+            points = 0;
+            document.getElementById('score-label').innerText = points;
+            buildQuestionLayout();
+        }
 
-let q=questions[i];
+        function buildQuestionLayout() {
+            attempts = 0;
+            const data = coreQuiz[playHead];
+            document.getElementById('curr-idx').innerText = playHead + 1;
+            document.getElementById('question-text').innerHTML = data.q;
+            
+            const holder = document.getElementById('options-holder');
+            holder.innerHTML = '';
+            
+            const panel = document.getElementById('feedback-panel');
+            panel.style.display = 'none';
+            panel.className = 'feedback-box';
+            document.getElementById('next-action-btn').style.display = 'none';
 
-document.getElementById("q").innerHTML=q.q;
-document.getElementById("options").innerHTML="";
-document.getElementById("feedback").innerText="";
+            data.o.forEach((opt, idx) => {
+                const b = document.createElement('button');
+                b.classList.add('option-tile');
+                b.innerHTML = opt;
+                b.onclick = () => verifySelection(idx, b);
+                holder.appendChild(b);
+            });
+        }
 
-q.o.forEach((op,idx)=>{
-let div=document.createElement("div");
-div.className="option";
-div.innerText=op;
-div.onclick=()=>check(idx,div);
-document.getElementById("options").appendChild(div);
-});
-}
+        function verifySelection(selected, element) {
+            const data = coreQuiz[playHead];
+            const panel = document.getElementById('feedback-panel');
+            const tiles = document.querySelectorAll('.option-tile');
 
-/* CHECK ANSWER */
-function check(ans,el){
-if(lock) return;
+            if (selected === data.c) {
+                element.classList.add('correct');
+                freezeTiles();
+                
+                if (attempts === 0) {
+                    points++;
+                    document.getElementById('score-label').innerText = points;
+                }
+                
+                panel.className = "feedback-box reveal";
+                panel.innerHTML = `<strong>Magnificent! Correct Answer!</strong><br>${data.x}`;
+                panel.style.display = 'block';
+                document.getElementById('next-action-btn').style.display = 'block';
+                try { sndYes.play(); } catch(e){}
+            } else {
+                attempts++;
+                element.classList.add('wrong');
+                element.disabled = true;
+                try { sndNo.play(); } catch(e){}
 
-let q=questions[i];
+                if (attempts === 1) {
+                    panel.className = "feedback-box retry";
+                    panel.innerHTML = "<strong>Don't worry, try again!</strong> Re-evaluate the details or look closer at the clues.";
+                    panel.style.display = 'block';
+                } else {
+                    freezeTiles();
+                    if (tiles[data.c]) tiles[data.c].classList.add('correct');
+                    
+                    panel.className = "feedback-box reveal";
+                    panel.innerHTML = `<strong>Let's Learn!</strong><br>${data.x}`;
+                    panel.style.display = 'block';
+                    document.getElementById('next-action-btn').style.display = 'block';
+                }
+            }
+        }
 
-if(ans===q.a){
-el.classList.add("correct");
-document.getElementById("correctSound").play();
-score++;
-document.getElementById("score").innerText="Score: "+score;
-lock=true;
-setTimeout(next,800);
-}
-else{
-attempt++;
-el.classList.add("wrong");
-document.getElementById("wrongSound").play();
+        function freezeTiles() {
+            document.querySelectorAll('.option-tile').forEach(b => b.disabled = true);
+        }
 
-if(attempt===2){
-document.getElementById("feedback").innerText=
-"Correct Answer: "+q.o[q.a]+" → "+q.e;
-lock=true;
-setTimeout(next,2000);
-}
-}
-}
+        function advanceQueue() {
+            playHead++;
+            if(playHead < coreQuiz.length) {
+                buildQuestionLayout();
+            } else {
+                displaySummary();
+            }
+        }
 
-/* NEXT */
-function next(){
-clearInterval(interval);
-i++;
-if(i<questions.length){
-load();
-}else end();
-}
+        function displaySummary() {
+            document.getElementById('scr-quiz').classList.remove('active');
+            document.getElementById('scr-over').classList.add('active');
+            document.getElementById('medal-score').innerText = points;
+            
+            const badge = document.getElementById('evaluation-badge');
+            const msg = document.getElementById('evaluation-msg');
+            const rate = points / coreQuiz.length;
 
-/* END */
-function end(){
-clearInterval(interval);
-document.getElementById("game").style.display="none";
-document.getElementById("result").style.display="block";
-document.getElementById("clapSound").play();
-document.getElementById("final").innerText=
-"Score: "+score+"/"+questions.length;
-}
-
-/* START */
-setTimeout(()=>{
-document.getElementById("splash").style.display="none";
-document.getElementById("game").style.display="block";
-load();
-},5000);
-
-</script>
-
+            if(rate >= 0.85) {
+                badge.innerText = "🏆 Rashtriya Scholar!";
+                msg.innerText = "Incredible masterclass performance! You possess fantastic insight into India's vast geography, regional cultures, and unified spirit.";
+                try { sndCheer.play(); } catch(e){}
+            } else if(rate >= 0.5) {
+                badge.innerText = "🌟 Great Explorer!";
+                msg.innerText = "Wonderful job! You have a strong grasp of India's mixed heritage. Try one more time to claim a perfect rating!";
+            } else {
+                badge.innerText = "🧭 Avid Traveler!";
+                msg.innerText = "Keep learning! Delving into maps, regional languages, and heritage monuments will make the next run a breeze.";
+            }
+        }
+    </script>
 </body>
 </html>
