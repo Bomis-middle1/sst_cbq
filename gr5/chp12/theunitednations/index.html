@@ -120,12 +120,10 @@ button{
 
 <body>
 
-<!-- SPLASH -->
 <div id="splash">
   <img src="assets/logo.png">
 </div>
 
-<!-- GAME -->
 <div id="game">
 
 <div class="top">
@@ -140,14 +138,12 @@ button{
 
 </div>
 
-<!-- RESULT -->
 <div id="result">
   <h2>🌍 Excellent Work!</h2>
   <p id="final"></p>
   <button onclick="location.reload()">Play Again</button>
 </div>
 
-<!-- AUDIO -->
 <audio id="correctSound" src="assets/correct.mp3"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
 <audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
@@ -159,59 +155,69 @@ let i=0,score=0,time=45,lock=false,interval;
 /* QUESTIONS (MODIFIED CBSE LEVEL) */
 const questions=[
 {
-q:"Two countries want peaceful settlement of border conflict. Which UN body helps?",
-o:["UNESCO","International Court of Justice","WHO","UNICEF"],
+q:"Two neighbouring countries have been arguing over their border for many years. Their leaders decide not to fight a war and instead agree to seek a peaceful legal solution through an international organisation. Which United Nations body is most suitable to help resolve this dispute?",
+o:["General Assembly","International Court of Justice","UNESCO","UNICEF"],
 a:1
 },
 {
-q:"Which UN agency helps children during floods and disasters?",
-o:["WHO","UNICEF","IMF","Security Council"],
-a:1
+q:"Heavy floods have affected thousands of families in a country. Many children have lost access to food, clean drinking water, healthcare and schools. The government requests help from the United Nations. Which UN agency would play the most important role in protecting the children's needs?",
+o:["UNESCO","WHO","UNICEF","Security Council"],
+a:2
 },
 {
-q:"Model UN helps students mainly to...",
-o:["Play sports","Discuss global issues","Run businesses","Learn coding"],
-a:1
-},
-{
-q:"Which agency supports education and culture?",
-o:["WHO","UNESCO","WFP","ICJ"],
-a:1
-},
-{
-q:"UN Day is celebrated on...",
-o:["15 August","24 October","2 October","1 January"],
-a:1
-},
-{
-q:"Which agency handles health emergencies?",
-o:["WHO","UNICEF","UNESCO","NASA"],
+q:"During a Model United Nations (MUN) programme, students represent different countries. Instead of arguing, they discuss climate change, share ideas and work together to prepare common solutions. What is the main purpose of conducting such an activity?",
+o:["To teach students how countries cooperate to solve global problems","To choose world leaders","To organise sports competitions","To compare different school systems"],
 a:0
 },
 {
-q:"Odd one out: Which is NOT a UN body?",
-o:["General Assembly","Security Council","UNICEF","Cricket Board"],
-a:3
+q:"A country has started a project to restore damaged historical monuments while also improving the quality of education in villages. The government wants support from a UN agency that works in both these areas. Which agency should it approach?",
+o:["WHO","WFP","UNESCO","Security Council"],
+a:2
 },
 {
-q:"Security Council mainly works for...",
-o:["Trade","Peace and security","Education","Sports"],
-a:1
-},
-{
-q:"Peacekeeping missions are sent to...",
-o:["War zones","Schools","Markets","Hospitals only"],
+q:"Assertion: United Nations Day is celebrated every year on 24 October. Reason: This day marks the anniversary of the establishment of the United Nations.",
+o:["Both statements are true and the reason correctly explains the assertion.","Both statements are true but the reason does not explain the assertion.","Assertion is true but Reason is false.","Assertion is false but Reason is true."],
 a:0
 },
 {
-q:"NAM means countries that want...",
-o:["Military alliance","Independence and peace","War support","Trade monopoly"],
+q:"A dangerous disease spreads quickly across several countries. Governments need expert guidance on preventing infections, improving hospitals and protecting public health. Which UN agency would provide the best support?",
+o:["WHO","UNESCO","WFP","General Assembly"],
+a:0
+},
+{
+q:"A student preparing for a quiz says, 'UNICEF is one of the six main organs of the United Nations.' Another student politely corrects the statement. Which explanation is correct?",
+o:["UNICEF is a specialised UN agency that works for children, not one of the main organs.","UNICEF manages the Security Council.","UNICEF settles international disputes.","UNICEF elects the Secretary-General."],
+a:0
+},
+{
+q:"During a classroom discussion, Ravi says, 'The Security Council mainly works to improve education and preserve cultural heritage across the world.' Which statement correctly identifies Ravi's mistake?",
+o:["The Security Council mainly works to maintain international peace and security.","The Security Council provides food during disasters.","The Security Council protects children's rights.","The Security Council promotes tourism."],
+a:0
+},
+{
+q:"News reports show Indian soldiers wearing blue helmets while helping maintain peace in a country affected by civil conflict. Their duty is to protect civilians and support peace without taking sides. This is an example of:",
+o:["Peacekeeping Mission","Military invasion","Trade agreement","Tourism programme"],
+a:0
+},
+{
+q:"A newly independent nation wants friendly relations with all countries but decides not to join any military alliance during the Cold War. Instead, it wishes to remain independent while promoting peace. Which movement supports this idea?",
+o:["World Food Programme","Security Council","Non-Aligned Movement (NAM)","UNICEF"],
+a:2
+},
+{
+q:"A remote village is facing two serious problems: Many children have stopped attending school, and several families are suffering from severe food shortages after a drought. Which combination of UN agencies would be the most suitable to help the village?",
+o:["WHO and Security Council","UNICEF and WFP","UNESCO and International Court of Justice","General Assembly and WHO"],
 a:1
 },
 {
-q:"Countries discussing climate issues meet in...",
-o:["WHO","General Assembly","UNICEF","ICJ"],
-a:1
+q:"Representatives from almost every country gather at a large international meeting to discuss climate change. Each country shares its views before voting on recommendations to protect the environment. Which UN body is conducting this meeting?",
+o:["General Assembly","WHO","UNICEF","International Court of Justice"],
+a:0
+},
+{
+q:"Assertion: India played an important role in the formation of the Non-Aligned Movement. Reason: India wanted nations to remain independent and promote peaceful coexistence.",
+o:["Both statements are true and the reason correctly explains the assertion.","Both statements are true but the reason does not explain the assertion.","Assertion is true but Reason is false.","Assertion is false but Reason is true."],
+a:0
 }
 ];
 
