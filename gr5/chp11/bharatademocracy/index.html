@@ -128,12 +128,10 @@ button{
 
 <body>
 
-<!-- SPLASH -->
 <div id="splash">
   <img src="assets/logo.png">
 </div>
 
-<!-- GAME -->
 <div id="game">
 
 <div class="top">
@@ -149,14 +147,12 @@ button{
 
 </div>
 
-<!-- RESULT -->
 <div id="result">
   <h2>🇮🇳 Excellent Work!</h2>
   <p id="final"></p>
   <button onclick="location.reload()">Play Again</button>
 </div>
 
-<!-- AUDIO -->
 <audio id="correctSound" src="assets/correct.mp3"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
 <audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
@@ -193,70 +189,76 @@ setTimeout(()=>d.remove(),3000);
 /* CBQ QUESTIONS (NO TABLE) */
 const questions=[
 {
-q:"A class votes for monitor selection. What principle is shown?",
-o:["Rule of one leader","Participation of people","No decision system","Random choice"],
+q:"Class 5 is choosing its class monitor. Every student gets one vote, and the candidate with the highest number of votes becomes the monitor. The teacher reminds everyone that every vote is equally important. Which democratic principle does this activity show?",
+o:["Rule by one person","Participation of people","Monarchy","Dictatorship"],
 a:1,
-e:"Democracy means participation."
+e:"Democracy gives everyone equal opportunity to participate."
 },
 {
-q:"Students celebrate all religions in school. What value is shown?",
-o:["Secularism","Dictatorship","Monarchy","Bias"],
+q:"Harmony Week Celebration: Students from different religions are invited to explain their festivals, traditions, and customs. Everyone is encouraged to respect each other's beliefs. Which constitutional value is highlighted in this notice?",
+o:["Secularism","Monarchy","Exploitation","Dictatorship"],
 a:0,
-e:"India respects all religions."
+e:"Secularism means respecting and treating all religions equally."
 },
 {
-q:"Girls are not allowed in a club. What is violated?",
-o:["Right to Equality","Right to Trade","Right to Travel","Cultural Right"],
-a:0,
-e:"Equality is violated."
+q:"A school announces that only boys can join the Robotics Club, while girls are not allowed to participate even if they are interested. Which Fundamental Right is being violated?",
+o:["Right to Freedom of Religion","Right to Equality","Right against Exploitation","Cultural and Educational Rights"],
+a:1,
+e:"Excluding individuals based on gender violates the Right to Equality."
 },
 {
-q:"Government builds schools and hospitals. What does it show?",
-o:["Works for citizens","Works for rulers only","No responsibility","Random action"],
-a:0,
-e:"Government serves people."
+q:"The local government has built new schools, repaired roads, and opened a health centre in a remote village after listening to the needs of the people. What does this show about a democratic government?",
+o:["It works only for elected leaders.","It works for the welfare of the people.","It ignores public opinion.","It makes decisions without consulting citizens."],
+a:1,
+e:"A democratic government is elected to serve and care for the citizens."
 },
 {
-q:"Citizens can change government through elections. Why?",
-o:["People are powerful","Government is permanent","No elections exist","Random process"],
+q:"Assertion (A): Citizens in a democracy can remove a government through elections. Reason (R): Democratic governments are accountable to the people.",
+o:["Both A and R are true, and R correctly explains A.","Both A and R are true, but R does not explain A.","A is true, but R is false.","A is false, but R is true."],
 a:0,
-e:"People hold power in democracy."
+e:"Elections ensure that an accountable government remains answerable to its people."
 },
 {
-q:"A student writes opinions in magazine. What right is used?",
-o:["Freedom of expression","Right to property","Right to vote","Right to transport"],
-a:0,
-e:"Freedom of speech is allowed."
+q:"Nisha writes an article in her school magazine suggesting ways to reduce plastic waste and improve cleanliness in the school. She respectfully shares her opinions with everyone. Which Fundamental Right allows her to express her views?",
+o:["Right to Equality","Right to Freedom","Right against Exploitation","Right to Constitutional Remedies"],
+a:1,
+e:"The Right to Freedom guarantees the freedom of speech and expression."
 },
 {
-q:"Damaging public park shows what?",
-o:["Duty violation","Good citizenship","Equality","Respect"],
-a:0,
-e:"It is wrong civic behaviour."
+q:"Four students behave differently during a school picnic: Aarav stands respectfully during the National Anthem. Meera puts waste only in the dustbin. Kabir writes his name on a public monument. Zoya helps younger students cross the road safely. Who is not performing the duties of a responsible citizen?",
+o:["Aarav","Meera","Kabir","Zoya"],
+a:2,
+e:"Defacing public property goes against the fundamental duties of a citizen."
 },
 {
-q:"Children forced to work instead of school. Which right?",
-o:["Right against exploitation","Right to education only","Right to travel","Right to vote"],
+q:"Officials rescued several children who were working in a dangerous factory. The children were sent back to school, and action was taken against the factory owner. Which Fundamental Right protects these children?",
+o:["Right against Exploitation","Right to Freedom","Right to Equality","Freedom of Religion"],
 a:0,
-e:"Child labour is banned."
+e:"The Right against Exploitation bans child labour and protects minors."
 },
 {
-q:"Only some students get equal rights. What is wrong?",
-o:["Inequality","Fairness","Democracy","Unity"],
-a:0,
-e:"Equality is missing."
+q:"During a school election, a few students say that only children from one section should be allowed to vote because they are 'more responsible.' If the teacher wants to follow democratic values, what should she do?",
+o:["Allow only one section to vote.","Let class leaders decide the winner.","Give every student an equal chance to vote.","Cancel the election."],
+a:2,
+e:"Democratic values demand equal voting rights for everyone without discrimination."
 },
 {
-q:"Different cultures live together peacefully. What is it?",
-o:["Unity in diversity","Single culture","No society","Conflict"],
-a:0,
-e:"India is diverse but united."
+q:"A tribal community starts a learning centre where children are taught their traditional language, songs, and folk dances so that these can be preserved for future generations. Which Fundamental Right supports this effort?",
+o:["Right against Exploitation","Right to Equality","Cultural and Educational Rights","Right to Constitutional Remedies"],
+a:2,
+e:"Cultural and Educational Rights preserve minority cultures and traditions."
 },
 {
-q:"Class creates rules with everyone’s opinion. What is this?",
-o:["Democracy","Dictatorship","Monarchy","Control system"],
-a:0,
-e:"Everyone participates."
+q:"Your class is writing a 'Classroom Constitution.' Four students suggest different rules. Which rule best reflects the values of the Indian Constitution?",
+o:["Only class toppers may share their opinions.","Every student may express opinions respectfully, and everyone will be treated equally.","One student will make all classroom decisions.","Different rules will apply to different groups of students."],
+a:1,
+e:"Equality and respect for all opinions lie at the heart of our Constitution."
+},
+{
+q:"Riya notices that some students are not allowed to participate in the annual sports meet because of their family background. She feels this is unfair. What should Riya do to uphold democratic values?",
+o:["Ignore the matter because it does not affect her.","Support the decision made by others.","Encourage equal opportunities and inform the teacher about the unfair treatment.","Ask only her friends to participate."],
+a:2,
+e:"Upholding democracy means speaking out against discrimination and promoting fairness."
 }
 ];
 
