@@ -51,9 +51,27 @@ body{
 }
 
 #q{
-  font-size:26px;
+  font-size:24px;
   font-weight:bold;
   margin-bottom:15px;
+  line-height: 1.4;
+  white-space: pre-line;
+}
+
+/* TABLE STYLING */
+.q-table {
+  width: 80%;
+  margin: 15px auto;
+  border-collapse: collapse;
+  background: #222;
+}
+.q-table th, .q-table td {
+  border: 1px solid #444;
+  padding: 10px;
+  text-align: left;
+}
+.q-table th {
+  background: #333;
 }
 
 .option{
@@ -65,6 +83,7 @@ body{
   background:#1a1a1a;
   border:1px solid #333;
   cursor:pointer;
+  text-align: left;
 }
 
 .option:hover{background:#333;}
@@ -92,18 +111,17 @@ button{
   background:#fff;
   color:#000;
   font-size:16px;
+  cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
-<!-- SPLASH -->
 <div id="splash">
   <img src="assets/logo.png">
 </div>
 
-<!-- GAME -->
 <div id="game">
 
 <div class="top">
@@ -119,14 +137,12 @@ button{
 
 </div>
 
-<!-- RESULT -->
 <div id="result">
   <h2>🇮🇳 Excellent!</h2>
   <p id="final"></p>
   <button onclick="location.reload()">Play Again</button>
 </div>
 
-<!-- AUDIO -->
 <audio id="correctSound" src="assets/correct.mp3"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
 <audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
@@ -153,73 +169,89 @@ if(time<=0) next();
 },1000);
 }
 
-/* 11 CBQ QUESTIONS (REASONING BASED) */
+/* 12 CBQ QUESTIONS (UPDATED) */
 const questions=[
 {
-q:"A student observes India has many languages but people still understand each other. What does this show?",
-o:["One language system","Linguistic diversity","No communication","Only English is used"],
+q:"Emma is visiting Bengaluru for the first time. She wants to greet local people and ask for directions using the language commonly spoken there.\n\nWhich language should Emma learn?",
+o:["Marathi","Kannada","Tamil","Telugu"],
 a:1,
-e:"India has many languages across regions."
+e:"Kannada is the official and most widely spoken language in Bengaluru."
 },
 {
-q:"Different states in India have deserts, mountains and plains. What does this indicate?",
-o:["Uniform geography","Diverse landforms","Only plains exist","No mountains"],
-a:1,
-e:"India has diverse physical features."
+q:"\"Visit one of the Seven Wonders of the World. This beautiful white marble monument is located in Agra and attracts visitors from all over the world.\"\n\nIn which state is this monument located?",
+o:["Rajasthan","Maharashtra","Uttar Pradesh","Gujarat"],
+a:2,
+e:"Agra and the Taj Mahal are located in Uttar Pradesh."
 },
 {
-q:"People prefer local products over imported goods in a movement. What idea is this linked to?",
-o:["Global trade","Swadeshi thinking","Foreign dependency","Industrial rejection"],
-a:1,
-e:"Swadeshi promotes local goods."
+q:"Study the table below:\n<table class='q-table'><tr><th>State</th><th>Famous Feature</th></tr><tr><td>Kerala</td><td>Backwaters</td></tr><tr><td>Rajasthan</td><td>Desert</td></tr><tr><td>West Bengal</td><td>Sundarbans</td></tr><tr><td>Punjab</td><td>Backwaters</td></tr></table>\nWhich row contains incorrect information?",
+o:["Kerala – Backwaters","Rajasthan – Desert","West Bengal – Sundarbans","Punjab – Backwaters"],
+a:3,
+e:"Punjab is known as the land of five rivers; it is not known for backwaters."
 },
 {
-q:"Different festivals are celebrated peacefully across India. What does this suggest?",
-o:["Cultural unity in diversity","Single religion","No culture","Same traditions everywhere"],
+q:"An exchange student visits a school in Gujarat. During the morning assembly, students welcome the guest in their state's main language before presenting a cultural programme.\n\nWhich language are the students most likely speaking?",
+o:["Gujarati","Bengali","Punjabi","Malayalam"],
 a:0,
-e:"India celebrates diversity."
+e:"Gujarati is the official and principal language spoken in Gujarat."
 },
 {
-q:"A traveler sees different clothing styles in different states. What can be inferred?",
-o:["Uniform culture","Regional diversity","No culture exists","Same clothing everywhere"],
+q:"A history club is planning an educational trip for students to learn about magnificent forts, palaces, and the royal heritage of India.\n\nWhich state should they choose?",
+o:["Kerala","Rajasthan","Goa","Assam"],
 a:1,
-e:"India has regional diversity."
+e:"Rajasthan is world-famous for its historic palaces, royal heritage, and forts."
 },
 {
-q:"People with different religions live together peacefully. What does this show?",
-o:["Conflict","Unity in diversity","No society","Isolation"],
-a:1,
-e:"India shows unity in diversity."
+q:"A family decorates their home with lamps, lights, and colourful rangoli. They celebrate the victory of good over evil by sharing sweets with neighbours.\n\nWhich festival are they celebrating?",
+o:["Eid","Christmas","Diwali","Navroz"],
+a:2,
+e:"Diwali is celebrated with lamps, rangoli, and sweets to symbolise light over darkness."
 },
 {
-q:"A student sees a map showing islands with marine life. What can be inferred?",
-o:["Himalayan region","Island territory","Desert area","Plateau only"],
-a:1,
-e:"Island regions have marine ecosystems."
+q:"A student prepares the following list for a heritage quiz:\n\n• Meenakshi Temple – Tamil Nadu\n• Gateway of India – Mumbai\n• Hawa Mahal – Jaipur\n• Taj Mahal – Chennai\n\nWhich pair is incorrect?",
+o:["Meenakshi Temple – Tamil Nadu","Gateway of India – Mumbai","Hawa Mahal – Jaipur","Taj Mahal – Chennai"],
+a:3,
+e:"The Taj Mahal is located in Agra, not Chennai."
 },
 {
-q:"A cultural exchange shows people using gestures and translation to communicate. What does this show?",
-o:["Communication failure","Adaptation in diversity","No interaction","Language barrier only"],
-a:1,
-e:"People adapt to diversity."
+q:"\"Today I reached Port Blair. I learnt that it is the capital city of one of India's Union Territories surrounded by the sea.\"\n\nWhich Union Territory is the traveller visiting?",
+o:["Ladakh","Delhi","Puducherry","Andman and Nicobar Islands"],
+a:3,
+e:"Port Blair is the capital city of the Andaman and Nicobar Islands."
 },
 {
-q:"A place has forts, deserts and palaces in same region. What does this suggest?",
-o:["Coastal city","Rajasthan-like heritage region","Forest area","Island zone"],
-a:1,
-e:"Rajasthan is known for forts and deserts."
+q:"Assertion (A): India is known as a diverse country.\nReason (R): People across India speak different languages and follow different traditions while living together.",
+o:[
+  "Both A and R are true, and R is the correct explanation of A.",
+  "Both A and R are true, but R is not the correct explanation of A.",
+  "A is true, but R is false.",
+  "A is false, but R is true."
+],
+a:0,
+e:"Both statements are correct; the coexistence of different languages and cultures proves its diversity."
 },
 {
-q:"Students notice unity despite many differences in India. What is the correct conclusion?",
-o:["Division","Unity in diversity","No identity","Confusion"],
-a:1,
-e:"India is unity in diversity."
+q:"Riya wants to spend her summer vacation in a place with snow-covered mountains, cool weather, and beautiful valleys.\n\nWhich region of India should she visit?",
+o:["Northern India","Southern India","Western India","Coastal India"],
+a:0,
+e:"Northern India includes the Himalayan mountain ranges, valleys, and snowscapes."
 },
 {
-q:"A country has many traditions but still functions as one nation. What does this show?",
-o:["Breakdown of society","Cultural unity","No governance","Isolation"],
+q:"A travel company receives the following request from a family:\n\"We would like to visit a famous white marble monument located in Agra during our holiday.\"\n\nWhich place should the travel company recommend?",
+o:["Gateway of India","Taj Mahal","Meenakshi Temple","Jaisalmer Fort"],
 a:1,
-e:"Diversity and unity coexist."
+e:"The Taj Mahal is the world-famous white marble monument in Agra."
+},
+{
+q:"A class is preparing a display board for Independence Day. The teacher asks students to choose pictures and ideas that best represent India's Unity in Diversity.\n\nWhich set should they select?",
+o:[
+  "One language and one festival only",
+  "One state and one city only",
+  "Different languages, festivals, clothes, food, and traditions living together peacefully",
+  "Only famous monuments"
+],
+a:2,
+e:"Unity in diversity is perfectly displayed when various regional backgrounds coexist harmoniously."
 }
 ];
 
@@ -232,7 +264,7 @@ startTimer();
 
 let q=questions[i];
 
-document.getElementById("q").innerText=q.q;
+document.getElementById("q").innerHTML=q.q;
 document.getElementById("options").innerHTML="";
 document.getElementById("feedback").innerText="";
 
