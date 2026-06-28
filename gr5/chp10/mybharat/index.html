@@ -33,6 +33,26 @@
             justify-content: center;
             align-items: center;
             padding: 15px;
+            overflow: hidden;
+        }
+
+        /* --- 3-SECOND SPLASH SCREEN (COMPLETELY SEPARATE) --- */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #FFFFFF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            transition: opacity 0.5s ease;
+        }
+        #splash-screen img {
+            max-width: 220px;
+            height: auto;
         }
 
         /* --- CONTAINER --- */
@@ -40,6 +60,7 @@
             width: 100%;
             max-width: 650px;
             position: relative;
+            display: none; /* Hidden until splash finishes */
         }
         
         .card {
@@ -54,16 +75,6 @@
 
         .screen { display: none; }
         .screen.active { display: block; }
-
-        /* --- LOGO PACKING --- */
-        .logo-wrapper {
-            text-align: center;
-            margin-bottom: 15px;
-        }
-        .logo-wrapper img {
-            max-width: 140px;
-            height: auto;
-        }
 
         /* --- TYPOGRAPHY --- */
         h1 {
@@ -201,13 +212,13 @@
 </head>
 <body>
 
-    <div class="game-container">
+    <div id="splash-screen">
+        <img src="assets/logo.png" alt="Innovine Logo">
+    </div>
+
+    <div class="game-container" id="main-game">
         <div class="card">
             
-            <div class="logo-wrapper">
-                <img src="assets/logo.png" alt="Innovine Logo">
-            </div>
-
             <div id="scr-intro" class="screen active">
                 <p class="meta-text">CHAPTER: UNITY IN DIVERSITY</p>
                 <h1>My Bharat! 🇮🇳</h1>
@@ -340,8 +351,21 @@
         const sndNo = document.getElementById('snd-no');
         const sndCheer = document.getElementById('snd-cheer');
 
+        // SPLASH SCREEN MANAGEMENT RUNS FIRST
         window.addEventListener('DOMContentLoaded', () => {
-            initGame();
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                const game = document.getElementById('main-game');
+                
+                if(splash && game) {
+                    splash.style.opacity = '0';
+                    game.style.display = 'block';
+                    document.body.style.overflow = 'auto';
+                    
+                    // Cleanup from view entirely after transitions finish
+                    setTimeout(() => splash.remove(), 500);
+                }
+            }, 3000); // 3000ms = Exactly 3 Seconds Splash Window
         });
 
         function initGame() {
