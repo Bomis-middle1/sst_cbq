@@ -205,7 +205,7 @@
         <div class="card">
             
             <div class="logo-wrapper">
-                <img src="gr5/chp10/mybharat/assets/logo.png" alt="Innovine Logo">
+                <img src="assets/logo.png" alt="Innovine Logo">
             </div>
 
             <div id="scr-intro" class="screen active">
@@ -242,9 +242,9 @@
         </div>
     </div>
 
-    <audio id="snd-yes" src="gr5/chp10/mybharat/assets/correct.mp3" preload="auto"></audio>
-    <audio id="snd-no" src="gr5/chp10/mybharat/assets/wrong.mp3" preload="auto"></audio>
-    <audio id="snd-cheer" src="gr5/chp10/mybharat/assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
+    <audio id="snd-yes" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="snd-no" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="snd-cheer" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
 
     <script>
         const coreQuiz = [
@@ -340,13 +340,11 @@
         const sndNo = document.getElementById('snd-no');
         const sndCheer = document.getElementById('snd-cheer');
 
-        // Automatically load layout instantly on startup
         window.addEventListener('DOMContentLoaded', () => {
             initGame();
         });
 
         function initGame() {
-            // Skips introductory button directly to first question card
             document.getElementById('scr-intro').classList.remove('active');
             document.getElementById('scr-quiz').classList.add('active');
             playHead = 0; 
