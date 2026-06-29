@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Interactive Arena: Post-Gupta India</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',system-ui,sans-serif}
+:root{
+  --clay-dark:#2c1810;
+  --terracotta:#b45309;
+  --imperial-gold:#d97706;
+  --parchment-light:#fefcbf;
+  --panel-bg:#3f2c20;
+  --text-light:#fef3c7;
+  --text-muted:#d97706;
+  --emerald:#10b981;
+  --emerald-bg:rgba(16,185,129,0.15);
+  --crimson:#ef4444;
+  --crimson-bg:rgba(239,68,68,0.15);
+}
+body{background:linear-gradient(135deg,var(--clay-dark),#1f0f0a);min-height:100vh;color:var(--text-light);padding:20px;display:flex;align-items:center;justify-content:center}
+
+/* Card Structures */
+.hidden { display: none !important; }
+.history-card { background: var(--panel-bg); width: 100%; max-width: 680px; padding: 35px; border-radius: 14px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); border: 2px solid var(--terracotta); position: relative; }
+.history-card::before { content:''; position:absolute; top:0; left:0; width:100%; height:6px; background:linear-gradient(90deg, var(--terracotta), var(--imperial-gold), var(--parchment-light)); border-radius:14px 14px 0 0; }
+.center { text-align: center; }
+.epoch-badge { display: inline-block; background: rgba(217,119,6,0.15); color: var(--parchment-light); font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; padding: 6px 16px; border-radius: 20px; border: 1px solid var(--imperial-gold); margin-bottom: 20px; }
+
+/* Dashboard Telemetry */
+.dashboard-bar { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; font-size:12px; font-weight:600; color:var(--parchment-light); border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:12px; text-transform:uppercase; letter-spacing:1px }
+.dashboard-bar span { color: var(--imperial-gold); font-weight:700; }
+
+/* Progress Visualized */
+.progress-grid{display:flex;gap:6px;margin-bottom:25px}
+.progress-node{height:6px;flex:1;background:rgba(255,255,255,0.1);border-radius:3px;transition:all .3s ease}
+.progress-node.active{background:var(--parchment-light);box-shadow:0 0 8px var(--parchment-light)}
+.progress-node.passed{background:var(--imperial-gold)}
+
+/* Case Study Segment Display */
+.case-display { background: rgba(0,0,0,0.2); border-left: 4px solid var(--imperial-gold); padding: 15px; margin-bottom: 20px; border-radius: 4px; font-size: 14px; line-height: 1.6; color: #fffbeb; }
+
+/* Choice Matrix */
+h2{font-size:18px;line-height:1.5;color:var(--text-light);margin-bottom:22px;font-weight:600}
+.matrix-layout{display:flex;flex-direction:column;gap:12px}
+.choice-row{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:16px;cursor:pointer;font-size:15px;line-height:1.4;transition:all 0.2s ease;display:flex;align-items:start;gap:12px}
+.choice-row:hover{background:rgba(217,119,6,0.08);border-color:var(--imperial-gold);transform:translateX(3px)}
+.prefix-lbl{font-weight:700;color:var(--imperial-gold)}
+
+/* Feedback Output */
+.feedback-box{margin-top:20px;padding:16px;border-radius:8px;font-size:14px;line-height:1.5}
+.feedback-correct{background:var(--emerald-bg);color:var(--emerald);border:1px solid rgba(16,185,129,0.3)}
+.feedback-wrong{background:var(--crimson-bg);color:var(--crimson);border:1px solid rgba(239,68,68,0.3)}
+
+button.action-btn{width:100%;background:linear-gradient(135deg, var(--terracotta), #78350f);color:white;border:none;padding:16px;border-radius:8px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1px;cursor:pointer;margin-top:20px;transition:all .2s;box-shadow:0 4px 12px rgba(0,0,0,0.3)}
+button.action-btn:hover{transform:translateY(-1px);filter:brightness(1.1)}
+</style>
+</head>
+<body>
+
+<div id="splash" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#ffffff;display:flex;justify-content:center;align-items:center;z-index:99999;transition:opacity .4s ease">
+  <div class="center">
+    <img id="logo-img" src="assets/innovine-logo.png" alt="Innovine Core Logo" style="width:260px;height:auto;display:block;" onerror="this.style.display='none'; document.getElementById('splash-text').style.display='block';">
+    <h1 id="splash-text" style="display:none;color:#b45309;font-family:serif;letter-spacing:3px;">INNOVINE LEARNING</h1>
+  </div>
+</div>
+
+<div id="welcome-board" class="history-card center hidden">
+  <div class="epoch-badge">Early Medieval Analysis Lab</div>
+  <h1 style="font-size:24px;margin-bottom:12px;color:var(--text-light)">Chapter 3: Life & Power in Post-Gupta India</h1>
+  <p style="color:#d97706;font-size:14px;line-height:1.6;margin-bottom:24px">Analyze how regional kingdoms, trade guilds, and cultural movements shaped the classical Indian subcontinent following the fragmentation of central Gupta authority.</p>
+  <div style="font-size:44px;margin-bottom:20px">📜🏛️🛡️</div>
+  <button class="action-btn" onclick="initSimulation()">Enter Historical Simulation</button>
+</div>
+
+<div id="simulation-board" class="history-card hidden">
+  <div class="dashboard-bar">
+    <div id="phase-lbl">Standard Evaluation</div>
+    <div>Score: <span id="score-lbl">0</span></div>
+  </div>
+  <div class="progress-grid" id="node-container"></div>
+  <div id="case-box" class="case-display hidden"></div>
+  <h2 id="question-txt"></h2>
+  <div class="matrix-layout" id="options-holder"></div>
+  <div id="feedback-display"></div>
+  <button id="next-btn" class="action-btn hidden" onclick="moveToNext()">Record Finding & Continue →</button>
+</div>
+
+<div id="summary-board" class="history-card center hidden">
+  <div style="font-size:55px;margin-bottom:15px" id="result-emoji"></div>
+  <h1 id="result-title" style="margin-bottom:10px;"></h1>
+  <p id="result-desc" style="color:#fef3c7;font-size:15px;margin-bottom:25px"></p>
+  <div class="epoch-badge" id="result-rank"></div>
+  <br><br>
+  <button class="action-btn" onclick="window.location.reload()">Re-examine Historical Inscriptions</button>
+</div>
+
+<script>
+window.addEventListener('DOMContentLoaded',()=>{
+  setTimeout(()=>{
+    const sp = document.getElementById('splash');
+    sp.style.opacity = '0';
+    setTimeout(()=>{
+      sp.style.display = 'none';
+      document.getElementById('welcome-board').classList.remove('hidden');
+    },400);
+  },1500);
+});
+
+const historicalDatabase = [
+  {
+    q: "A local pottery artisan living in an early medieval Indian village needs to resolve a boundary dispute regarding a clay storage yard. Based on the chapter, which local authority should the artisan approach to settle this matter?",
+    o: [
+      "A regional university professor from Nalanda",
+      "The village headman and local council",
+      "A foreign merchant from a Silk Route trade convoy",
+      "A royal poet serving in the capital court"
+    ],
+    a: 1,
+    e: "The chapter notes that village administration was managed by a headman and a local council that looked after public works and resolved local disputes."
+  },
+  {
+    q: "A student is sorting historical features into groups to study the daily life of ordinary people in a Gupta village. Which of the following items does NOT belong in this group?",
+    o: [
+      "Cultivating fields of rice, wheat, and barley",
+      "Living in houses made of bamboo or mud bricks with thatched roofs",
+      "Organizing into guilds to regulate trade and fix prices",
+      "Wearing decorative gold necklaces, bangles, and silk saris every day in royal court rooms"
+    ],
+    a: 3,
+    e: "Wearing expensive gold jewelry and elite court clothing was a feature of wealthy nobles and royal courts, not the daily life of ordinary village farmers or artisans."
+  },
+  {
+    case: "<b>Trade Networks Source:</b><br>'Indian merchants travelled along both land and sea routes, linking important cities within the subcontinent to Central Asia, Persia, and China through overland routes. At the same time, maritime trade flourished across the Indian Ocean, connecting India with Southeast Asia, Arabia, and the eastern coast of Africa.'",
+    q: "Based on this description, what secondary effect did this trade expansion have on countries in Southeast Asia?",
+    o: [
+      "Southeast Asian countries stopped trading with Arabia entirely.",
+      "It led to the spread of Sanskrit, Hindu and Buddhist ideas, and temple architecture styles to those countries.",
+      "It forced foreign rulers to adopt the village headman system of administration.",
+      "It caused overland trade routes to close down permanently due to heavy traffic."
+    ],
+    a: 1,
+    e: "The text explains that trade networks also encouraged cultural exchange. Along with goods, ideas, religions, art styles, and languages traveled to parts of Southeast Asia like Cambodia, Indonesia, and Thailand."
+  },
+  {
+    q: "A history student writes four summary points about how ancient craftsman guilds worked. Identify which point contains an ERROR:",
+    o: [
+      "Guilds were associations made of craftsmen practicing the same trade.",
+      "Guilds helped to maintain the high quality of products and fix fair prices.",
+      "Guilds required every craftsman to work completely alone without financial help.",
+      "Guilds sometimes supported communities by helping to build temples and wells."
+    ],
+    a: 2,
+    e: "A guild was specifically an organized association of craftsmen or merchants who practiced the same trade or profession (such as potters, weavers, or metalworkers), not a random group of mixed occupations."
+  },
+  {
+    q: "Assertion (A): The city of Kannauj was the center of a long political conflict known as the Tripartite Struggle.\nReason (R): Kannauj was strategically located in the fertile Gangetic plain and controlled important trade routes.",
+    o: [
+      "Both A and R are true and R explains A.",
+      "Both A and R are true but R does not explain A.",
+      "A is true but R is false.",
+      "A is false but R is true."
+    ],
+    a: 0,
+    e: "Kannauj’s valuable economic position in the fertile Gangetic plain made it highly desirable, which explains why three dynasties (Gurjara-Pratiharas, Palas, and Rashtrakutas) spent nearly two centuries fighting to control it."
+  },
+  {
+    q: "A traveling saint from the early medieval period walks between villages singing devotional songs. The saint teaches that all people are equal before God and that love and faith are the true paths to salvation, rather than performing expensive rituals. Which movement is this saint representing?",
+    o: [
+      "The conquest of Sindh by Arab armies",
+      "The Bhakti Movement",
+      "The Tripartite Struggle for Kannauj",
+      "The expansion of elite Sanskrit administration schools"
+    ],
+    a: 1,
+    e: "The chapter states that Bhakti saints taught that devotion was more important than rituals, all people were equal before God, and love and faith were the path to salvation."
+  },
+  {
+    case: "<b>Chronological Inscription Record:</b><br>• 320 CE: Beginning of the Gupta Empire<br>• 5th–6th centuries CE: Invasions by the Hunas weaken the Gupta Empire<br>• Late 6th century CE: Decline and fragmentation of the Gupta Empire<br>• 711–712 CE: Arab conquest of Sindh by Muhammad bin Qasim",
+    q: "Based on the timeline data provided, which event directly contributed to the initial weakening and ultimate physical fragmentation of the unified Gupta Empire?",
+    o: [
+      "The Arab conquest of Sindh by Muhammad bin Qasim",
+      "Invasions by the nomadic Hunas into northwestern regions",
+      "The building of Nalanda University in Bihar",
+      "The translation of medical textbooks into Arabic"
+    ],
+    a: 1,
+    e: "The timeline explicitly tracks that invasions by the Hunas in the 5th-6th centuries CE weakened the military and state power, leading directly to the decline and fragmentation of the empire by the late 6th century."
+  },
+  {
+    q: "A scientific modern team tests an ancient iron structure from the Gupta period that has stood in the open air for over 1,500 years near the Qutub Complex. They observe that it has hardly accumulated any rust. Which feature of ancient Indian civilization does this physical evidence directly demonstrate?",
+    o: [
+      "The use of modern factory manufacturing machinery by rural farmers",
+      "The advanced knowledge of metallurgy possessed by Indian craftsmen of that time",
+      "An absolute reliance on stone carving rather than metalwork",
+      "A decline in trade connections with Central Asia and Persia"
+    ],
+    a: 1,
+    e: "The Iron Pillar of Delhi stands about 7 meters tall and has hardly rusted in 1,500 years, highlighting the advanced metallurgy and technical skills of ancient Indian metalworkers."
+  },
+  {
+    case: "<b>Historical Record Segment:</b><br>'After the conquest of Sindh around 712 CE, Arab administrators allowed many local customs to continue. Interaction between local communities and Arab settlers led to the exchange of knowledge. Scholars carried information about Indian science, mathematics, and medicine to the Islamic world, where it was translated into Arabic.'",
+    q: "Based on the passage, what was a major outcome of the new political and cultural contacts in northwestern India?",
+    o: [
+      "Indian maritime trade routes across the Indian Ocean were completely destroyed.",
+      "Local customs and administrative systems were immediately outlawed.",
+      "Indian mathematical and scientific knowledge was preserved, shared, and studied globally.",
+      "Sanskrit replaced Arabic as the primary language of the Umayyad Caliphate."
+    ],
+    a: 2,
+    e: "The passage explicitly points out that growing contacts allowed local scientific, mathematical, and medical knowledge to travel to the wider Islamic world through translations."
+  },
+  {
+    q: "A student reading the chapter wonders why historians describe the early medieval period as a time of both political breakdown and cultural growth. Which explanation resolves this question?",
+    o: [
+      "All big cities vanished, forcing everyone to stop farming and build schools in the mountains.",
+      "While central imperial unity ended, new regional kingdoms independently rose to power and actively encouraged temple building, literature, and trade.",
+      "Foreign invaders forced all village headmen to write Sanskrit poetry.",
+      "Trade networks stopped carrying goods and only carried religious ideas."
+    ],
+    a: 1,
+    e: "The chapter explains that although central authority collapsed, the rise of regional kingdoms (like the Chalukyas, Pallavas, Palas, and Rashtrakutas) led to localized administration systems that heavily funded trade, regional literature, and temple construction."
+  }
+];
+
+let index = 0;
+let computedScore = 0;
+let firstStrikeMistake = false;
+
+function initSimulation(){
+  document.getElementById('welcome-board').classList.add('hidden');
+  document.getElementById('simulation-board').classList.remove('hidden');
+  renderProgressSlots();
+  loadQuestionItem();
+}
+
+function renderProgressSlots(){
+  const container = document.getElementById('node-container');
+  container.innerHTML = '';
+  for(let i=0; i<historicalDatabase.length; i++){
+    let nd = document.createElement('div');
+    nd.className = 'progress-node';
+    container.appendChild(nd);
+  }
+}
+
+function loadQuestionItem(){
+  firstStrikeMistake = false;
+  document.getElementById('feedback-display').innerHTML = '';
+  document.getElementById('next-btn').classList.add('hidden');
+  
+  const steps = document.querySelectorAll('.progress-node');
+  steps.forEach((st, i) => {
+    if(i === index) st.className = 'progress-node active';
+    else if(i < index) st.className = 'progress-node passed';
+    else st.className = 'progress-node';
+  });
+
+  if(index >= 7){
+    document.getElementById('phase-lbl').textContent = "⚠️ Final Challenge Challenge";
+    document.getElementById('phase-lbl').style.color = "var(--parchment-light)";
+  } else {
+    document.getElementById('phase-lbl').textContent = "Standard Historical Evaluation";
+    document.getElementById('phase-lbl').style.color = "var(--imperial-gold)";
+  }
+
+  const currentObj = historicalDatabase[index];
+  
+  const cBox = document.getElementById('case-box');
+  if(currentObj.case){
+    cBox.innerHTML = currentObj.case;
+    cBox.classList.remove('hidden');
+  } else {
+    cBox.classList.add('hidden');
+  }
+
+  document.getElementById('question-txt').innerHTML = `${index + 1}. ${currentObj.q.replace('\n', '<br>')}`;
+  
+  const optionsBox = document.getElementById('options-holder');
+  optionsBox.innerHTML = '';
+
+  const optionMarkers = ['A','B','C','D'];
+  currentObj.o.forEach((txt, idx) => {
+    let row = document.createElement('div');
+    row.className = 'choice-row';
+    row.innerHTML = `<span class="prefix-lbl">${optionMarkers[idx]}.</span> <span>${txt}</span>`;
+    row.onclick = () => verifySelectedAnswer(idx, row);
+    optionsBox.appendChild(row);
+  });
+}
+
+function verifySelectedAnswer(chosenIdx, uiElement){
+  const itemData = historicalDatabase[index];
+  if(chosenIdx === itemData.a){
+    if(!firstStrikeMistake){
+      computedScore++;
+      document.getElementById('score-lbl').textContent = computedScore;
+    }
+    document.getElementById('feedback-display').innerHTML = `<div class="feedback-box feedback-correct"><b>✓ Verified Historical Fact.</b> ${itemData.e}</div>`;
+    lockCurrentOptions();
+    document.getElementById('next-btn').classList.remove('hidden');
+  } else {
+    if(!firstStrikeMistake){
+      firstStrikeMistake = true;
+      uiElement.style.borderColor = 'var(--crimson)';
+      uiElement.style.background = 'var(--crimson-bg)';
+      document.getElementById('feedback-display').innerHTML = `<div class="feedback-box feedback-wrong"><b>⚠️ Inconsistent Finding.</b> This interpretation runs contrary to archaeological or textual records. Re-analyze carefully.</div>`;
+    } else {
+      exposeAccurateKey();
+    }
+  }
+}
+
+function exposeAccurateKey(){
+  lockCurrentOptions();
+  const activeObj = historicalDatabase[index];
+  const prefixes = ['A','B','C','D'];
+  document.getElementById('feedback-display').innerHTML = `<div class="feedback-box feedback-wrong"><b>🔍 Codex Clarification.</b> The accurate historical determination is <b>${prefixes[activeObj.a]}. ${activeObj.o[activeObj.a]}</b>.<br><br>${activeObj.e}</div>`;
+  document.getElementById('next-btn').classList.remove('hidden');
+}
+
+function lockCurrentOptions(){
+  document.querySelectorAll('.choice-row').forEach(row => row.onclick = null);
+}
+
+function moveToNext(){
+  index++;
+  if(index < historicalDatabase.length){
+    loadQuestionItem();
+  } else {
+    showFinalReport();
+  }
+}
+
+function showFinalReport(){
+  document.getElementById('simulation-board').classList.add('hidden');
+  document.getElementById('summary-board').classList.remove('hidden');
+
+  const emo = document.getElementById('result-emoji');
+  const tit = document.getElementById('result-title');
+  const des = document.getElementById('result-desc');
+  const rnk = document.getElementById('result-rank');
+
+  des.textContent = `You correctly decoded ${computedScore} out of ${historicalDatabase.length} core political, structural, and economic parameters.`;
+
+  if(computedScore >= 9){
+    emo.textContent = '🏛️';
+    tit.textContent = 'Master Epigraphist & Historian';
+    rnk.textContent = 'Nalanda Court Scholar Tier';
+  } else if(computedScore >= 6){
+    emo.textContent = '📜';
+    tit.textContent = 'Guild Registrar';
+    rnk.textContent = 'Urban Trade Superintendent';
+  } else {
+    emo.textContent = '🛡️';
+    tit.textContent = 'Frontier Outpost Explorer';
+    rnk.textContent = 'Novice Scribe Apprentice';
+  }
+}
+</script>
+</body>
+</html>
