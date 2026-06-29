@@ -1,1 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Interactive Arena: From Distant Lands to Indian Shores</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',system-ui,sans-serif}
+:root{
+  --maritime-blue:#0c1e36;
+  --antique-gold:#d99e32;
+  --coastal-teal:#14b8a6;
+  --sea-foam:#f0fdfa;
+  --slate-panel:#1e293b;
+  --text-light:#f8fafc;
+  --text-muted:#94a3b8;
+  --emerald:#10b981;
+  --emerald-bg:rgba(16,185,129,0.15);
+  --crimson:#ef4444;
+  --crimson-bg:rgba(239,68,68,0.15);
+}
+body{background:linear-gradient(135deg,var(--maritime-blue),#070f1e);min-height:100vh;color:var(--text-light);padding:15px;display:flex;align-items:center;justify-content:center}
 
+/* Card Frameworks */
+.hidden { display: none !important; }
+.history-card { background: var(--slate-panel); width: 100%; max-width: 700px; padding: 30px; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.45); border: 1px solid rgba(217,158,50,0.25); position: relative; transition: all 0.3s ease; }
+@media (max-width: 480px) { .history-card { padding: 20px; } }
+.history-card::before { content:''; position:absolute; top:0; left:0; width:100%; height:4px; background:linear-gradient(90deg, var(--antique-gold), var(--coastal-teal), var(--sea-foam)); border-radius:16px 16px 0 0; }
+.center { text-align: center; }
+.epoch-badge { display: inline-block; background: rgba(20,184,166,0.1); color: var(--coastal-teal); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; padding: 6px 16px; border-radius: 6px; border: 1px solid rgba(20,184,166,0.25); margin-bottom: 20px; }
+
+/* Dashboard Display */
+.dashboard-bar { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; font-size:12px; font-weight:600; color:var(--text-muted); border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:12px; text-transform:uppercase; letter-spacing:1px }
+.dashboard-bar span { color: var(--antique-gold); font-weight:700; }
+
+/* Timeline Progress Nodes */
+.progress-grid{display:flex;gap:4px;margin-bottom:25px;overflow-x:auto;padding-bottom:4px;}
+.progress-node{height:4px;min-width:30px;flex:1;background:rgba(255,255,255,0.08);border-radius:2px;transition:all .3s ease}
+.progress-node.active{background:var(--coastal-teal);box-shadow:0 0 10px var(--coastal-teal)}
+.progress-node.passed{background:var(--antique-gold)}
+
+/* Case Segment Display */
+.case-display { background: rgba(12,30,54,0.5); border-left: 4px solid var(--antique-gold); padding: 16px; margin-bottom: 24px; border-radius: 0 8px 8px 0; font-size: 14.5px; line-height: 1.6; color: #e2e8f0; }
+
+/* Interactive Matrix */
+h2{font-size:18px;line-height:1.5;color:var(--text-light);margin-bottom:24px;font-weight:600;letter-spacing:-0.01em}
+.matrix-layout{display:flex;flex-direction:column;gap:12px}
+.choice-row{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:15px;cursor:pointer;font-size:14.5px;line-height:1.45;transition:all 0.2s cubic-bezier(0.4, 0, 0.2, 1);display:flex;align-items:start;gap:12px}
+.choice-row:hover{background:rgba(20,184,166,0.05);border-color:rgba(20,184,166,0.4);transform:translateX(3px)}
+.prefix-lbl{font-weight:700;color:var(--antique-gold)}
+
+/* System Output Box */
+.feedback-box{margin-top:20px;padding:16px;border-radius:8px;font-size:14px;line-height:1.5}
+.feedback-correct{background:var(--emerald-bg);color:#34d399;border:1px solid rgba(16,185,129,0.25)}
+.feedback-wrong{background:var(--crimson-bg);color:#f87171;border:1px solid rgba(239,68,68,0.25)}
+
+button.action-btn{width:100%;background:linear-gradient(135deg, var(--maritime-blue), #162e4e);border:1px solid rgba(217,158,50,0.3);color:white;padding:16px;border-radius:8px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;cursor:pointer;margin-top:20px;transition:all .2s ease;box-shadow:0 4px 12px rgba(0,0,0,0.2)}
+button.action-btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(20,184,166,0.15);filter:brightness(1.15)}
+</style>
+</head>
+<body>
+
+<div id="splash" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#ffffff;display:flex;justify-content:center;align-items:center;z-index:99999;transition:opacity .4s ease">
+  <div class="center">
+    <img id="logo-img" src="assets/innovine-logo.png" alt="Innovine Core Logo" style="width:260px;height:auto;display:block;" onerror="this.style.display='none'; document.getElementById('splash-text').style.display='block';">
+    <h1 id="splash-text" style="display:none;color:#0c1e36;font-family:sans-serif;letter-spacing:3px;font-weight:800;">INNOVINE LEARNING</h1>
+  </div>
+</div>
+
+<div id="welcome-board" class="history-card center hidden">
+  <div class="epoch-badge">Civilisational Heritage Lab</div>
+  <h1 style="font-size:24px;margin-bottom:12px;color:var(--text-light)">Chapter 5: From Distant Lands to Indian Shores</h1>
+  <p style="color:var(--text-muted);font-size:14px;line-height:1.6;margin-bottom:24px">Examine how India serves as a refuge and peaceful sanctuary for communities fleeing global persecution, enriching its arts, trade, and values.</p>
+  <div style="font-size:44px;margin-bottom:20px">⛵🕊️🏛️</div>
+  <button class="action-btn" onclick="initSimulation()">Begin Evaluation</button>
+</div>
+
+<div id="simulation-board" class="history-card hidden">
+  <div class="dashboard-bar">
+    <div id="phase-lbl">Standard Evaluation</div>
+    <div>Score: <span id="score-lbl">0</span></div>
+  </div>
+  <div class="progress-grid" id="node-container"></div>
+  <div id="case-box" class="case-display hidden"></div>
+  <h2 id="question-txt"></h2>
+  <div class="matrix-layout" id="options-holder"></div>
+  <div id="feedback-display"></div>
+  <button id="next-btn" class="action-btn hidden" onclick="moveToNext()">Record Findings & Proceed →</button>
+</div>
+
+<div id="summary-board" class="history-card center hidden">
+  <div style="font-size:55px;margin-bottom:15px" id="result-emoji"></div>
+  <h1 id="result-title" style="margin-bottom:10px;"></h1>
+  <p id="result-desc" style="color:var(--text-muted);font-size:15px;margin-bottom:25px"></p>
+  <div class="epoch-badge" id="result-rank"></div>
+  <br><br>
+  <button class="action-btn" onclick="window.location.reload()">Restart Challenge</button>
+</div>
+
+<audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+
+<script>
+window.addEventListener('DOMContentLoaded',()=>{
+  setTimeout(()=>{
+    const sp = document.getElementById('splash');
+    sp.style.opacity = '0';
+    setTimeout(()=>{
+      sp.style.display = 'none';
+      document.getElementById('welcome-board').classList.remove('hidden');
+    },400);
+  },1500);
+});
+
+const historicalDatabase = [
+  {
+    q: "A cultural historian studies how foreign groups integrated into Indian society without losing their core faith. Which of the following groups swam ashore along the Konkan coast around 175 BCE, adopted the Marathi language and local clothing, yet strictly preserved their essential belief in one God?",
+    o: [
+      "The Syrian Christians of Kerala",
+      "The Bene Israel community",
+      "The Hakka Chinese merchants",
+      "The Armenian traders of Agra"
+    ],
+    a: 1,
+    e: "The Bene Israel are among the earliest known Jewish settlers who shipwrecked on the Konkan coast around 175 BCE. They adopted local Marathi customs, dress, and language while holding onto their monotheistic faith."
+  },
+  {
+    q: "A team of archaeologists is documenting the oldest surviving Jewish religious structure in India, located in a neighborhood historically known as 'Jew Town' in Kochi. Which landmark are they surveying?",
+    o: [
+      "The Cheraman Juma Masjid",
+      "The Paradesi Synagogue",
+      "The Namdroling Monastery",
+      "The Fire Temple at Udvada"
+    ],
+    a: 1,
+    e: "Built in 1568 CE, the Paradesi Synagogue in Kochi stands as one of the most well-known Jewish religious structures in India, serving both Malabari and Paradesi Jewish communities."
+  },
+  {
+    case: "<b>The Milk and Sugar Legend Source:</b><br>'When the Parsis arrived at Sanjan, the local king Jadav Rana showed their leader a bowl filled to the brim with milk to signal that his land was already full. The Parsi leader silently stirred a spoonful of sugar into the milk without spilling a drop.'",
+    q: "Based on this historical text, what did the Parsi leader's gesture symbolize to the Indian ruler?",
+    o: [
+      "The Parsis would conquer neighboring lands to make more space.",
+      "The Parsis would stay temporarily until the monsoons passed.",
+      "The Parsis would blend peacefully into the land and enrich it without causing disruption.",
+      "The Parsis would demand that the local population change their language and faith."
+    ],
+    a: 2,
+    e: "The sugar in the milk symbolized that the Parsi community would seamlessly integrate into local society, sweetening or enriching life without displacing or disturbing the existing populace."
+  },
+  {
+    q: "A school project asks students to identify how global trade routes served as 'bridges of knowledge' in antiquity. Which group of people carried the Indian numeral system and the concept of zero from India to the West, where they became known as 'Arabic numerals'?",
+    o: [
+      "The Polish refugee children in Jamnagar",
+      "Arab merchants trading along the Malabar Coast",
+      "The Armenian silk traders under Mughal patronage",
+      "Tibetan monks traveling through the Himalayas"
+    ],
+    a: 1,
+    e: "Arab traders came purely for business, but they also acted as knowledge bridges, carrying Indian mathematical achievements (including zero and the numeral system) to the Arab world, which eventually passed them to Europe."
+  },
+  {
+    q: "Assertion (A): The Siddi community of Janjira Fort in Maharashtra established an independent principality that was never conquered by the Mughals, Marathas, or the British.\nReason (R): The ancestors of the Siddis were recruited as skilled soldiers and possessed exceptional military capabilities, including guerrilla warfare tactics.",
+    o: [
+      "Both A and R are true and R explains A.",
+      "Both A and R are true but R does not explain A.",
+      "A is true but R is false.",
+      "A is false but R is true."
+    ],
+    a: 0,
+    e: "The Siddis of Janjira held an unmatched military record of remaining unconquered because of their incredible structural fortifications and their background as formidable warriors and tactical military leaders."
+  },
+  {
+    q: "A student is creating a digital infographic showcasing modern Indian icons from the African-descended Siddi community. Which historical figure should they feature as the first woman from this community to be honored with the prestigious Padma Shri award in 2023 for empowering women?",
+    o: [
+      "Malik Ambar",
+      "Hirabai Ibrahim Lobi",
+      "Fariborz Sahba",
+      "Dadabhai Naoroji"
+    ],
+    a: 1,
+    e: "Hirabai Ibrahim Lobi founded the Mahila Vikas Sangh, teaching over 700 Siddi women to open bank accounts and achieve independence, earning her the Padma Shri from President Droupadi Murmu."
+  },
+  {
+    case: "<b>Civilisational Timeline Record:</b><br>• 175 BCE: Bene Israel arrives on the Konkan Coast<br>• 52 CE: St. Thomas brings Christianity to Kerala<br>• 629 CE: Construction of the Cheraman Juma Masjid<br>• 800–1000 CE: Parsis arrive at Sanjan, Gujarat<br>• 1959 CE: Dalai Lama and Tibetan refugees seek asylum",
+    q: "Based on this timeline and the textbook, what core civilisational pattern does this 2,000-year history reveal about India?",
+    o: [
+      "India consistently closed its borders to foreign travelers due to conflicts.",
+      "Migrants only moved to India if they belonged to neighboring Asian countries.",
+      "India has long served as a continuous sanctuary, refuge, and home for diverse global communities fleeing persecution.",
+      "Foreign communities completely abandoned their original faiths upon touching Indian soil."
+    ],
+    a: 2,
+    e: "The timeline proves that across thousands of years and various eras, India has consistently welcomed diverse groups, honoring their traditions under the civilisational guiding principle of Vasudhaiva Kutumbakam (The World is One Family)."
+  },
+  {
+    q: "A visitor stands inside the architectural marvel of the Lotus Temple in New Delhi. They notice that the building has 9 open doors, features no idols, performs no rituals, and welcomes individuals of all religious backgrounds to pray in silence. Which core doctrine of the Baha'i faith is expressed through this design?",
+    o: [
+      "The complete isolation of spiritual practices from public life",
+      "The absolute unity of God, world religions, and all of humanity",
+      "The strict dominance of Persian design styles over Indian materials",
+      "The reliance on complex scriptural sermons to achieve peace"
+    ],
+    a: 1,
+    e: "The Lotus Temple's unique 9-sided design symbolizes completeness and oneness, reinforcing the Bahá'í teaching that people of all background paths are equal children of the same divine source."
+  },
+  {
+    q: "During the devastating chaos of World War II, a group of approximately 740 orphaned and stranded Polish children were turned away by multiple ports. Which Indian ruler stepped forward to build a 'Little Poland' sanctuary for them in Balachadi between 1942 and 1946?",
+    o: [
+      "The Raja of Kochi in Kerala",
+      "Mughal Emperor Akbar at Agra",
+      "Maharaja Digvijaysinhji of Nawanagar",
+      "Prime Minister Malik Ambar of Ahmednagar"
+    ],
+    a: 2,
+    e: "Known as the 'Good Maharaja', Digvijaysinhji of Nawanagar stepped in when the British Governor at Bombay denied entry, providing safety, education, and shelter to Polish children during the war."
+  },
+  {
+    q: "Following political unrest in 1959, the 14th Dalai Lama sought refuge in India. Today, their community has significantly enriched Indian society through traditional crafts, woollen markets, and a system of healthcare known as:",
+    o: [
+      "Sowa Rigpa",
+      "Vishishtadvaita",
+      "Zoroastrianism",
+      "Sasanian Medicine"
+    ],
+    a: 0,
+    e: "Traditional Tibetan medicine, known as Sowa Rigpa, has gained massive nationwide recognition and is now officially included within India’s AYUSH healthcare system."
+  }
+];
+
+let index = 0;
+let computedScore = 0;
+let firstStrikeMistake = false;
+
+function initSimulation(){
+  document.getElementById('welcome-board').classList.add('hidden');
+  document.getElementById('simulation-board').classList.remove('hidden');
+  renderProgressSlots();
+  loadQuestionItem();
+}
+
+function renderProgressSlots(){
+  const container = document.getElementById('node-container');
+  container.innerHTML = '';
+  for(let i=0; i<historicalDatabase.length; i++){
+    let nd = document.createElement('div');
+    nd.className = 'progress-node';
+    container.appendChild(nd);
+  }
+}
+
+function loadQuestionItem(){
+  firstStrikeMistake = false;
+  document.getElementById('feedback-display').innerHTML = '';
+  document.getElementById('next-btn').classList.add('hidden');
+  
+  const steps = document.querySelectorAll('.progress-node');
+  steps.forEach((st, i) => {
+    if(i === index) st.className = 'progress-node active';
+    else if(i < index) st.className = 'progress-node passed';
+    else st.className = 'progress-node';
+  });
+
+  if(index >= 7){
+    document.getElementById('phase-lbl').textContent = "⚠️ Final Challenge";
+    document.getElementById('phase-lbl').style.color = "var(--text-light)";
+  } else {
+    document.getElementById('phase-lbl').textContent = "Standard Historical Evaluation";
+    document.getElementById('phase-lbl').style.color = "var(--antique-gold)";
+  }
+
+  const currentObj = historicalDatabase[index];
+  
+  const cBox = document.getElementById('case-box');
+  if(currentObj.case){
+    cBox.innerHTML = currentObj.case;
+    cBox.classList.remove('hidden');
+  } else {
+    cBox.classList.add('hidden');
+  }
+
+  document.getElementById('question-txt').innerHTML = `${index + 1}. ${currentObj.q.replace('\n', '<br>')}`;
+  
+  const optionsBox = document.getElementById('options-holder');
+  optionsBox.innerHTML = '';
+
+  const optionMarkers = ['A','B','C','D'];
+  currentObj.o.forEach((txt, idx) => {
+    let row = document.createElement('div');
+    row.className = 'choice-row';
+    row.innerHTML = `<span class="prefix-lbl">${optionMarkers[idx]}.</span> <span>${txt}</span>`;
+    row.onclick = () => verifySelectedAnswer(idx, row);
+    optionsBox.appendChild(row);
+  });
+}
+
+function playSound(elementId) {
+  const snd = document.getElementById(elementId);
+  if (snd) {
+    snd.currentTime = 0;
+    snd.play().catch(e => console.log("Audio playback blocked or interrupted: ", e));
+  }
+}
+
+function verifySelectedAnswer(chosenIdx, uiElement){
+  const itemData = historicalDatabase[index];
+  if(chosenIdx === itemData.a){
+    if(!firstStrikeMistake){
+      computedScore++;
+      document.getElementById('score-lbl').textContent = computedScore;
+    }
+    playSound('snd-correct');
+    document.getElementById('feedback-display').innerHTML = `<div class="feedback-box feedback-correct"><b>✓ Accurate Interpretation.</b> ${itemData.e}</div>`;
+    lockCurrentOptions();
+    document.getElementById('next-btn').classList.remove('hidden');
+  } else {
+    if(!firstStrikeMistake){
+      firstStrikeMistake = true;
+      playSound('snd-wrong');
+      uiElement.style.borderColor = 'var(--crimson)';
+      uiElement.style.background = 'var(--crimson-bg)';
+      document.getElementById('feedback-display').innerHTML = `<div class="feedback-box feedback-wrong"><b>⚠️ Alternative Assessment.</b> This choice conflicts with historical documentary testimonies. Review your context points.</div>`;
+    } else {
+      exposeAccurateKey();
+    }
+  }
+}
+
+function exposeAccurateKey(){
+  lockCurrentOptions();
+  const activeObj = historicalDatabase[index];
+  const prefixes = ['A','B','C','D'];
+  document.getElementById('feedback-display').innerHTML = `<div class="feedback-box feedback-wrong"><b>🔍 Codex Clarification.</b> The primary verified analytical determination is <b>${prefixes[activeObj.a]}. ${activeObj.o[activeObj.a]}</b>.<br><br>${activeObj.e}</div>`;
+  document.getElementById('next-btn').classList.remove('hidden');
+}
+
+function lockCurrentOptions(){
+  document.querySelectorAll('.choice-row').forEach(row => row.onclick = null);
+}
+
+function moveToNext(){
+  index++;
+  if(index < historicalDatabase.length){
+    loadQuestionItem();
+  } else {
+    showFinalReport();
+  }
+}
+
+function showFinalReport(){
+  document.getElementById('simulation-board').classList.add('hidden');
+  document.getElementById('summary-board').classList.remove('hidden');
+
+  const emo = document.getElementById('result-emoji');
+  const tit = document.getElementById('result-title');
+  const des = document.getElementById('result-desc');
+  const rnk = document.getElementById('result-rank');
+
+  des.textContent = `You correctly evaluated ${computedScore} out of ${historicalDatabase.length} core competency items.`;
+
+  if(computedScore >= 9){
+    emo.textContent = '🏛️';
+    tit.textContent = 'Grand Archivist';
+    rnk.textContent = 'Imperial Counsel Tier';
+  } else if(computedScore >= 6){
+    emo.textContent = '📜';
+    tit.textContent = 'Charter Chronicler';
+    rnk.textContent = 'Sanctuary Explorer';
+  } else {
+    emo.textContent = '⚓';
+    tit.textContent = 'Coast Scribe';
+    rnk.textContent = 'Apprentice Researcher';
+  }
+}
+</script>
+</body>
+</html>
