@@ -1,1 +1,378 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Interactive Learning Core: Building Modern India</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',system-ui,-apple-system,sans-serif}
+:root{
+  --infra-slate:#0f172a;
+  --eco-emerald:#10b981;
+  --bright-mint:#34d399;
+  --panel-bg:#1e293b;
+  --text-light:#f8fafc;
+  --text-gray:#94a3b8;
+  --border-line:rgba(16,185,129,0.2);
+  --pass-bg:rgba(16,185,129,0.12);
+  --fail-red:#ef4444;
+  --fail-bg:rgba(239,68,68,0.12);
+}
+body{background:linear-gradient(135deg,var(--infra-slate),#040812);min-height:100vh;color:var(--text-light);padding:16px;display:flex;align-items:center;justify-content:center}
+
+/* Card Framework components */
+.hidden { display: none !important; }
+.app-container { background: var(--panel-bg); width: 100%; max-width: 680px; padding: 26px; border-radius: 12px; box-shadow: 0 20px 45px rgba(0,0,0,0.4); border: 1px solid var(--border-line); position: relative; transition: all 0.3s ease; }
+@media (max-width: 480px) { .app-container { padding: 16px; } }
+.app-container::before { content:''; position:absolute; top:0; left:0; width:100%; height:4px; background:linear-gradient(90deg, var(--eco-emerald), var(--bright-mint), var(--text-light)); border-radius:12px 12px 0 0; }
+.center { text-align: center; }
+.pill { display: inline-block; background: rgba(16,185,129,0.1); color: var(--bright-mint); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; padding: 5px 12px; border-radius: 5px; border: 1px solid rgba(16,185,129,0.2); margin-bottom: 16px; }
+
+/* HUD Header elements */
+.hud-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; font-size:11px; font-weight:700; color:var(--text-gray); border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:8px; text-transform:uppercase; letter-spacing:1px }
+.hud-meta span { color: var(--bright-mint); }
+
+/* Horizontal Tracker Segment */
+.track-bar{display:flex;gap:4px;margin-bottom:20px}
+.track-dot{height:4px;flex:1;background:rgba(255,255,255,0.06);border-radius:2px;transition:all .3s ease}
+.track-dot.active{background:var(--bright-mint);box-shadow:0 0 8px var(--bright-mint)}
+.track-dot.passed{background:var(--eco-emerald)}
+
+/* Interactive Context Box */
+.doc-box { background: rgba(15,23,42,0.5); border-left: 3px solid var(--eco-emerald); padding: 14px; margin-bottom: 18px; border-radius: 0 6px 6px 0; font-size: 14px; line-height: 1.55; color: #e2e8f0; }
+
+/* Choice Matrix selections */
+h2{font-size:16.5px;line-height:1.45;color:var(--text-light);margin-bottom:18px;font-weight:600}
+.matrix-wrapper{display:flex;flex-direction:column;gap:10px}
+.matrix-item{background:rgba(255,255,255,0.015);border:1px solid rgba(255,255,255,0.05);border-radius:6px;padding:12px 14px;cursor:pointer;font-size:14px;line-height:1.4;transition:all 0.2s ease;display:flex;align-items:start;gap:10px}
+.matrix-item:hover{background:rgba(16,185,129,0.03);border-color:rgba(16,185,129,0.3);transform:translateX(2px)}
+.item-pref{font-weight:700;color:var(--bright-mint)}
+
+/* Message feedback system */
+.alert-box{margin-top:16px;padding:12px;border-radius:6px;font-size:13.5px;line-height:1.5}
+.alert-pass{background:var(--pass-bg);color:#34d399;border:1px solid rgba(16,185,129,0.2)}
+.alert-fail{background:var(--fail-bg);color:#f87171;border:1px solid rgba(239,68,68,0.2)}
+
+button.nav-btn{width:100%;background:linear-gradient(135deg, #1e293b, #0f172a);border:1px solid rgba(16,185,129,0.3);color:white;padding:14px;border-radius:6px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;cursor:pointer;margin-top:16px;transition:all .2s ease}
+button.nav-btn:hover{background:linear-gradient(135deg, #334155, #1e293b);box-shadow:0 4px 12px rgba(16,185,129,0.15)}
+</style>
+</head>
+<body>
+
+<div id="splash-screen" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#ffffff;display:flex;justify-content:center;align-items:center;z-index:99999;transition:opacity .3s ease">
+  <div class="center">
+    <img id="brand-logo" src="assets/innovine-logo.png" alt="Logo" style="width:230px;height:auto;" onerror="this.style.display='none'; document.getElementById('splash-text-fallback').style.display='block';">
+    <h1 id="splash-text-fallback" style="display:none;color:#0f172a;letter-spacing:2px;font-weight:800;font-size:18px;">INNOVINE LEARNING</h1>
+  </div>
+</div>
+
+<div id="welcome-panel" class="app-container center hidden">
+  <div class="pill">National Development Systems</div>
+  <h1 style="font-size:21px;margin-bottom:10px;">Chapter 7: From Roads to the Internet</h1>
+  <p style="color:var(--text-gray);font-size:13.5px;line-height:1.5;margin-bottom:20px">Analyze networks across transportation, energy grids, fiber-optic communication, and learn how infrastructure acts as the lifeline of a growing nation.</p>
+  <div style="font-size:38px;margin-bottom:16px">🚀🛣️⚡🌐</div>
+  <button class="nav-btn" onclick="initCoreApp()">Initialize Simulator</button>
+</div>
+
+<div id="quiz-panel" class="app-container hidden">
+  <div class="hud-meta">
+    <div id="runtime-lbl">Operational Matrix</div>
+    <div>Score: <span id="runtime-score">0</span></div>
+  </div>
+  <div class="track-bar" id="dot-holder"></div>
+  <div id="doc-view" class="doc-box hidden"></div>
+  <h2 id="question-view"></h2>
+  <div class="matrix-wrapper" id="matrix-options"></div>
+  <div id="alert-view"></div>
+  <button id="next-step-btn" class="nav-btn hidden" onclick="progressNext()">Register Parameters & Proceed →</button>
+</div>
+
+<div id="end-panel" class="app-container center hidden">
+  <div style="font-size:45px;margin-bottom:10px" id="panel-emoji"></div>
+  <h1 id="panel-title" style="margin-bottom:6px;"></h1>
+  <p id="panel-desc" style="color:var(--text-gray);font-size:13.5px;margin-bottom:18px"></p>
+  <div class="pill" id="panel-rank"></div>
+  <br><br>
+  <button class="nav-btn" onclick="window.location.reload()">Re-Run Assessment</button>
+</div>
+
+<audio id="sound-pass" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="sound-fail" src="assets/wrong.mp3" preload="auto"></audio>
+
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    const splash = document.getElementById('splash-screen');
+    splash.style.opacity = '0';
+    setTimeout(() => {
+      splash.style.display = 'none';
+      document.getElementById('welcome-panel').classList.remove('hidden');
+    }, 300);
+  }, 1300);
+});
+
+const ch7Questions = [
+  {
+    q: "A state planning department is reviewing a map of a rural district. They categorize local schools and primary healthcare clinics as social infrastructure, while classifying the surrounding paved roads and electric power grids as physical infrastructure. Which statement correctly highlights the functional relationship between these two types of infrastructure?",
+    o: [
+      "Social infrastructure moves heavy industrial goods, while physical infrastructure develops a citizen's mental literacy.",
+      "Physical infrastructure provides the concrete networks and systems that allow social infrastructure to deliver well-being and develop human potential.",
+      "Social infrastructure completely replaces the need for utilities like electricity grids or clean water supply pipelines.",
+      "Physical infrastructure is abstract and cannot be touched, whereas social infrastructure consists strictly of underground cables."
+    ],
+    a: 1,
+    e: "While physical infrastructure provides the vital networks and structural pipelines (transport, utilities, energy), social infrastructure (schools, clinics) focuses directly on supporting human well-being and unlocking human potential."
+  },
+  {
+    case: "<b>Story Focus: Satish's Day</b><br>'Early in the morning, canal water flows to Satish's field through an irrigation network. By afternoon, his tomatoes are loaded onto a truck speeding along a national highway. Simultaneously, using his smartphone and the internet, he checks real-time market prices.'",
+    q: "Based on Satish's story, what would be the most immediate economic impact on a rural farming family if the local communication infrastructure (mobile networks and internet) experienced a total breakdown?",
+    o: [
+      "The physical canals would immediately stop supplying water to the crops.",
+      "Farmers would lose real-time market price access, making them vulnerable to unfair trade offers or post-harvest losses.",
+      "Trucks would no longer be physically able to drive on the national highways.",
+      "Cold storage facilities would completely convert their electrical waste into clean biogas."
+    ],
+    a: 1,
+    e: "The text highlights that the internet and smartphones provide farmers with direct access to urban market values and buying networks, which saves perishable harvests from rotting or being sold below value."
+  },
+  {
+    q: "An environmental engineer compiles data comparing the relative energy use of cargo transport modes in India. They discover that shipping heavy, bulky items via electric broad-gauge trains consumes significantly less energy per kilometer than transporting the exact same cargo weight using diesel trucks on a highway. To plan an energy-efficient nation, what should a logistics officer prioritize?",
+    o: [
+      "Moving small, urgent medical supplies exclusively via slow coastal waterways.",
+      "Directing heavy bulk commodities to the electrified rail network rather than long-distance road transport.",
+      "Eliminating expressways entirely to build narrow-gauge heritage toy tracks.",
+      "Using cargo planes to transport heavy minerals across short village roads."
+    ],
+    a: 1,
+    e: "Electric freight locomotives consume 75%–90% less energy per tonne-kilometer than highway road transport, making railways the sustainable and highly energy-efficient mode for moving heavy bulk loads over long distances."
+  },
+  {
+    case: "<b>Case Study 1: The Atal Tunnel</b><br>'Before 2020, the high-altitude Lahaul-Spiti valley was entirely cut off for six months every winter due to heavy snow blocking mountain passes. The construction of the 9.02 km tunnel through fragile Himalayan rock now connects the region year-round.'",
+    q: "Based on the textbook case study, the construction of the Atal Tunnel serves as strong evidence that:",
+    o: [
+      "High-altitude regions should rely solely on air transport during winter emergencies.",
+      "Overcoming severe natural and engineering barriers can completely transform a community's seasonal isolation into continuous economic and medical access.",
+      "Tunnels are cheap and simple to construct without advanced safety infrastructure or emergency exits.",
+      "Extreme weather completely prevents any form of physical network integration across the country."
+    ],
+    a: 1,
+    e: "The case study demonstrates how advanced engineering overcame freezing hazards and mountain barriers to connect over 300,000 cut-off residents with supplies, hospitals, and stable year-round tourism."
+  },
+  {
+    q: "A coastal shipping firm needs to transport 500 massive steel containers from the industrial ports of Mumbai to international markets in Europe. Based on the transport comparison criteria provided in the text, why will they select maritime transport over aviation cargo?",
+    o: [
+      "Maritime shipping is faster than aircraft over long global routes.",
+      "Sea transport costs only a tiny fraction of air transport, making it the most economical method for bulky, heavy international trade.",
+      "Ships are completely immune to extreme weather patterns and natural disasters.",
+      "Major ports are managed exclusively by village panchayats."
+    ],
+    a: 1,
+    e: "The textbook notes that shipping a container by sea costs a fraction of air transport. This economic efficiency is why most of the physical goods we buy travel on transport ships from factories to stores."
+  },
+  {
+    q: "Assertion (A): The historical expansion of the Indian railway network before 1947 was functionally distinct from its operational purpose in modern independent India.\nReason (R): The British colonial administration built railways primarily to extract raw materials and move them to ports for export, whereas post-1947 India transformed the network into a public utility serving national integration and affordable passenger travel.",
+    o: [
+      "Both A and R are true and R explains A.",
+      "Both A and R are true but R does not explain A.",
+      "A is true but R is false.",
+      "A is false but R is true."
+    ],
+    a: 0,
+    e: "The chapter notes that the first trains built under British rule aimed to extract materials for England, whereas independent India re-engineered the whole system into an affordable, unified citizen-centric service."
+  },
+  {
+    q: "While researching the pioneers of wireless technology, a student discovers that Jagadish Chandra Bose demonstrated microwave signals traveling through solid walls in 1895 but did not patent his work because he believed scientific knowledge should be freely shared with the world. This historical account teaches us that:",
+    o: [
+      "True technological innovations only occur when projects are heavily patented for profit.",
+      "Indian scientific contributions have deep roots in global communication history, driven by an ethos of open collaboration.",
+      "Microwaves cannot propagate through barriers without a maritime license.",
+      "Bose's experiments were completely ignored until the invention of fiber-optic cables."
+    ],
+    a: 1,
+    e: "The text documents J.C. Bose's pioneering microwave work in 1895, highlighting his legacy of sharing scientific breakthroughs for human progress, which is now celebrated worldwide."
+  },
+  {
+    q: "A village resident wants to check the official list of responsibilities handled at the lowest level of India's three-tier federal structure. Which of these duties falls under the direct authority of a Local Government (Panchayat/Municipality) rather than the Union Government?",
+    o: [
+      "Managing national defense systems and space programs",
+      "Operating railways, national highways, and printing currency",
+      "Organizing sanitation, drainage, streetlights, and local village fairs",
+      "Creating international foreign treaties and setting income tax rates"
+    ],
+    a: 2,
+    e: "Under the decentralized three-tier system, local everyday matters like drinking water, sanitation, streetlights, and local fairs are explicitly managed by village and town local bodies."
+  },
+  {
+    case: "<b>Sustainable Systems Focus:</b><br>'Some modern sewage treatment plants can convert waste into biogas, which is used to generate electricity. In many cities, treated wastewater is reused for watering parks, gardens, and agricultural fields.'",
+    q: "This technological integration of utility networks is an excellent example of sustainable infrastructure because:",
+    o: [
+      "It maximizes the consumption of imported fossil fuels to speed up electricity grids.",
+      "It meets today's urban sanitation needs while actively reducing waste and conserving resources for future generations.",
+      "It eliminates the need for underground fiber-optic communication systems.",
+      "It ensures that infrastructure development benefits only high-income city centers."
+    ],
+    a: 1,
+    e: "Sustainable infrastructure is engineered to process current civil waste efficiently while generating green power and reusable resources, protecting environmental health for posterity."
+  },
+  {
+    q: "A financial analyst explores how India's domestic digital economy achieved more than 10 billion transactions per month through applications like UPI. Which underlying physical and communication infrastructure layer forms the necessary backbone for this massive instant digital payment ecosystem?",
+    o: [
+      "Traditional paper telegraph networks and riverine ports.",
+      "A robust network of underground and undersea fiber-optic cables paired with widespread mobile towers.",
+      "Narrow-gauge mountain railway tracks and luxury heritage coaches.",
+      "Disputed international borders and regional toll expressways."
+    ],
+    a: 1,
+    e: "Wireless transaction apps require a physical network infrastructure backbone. Fiber-optic cables and cell towers send information instantly across long distances using light waves and signals."
+  }
+];
+
+let activeIdx = 0;
+let computedScore = 0;
+let dynamicLock = false;
+
+function initCoreApp(){
+  document.getElementById('welcome-panel').classList.add('hidden');
+  document.getElementById('quiz-panel').classList.remove('hidden');
+  renderTrackDots();
+  loadQuizQuestion();
+}
+
+function renderTrackDots(){
+  const holder = document.getElementById('dot-holder');
+  holder.innerHTML = '';
+  ch7Questions.forEach(() => {
+    let dot = document.createElement('div');
+    dot.className = 'track-dot';
+    holder.appendChild(dot);
+  });
+}
+
+function loadQuizQuestion(){
+  dynamicLock = false;
+  document.getElementById('alert-view').innerHTML = '';
+  document.getElementById('next-step-btn').classList.add('hidden');
+
+  const dots = document.querySelectorAll('.track-dot');
+  dots.forEach((dt, i) => {
+    if(i === activeIdx) dt.className = 'track-dot active';
+    else if(i < activeIdx) dt.className = 'track-dot passed';
+    else dt.className = 'track-dot';
+  });
+
+  if(activeIdx >= 7){
+    document.getElementById('runtime-lbl').textContent = "⚠️ High-Tier Core Evaluation";
+    document.getElementById('runtime-lbl').style.color = "var(--bright-mint)";
+  } else {
+    document.getElementById('runtime-lbl').textContent = "Standard Utility Assessment";
+    document.getElementById('runtime-lbl').style.color = "var(--text-gray)";
+  }
+
+  const currentItem = ch7Questions[activeIdx];
+  const docView = document.getElementById('doc-view');
+  
+  if(currentItem.case){
+    docView.innerHTML = currentItem.case;
+    docView.classList.remove('hidden');
+  } else {
+    docView.classList.add('hidden');
+  }
+
+  document.getElementById('question-view').innerHTML = `${activeIdx + 1}. ${currentItem.q}`;
+  
+  const optionsBox = document.getElementById('matrix-options');
+  optionsBox.innerHTML = '';
+
+  const indices = ['A','B','C','D'];
+  currentItem.o.forEach((text, slot) => {
+    let card = document.createElement('div');
+    card.className = 'matrix-item';
+    card.innerHTML = `<span class="item-pref">${indices[slot]}.</span> <span>${text}</span>`;
+    card.onclick = () => evaluateChoice(slot, card);
+    optionsBox.appendChild(card);
+  });
+}
+
+function dispatchSound(audioId) {
+  const elem = document.getElementById(audioId);
+  if(elem){
+    elem.currentTime = 0;
+    elem.play().catch(() => {});
+  }
+}
+
+function evaluateChoice(chosenPos, elementNode){
+  const targetObj = ch7Questions[activeIdx];
+  if(chosenPos === targetObj.a){
+    if(!dynamicLock){
+      computedScore++;
+      document.getElementById('runtime-score').textContent = computedScore;
+    }
+    dispatchSound('sound-pass');
+    document.getElementById('alert-view').innerHTML = `<div class="alert-box alert-pass"><b>✓ Metric Validated.</b> ${targetObj.e}</div>`;
+    lockMatrix();
+    document.getElementById('next-step-btn').classList.remove('hidden');
+  } else {
+    if(!dynamicLock){
+      dynamicLock = true;
+      dispatchSound('sound-fail');
+      elementNode.style.borderColor = 'var(--fail-red)';
+      elementNode.style.background = 'var(--fail-bg)';
+      document.getElementById('alert-view').innerHTML = `<div class="alert-box alert-fail"><b>⚠️ System Friction.</b> This structural arrangement does not match verified infrastructural constraints. Re-evaluate options.</div>`;
+    } else {
+      triggerMasterReveal();
+    }
+  }
+}
+
+function triggerMasterReveal(){
+  lockMatrix();
+  const targetObj = ch7Questions[activeIdx];
+  const tags = ['A','B','C','D'];
+  document.getElementById('alert-view').innerHTML = `<div class="alert-box alert-fail"><b>🔍 Optimal Vector.</b> Correct configuration is <b>${tags[targetObj.a]}. ${targetObj.o[targetObj.a]}</b>.<br><br>${targetObj.e}</div>`;
+  document.getElementById('next-step-btn').classList.remove('hidden');
+}
+
+function lockMatrix(){
+  document.querySelectorAll('.matrix-item').forEach(item => item.onclick = null);
+}
+
+function progressNext(){
+  activeIdx++;
+  if(activeIdx < ch7Questions.length){
+    loadQuizQuestion();
+  } else {
+    assembleReport();
+  }
+}
+
+function assembleReport(){
+  document.getElementById('quiz-panel').classList.add('hidden');
+  document.getElementById('end-panel').classList.remove('hidden');
+
+  const emoji = document.getElementById('panel-emoji');
+  const title = document.getElementById('panel-title');
+  const desc = document.getElementById('panel-desc');
+  const rank = document.getElementById('panel-rank');
+
+  desc.textContent = `You correctly synthesized ${computedScore} out of ${ch7Questions.length} system architecture questions.`;
+
+  if(computedScore >= 9){
+    emoji.textContent = '🚀';
+    title.textContent = 'Chief Infrastructure Architect';
+    rank.textContent = 'National Planning Master';
+  } else if(computedScore >= 6){
+    emoji.textContent = '⚡';
+    title.textContent = 'Logistics Supervisor';
+    rank.textContent = 'Network Coordinator';
+  } else {
+    emoji.textContent = '🛣️';
+    title.textContent = 'Systems Operator';
+    rank.textContent = 'Apprentice Surveyor';
+  }
+}
+</script>
+</body>
+</html>
+
