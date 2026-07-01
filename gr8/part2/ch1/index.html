@@ -1,0 +1,391 @@
+I have analyzed the repository structure from your uploaded screenshots. The correct asset path for this Grade 8, Part 2, Chapter 1 workspace is:
+
+`sst_cbq/gr8/part2/ch1/assets/`
+
+I have updated the asset references in the code to point to this directory. Here is your complete, self-contained interactive web application code:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Interactive Learning Core: Resources and Sustainable Development</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',system-ui,-apple-system,sans-serif}
+:root{
+  --bg-main:#f1f5f9;
+  --panel-bg:#ffffff;
+  --indigo-primary:#4f46e5;
+  --indigo-bright:#6366f1;
+  --text-dark:#0f172a;
+  --text-muted:#475569;
+  --border-line:rgba(79,70,229,0.2);
+  --pass-bg:rgba(16,185,129,0.1);
+  --pass-text:#059669;
+  --pass-border:rgba(16,185,129,0.3);
+  --fail-orange:#ea580c;
+  --fail-bg:rgba(234,88,12,0.08);
+  --fail-border:rgba(234,88,12,0.25);
+}
+body{background:linear-gradient(135deg,var(--bg-main),#e2e8f0);min-height:100vh;color:var(--text-dark);padding:16px;display:flex;align-items:center;justify-content:center}
+
+/* Card Framework components */
+.hidden { display: none !important; }
+.app-container { background: var(--panel-bg); width: 100%; max-width: 680px; padding: 28px; border-radius: 16px; box-shadow: 0 15px 35px rgba(15,23,42,0.08); border: 1px solid rgba(15,23,42,0.05); position: relative; transition: all 0.3s ease; }
+@media (max-width: 480px) { .app-container { padding: 18px; } }
+.app-container::before { content:''; position:absolute; top:0; left:0; width:100%; height:5px; background:linear-gradient(90deg, var(--indigo-primary), var(--indigo-bright)); border-radius:16px 16px 0 0; }
+.center { text-align: center; }
+.pill { display: inline-block; background: rgba(79,70,229,0.08); color: var(--indigo-primary); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; padding: 6px 14px; border-radius: 6px; border: 1px solid rgba(79,70,229,0.15); margin-bottom: 18px; }
+
+/* HUD Header elements */
+.hud-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; font-size:11px; font-weight:700; color:var(--text-muted); border-bottom:1px solid rgba(15,23,42,0.06); padding-bottom:8px; text-transform:uppercase; letter-spacing:1px }
+.hud-meta span { color: var(--indigo-primary); font-size: 13px; }
+
+/* Horizontal Tracker Segment */
+.track-bar{display:flex;gap:5px;margin-bottom:20px}
+.track-dot{height:5px;flex:1;background:rgba(15,23,42,0.08);border-radius:2.5px;transition:all .3s ease}
+.track-dot.active{background:var(--indigo-bright);box-shadow:0 0 6px rgba(99,102,241,0.4)}
+.track-dot.passed{background:var(--indigo-primary)}
+
+/* Interactive Context Box */
+.doc-box { background: rgba(248,250,252,0.95); border-left: 4px solid var(--indigo-primary); padding: 14px 16px; margin-bottom: 20px; border-radius: 0 8px 8px 0; font-size: 14px; line-height: 1.6; color: var(--text-dark); box-shadow: inset 0 1px 3px rgba(0,0,0,0.02); }
+
+/* Choice Matrix selections */
+h2{font-size:17px;line-height:1.45;color:var(--text-dark);margin-bottom:20px;font-weight:600}
+.matrix-wrapper{display:flex;flex-direction:column;gap:11px}
+.matrix-item{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:14px 16px;cursor:pointer;font-size:14.5px;line-height:1.45;color:var(--text-dark);transition:all 0.2s ease;display:flex;align-items:start;gap:12px}
+.matrix-item:hover{background:rgba(79,70,229,0.03);border-color:var(--indigo-bright);transform:translateY(-1px);box-shadow:0 3px 8px rgba(0,0,0,0.02)}
+.item-pref{font-weight:700;color:var(--indigo-primary)}
+
+/* Message feedback system */
+.alert-box{margin-top:18px;padding:14px;border-radius:8px;font-size:14px;line-height:1.5}
+.alert-pass{background:var(--pass-bg);color:var(--pass-text);border:1px solid var(--pass-border)}
+.alert-fail{background:var(--fail-bg);color:var(--fail-orange);border:1px solid var(--fail-border)}
+
+button.nav-btn{width:100%;background:linear-gradient(135deg, var(--indigo-primary), var(--indigo-bright));border:none;color:white;padding:15px;border-radius:8px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;cursor:pointer;margin-top:18px;transition:all .2s ease;box-shadow:0 4px 12px rgba(79,70,229,0.2)}
+button.nav-btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(79,70,229,0.3)}
+</style>
+</head>
+<body>
+
+<div id="splash-screen" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#ffffff;display:flex;justify-content:center;align-items:center;z-index:99999;transition:opacity .3s ease">
+  <div class="center">
+    <img id="brand-logo" src="sst_cbq/gr8/part2/ch1/assets/innovine-logo.png" alt="Logo" style="width:230px;height:auto;" onerror="this.style.display='none'; document.getElementById('splash-text-fallback').style.display='block';">
+    <h1 id="splash-text-fallback" style="display:none;color:#0f172a;letter-spacing:2px;font-weight:800;font-size:18px;">INNOVINE LEARNING</h1>
+  </div>
+</div>
+
+<div id="welcome-panel" class="app-container center hidden">
+  <div class="pill">Ecological & Resource Systems</div>
+  <h1 style="font-size:22px;margin-bottom:12px;color:var(--text-dark);">Resources: Utility, Value, and Conservation</h1>
+  <p style="color:var(--text-muted);font-size:14px;line-height:1.55;margin-bottom:22px">Analyze resource classification models, examine the complex interplay of time and technology, evaluate real-world conservation strategies, and explore the principles of Sustainable Development.</p>
+  <div style="font-size:42px;margin-bottom:18px">🌱💧☀️🚜</div>
+  <button class="nav-btn" onclick="initCoreApp()">Initialize Simulator</button>
+</div>
+
+<div id="quiz-panel" class="app-container hidden">
+  <div class="hud-meta">
+    <div id="runtime-lbl">Resource Management Matrix</div>
+    <div>Score: <span id="runtime-score">0</span></div>
+  </div>
+  <div class="track-bar" id="dot-holder"></div>
+  <div id="doc-view" class="doc-box hidden"></div>
+  <h2 id="question-view"></h2>
+  <div class="matrix-wrapper" id="matrix-options"></div>
+  <div id="alert-view"></div>
+  <button id="next-step-btn" class="nav-btn hidden" onclick="progressNext()">Next Question →</button>
+</div>
+
+<div id="end-panel" class="app-container center hidden">
+  <div style="font-size:50px;margin-bottom:12px" id="panel-emoji"></div>
+  <h1 id="panel-title" style="margin-bottom:8px;color:var(--text-dark);"></h1>
+  <p id="panel-desc" style="color:var(--text-muted);font-size:14px;margin-bottom:20px"></p>
+  <div class="pill" id="panel-rank"></div>
+  <br><br>
+  <button class="nav-btn" onclick="window.location.reload()">Re-Run Assessment</button>
+</div>
+
+<audio id="sound-pass" src="sst_cbq/gr8/part2/ch1/assets/correct.mp3" preload="auto"></audio>
+<audio id="sound-fail" src="sst_cbq/gr8/part2/ch1/assets/wrong.mp3" preload="auto"></audio>
+
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    const splash = document.getElementById('splash-screen');
+    splash.style.opacity = '0';
+    setTimeout(() => {
+      splash.style.display = 'none';
+      document.getElementById('welcome-panel').classList.remove('hidden');
+    }, 300);
+  }, 1300);
+});
+
+const ch8Questions = [
+  {
+    case: "<b>Dynamic Resource Analysis:</b><br>'A pristine mountain stream flows past a remote village. The communities use it solely for drinking water and domestic tasks. Decades later, a mineral company identifies rare therapeutic microelements in the water, establishes a certified facility to source it safely, and sells bottled mineral water globally.'",
+    q: "Based on the text, what core concept does this transition demonstrate regarding resource systems?",
+    o: [
+      "Natural resources have unchangeable economic values that never respond to human industrial presence.",
+      "The aesthetic appearance of a resource is the single element that dictates its global demand matrix.",
+      "The economic value of a resource is dynamic and can shift dramatically over time based on utilization, commercial demand, and human development.",
+      "A resource can only possess value if it is kept strictly out of trade channels entirely."
+    ],
+    a: 2,
+    e: "The text notes that a resource like a local river may possess community importance but lack outside commercial worth initially. Once processed or packaged, it achieves economic value, demonstrating how value evolves based on application and demand framework changes."
+  },
+  {
+    q: "A regional developmental group wants to classify different materials found in an industrial corridor. Which item perfectly describes the alignment of a 'Human-Made Resource' as explained in the chapter?",
+    o: [
+      "Crude copper reserves deposited deep within rocky underground structures.",
+      "Structural steel beams engineered by transforming natural iron ore to build transport routes and bridges.",
+      "The natural water cycles replenishing major rivers through rainfall events.",
+      "Unmanaged natural wild grass expanding naturally across non-arable lands."
+    ],
+    a: 1,
+    e: "Human-made resources are built by transforming materials taken directly from nature (like processing raw iron ore into structural steel or wood into furniture) to increase structural utility in human development."
+  },
+  {
+    case: "<b>Historical Framework Study:</b><br>'Historically, crude petroleum reserves remained undisturbed underground for thousands of years without human interaction. Once innovative combustion mechanics were designed, petroleum emerged as a globally vital fuel option.'",
+    q: "Which specific factors explain this transformation of a natural substance into a high-value resource?",
+    o: [
+      "The complete extraction of all competitive non-renewable metal ores.",
+      "The interactive progression of time, technology, and human ingenuity working together to create new practical uses.",
+      "A natural change in the chemical composition of petroleum reserves inside the earth.",
+      "Strict legal orders from ancestral merchant guilds forbidding all alternative energy forms."
+    ],
+    a: 1,
+    e: "The chapter shows that things around us become active resources when we figure out how to use them through three foundational variables: time, technology, and people."
+  },
+  {
+    q: "A research scientist designs a highly optimized solar panel layout that converts sunlight into electricity at record efficiency levels. According to the text's principles, why are the scientist's efforts classified as a 'Human Resource' contribution?",
+    o: [
+      "Because the scientist's physical body takes up space in the laboratory facility.",
+      "Because human skills, innovative ideas, and knowledge drive progress and find smarter ways to manage other resources.",
+      "Because humans are non-renewable components that disappear immediately upon creating technology.",
+      "Because human assets exist primarily to reduce the overall value of surrounding ecosystems."
+    ],
+    a: 1,
+    e: "People are recognized as the supreme resource because their unique knowledge, clever designs, and critical skills invent solutions and discover better applications for elements found in nature."
+  },
+  {
+    case: "<b>Regional Mitigation Study: Rajasthan, India</b><br>'Facing intense heat and short rainfall periods, villages in Rajasthan collaborated with NGOs to construct johads (small earthen dams) and kunds (circular collection pits) to catch seasonal rain, recharging local water tables and protecting crop production through dry spells.'",
+    q: "This localized water conservation strategy is a practical demonstration of:",
+    o: [
+      "Ignoring historical knowledge systems to copy foreign industrial systems.",
+      "Sustainable development principles leveraging traditional wisdom to protect resource access for current and future populations.",
+      "A direct failure of resource management due to high construction costs.",
+      "Transforming a renewable resource into an entirely non-renewable asset class."
+    ],
+    a: 1,
+    e: "The case study highlights how sustainable water management based on traditional regional knowledge protects livelihoods against scarcity while ensuring that future generations maintain access to vital water tables."
+  },
+  {
+    q: "Assertion (A): Fossil fuels like coal, oil, and natural gas are explicitly classified as non-renewable resources.\nReason (R): These energy sources require millions of years to form naturally under the earth and are consumed much faster than the time it takes for nature to replace them.",
+    o: [
+      "Both A and R are true and R explains A correctly.",
+      "Both A and R are true but R does not explain A.",
+      "A is true but R is completely false.",
+      "A is false but R is true."
+    ],
+    a: 0,
+    e: "Fossil fuels are defined as non-renewable because their natural regeneration takes millions of years, making them finite and non-replenishable within human life frames."
+  },
+  {
+    q: "A local town council is organizing an awareness drive on resource conservation. According to the explanations given by Ramya's grandmother in the text, what is the core meaning of 'Resource Conservation'?",
+    o: [
+      "Stopping all human development activity permanently to completely seal off natural areas.",
+      "Using resources thoughtfully so they last longer, avoiding waste, and ensuring they remain available for future generations.",
+      "Selling all available materials immediately to maximize short-term cash profits.",
+      "Replacing all natural resource systems with human-made digital frameworks."
+    ],
+    a: 1,
+    e: "Resource conservation means utilizing our current resources wisely and respectfully so that they are not depleted carelessly, ensuring future generations can enjoy them too."
+  },
+  {
+    q: "Which option outlines a renewable resource paired with its correct natural replenishment mechanism as described in the chapter text?",
+    o: [
+      "Iron ore, which replenishes itself every single season through agricultural cycles.",
+      "Freshwater, which continuously moves and regenerates through the natural water cycle.",
+      "Coal reserves, which quickly accumulate inside mountain valleys within a few months.",
+      "Gold veins, which expand rapidly when exposed directly to bright solar radiation."
+    ],
+    a: 1,
+    e: "Freshwater is a renewable resource because it regenerates naturally via the water cycle, though it requires smart management to protect it against pollution and uneven distribution."
+  },
+  {
+    case: "<b>Sustainability Assessment Metric:</b><br>'A manufacturing plant upgrades its machines to reduce waste output, recycles its process water completely, uses solar energy arrays, and provides clean drinking water options to surrounding neighborhoods.'",
+    q: "Which specific principles of Sustainable Development from the text does this plant apply?",
+    o: [
+      "Focusing entirely on rapid industrial expansion while ignoring waste output indicators.",
+      "Using resources efficiently, minimizing pollution footprints, and supporting the equal well-being of people.",
+      "Maximizing the extraction of non-renewable inputs to lower operational costs.",
+      "Removing human resource training programs to prioritize automated mechanical lines."
+    ],
+    a: 1,
+    e: "Sustainable Development principles highlight balancing economic progress with environmental care and social equity by using resources efficiently, minimizing pollution, and ensuring basic needs are met for everyone."
+  },
+  {
+    q: "Assertion (A): Trees are recognized as vital components for sustainable development and environmental balance.\nReason (R): According to text-anchored facts, a single large tree can absorb 25 kg of carbon dioxide annually while providing necessary oxygen for two human beings.",
+    o: [
+      "Both A and R are true and R provides the correct explanation for A.",
+      "Both A and R are true but R is not the correct explanation for A.",
+      "A is true but R is false.",
+      "A is false but R is true."
+    ],
+    a: 0,
+    e: "Trees help maintain global balance because their biological processes directly absorb carbon dioxide emissions and generate clean oxygen, justifying their key role in sustainable development initiatives."
+  }
+];
+
+let activeIdx = 0;
+let computedScore = 0;
+let dynamicLock = false;
+
+function initCoreApp(){
+  document.getElementById('welcome-panel').classList.add('hidden');
+  document.getElementById('quiz-panel').classList.remove('hidden');
+  renderTrackDots();
+  loadQuizQuestion();
+}
+
+function renderTrackDots(){
+  const holder = document.getElementById('dot-holder');
+  holder.innerHTML = '';
+  ch8Questions.forEach(() => {
+    let dot = document.createElement('div');
+    dot.className = 'track-dot';
+    holder.appendChild(dot);
+  });
+}
+
+function loadQuizQuestion(){
+  dynamicLock = false;
+  document.getElementById('alert-view').innerHTML = '';
+  document.getElementById('next-step-btn').classList.add('hidden');
+
+  const dots = document.querySelectorAll('.track-dot');
+  dots.forEach((dt, i) => {
+    if(i === activeIdx) dt.className = 'track-dot active';
+    else if(i < activeIdx) dt.className = 'track-dot passed';
+    else dt.className = 'track-dot';
+  });
+
+  if(activeIdx >= 7){
+    document.getElementById('runtime-lbl').textContent = "⚠️ Critical Advanced Evaluation";
+    document.getElementById('runtime-lbl').style.color = "var(--fail-orange)";
+  } else {
+    document.getElementById('runtime-lbl').textContent = "Standard Utility Assessment";
+    document.getElementById('runtime-lbl').style.color = "var(--text-muted)";
+  }
+
+  const currentItem = ch8Questions[activeIdx];
+  const docView = document.getElementById('doc-view');
+  
+  if(currentItem.case){
+    docView.innerHTML = currentItem.case;
+    docView.classList.remove('hidden');
+  } else {
+    docView.classList.add('hidden');
+  }
+
+  document.getElementById('question-view').innerHTML = `${activeIdx + 1}. ${currentItem.q}`;
+  
+  const optionsBox = document.getElementById('matrix-options');
+  optionsBox.innerHTML = '';
+
+  const indices = ['A','B','C','D'];
+  currentItem.o.forEach((text, slot) => {
+    let card = document.createElement('div');
+    card.className = 'matrix-item';
+    card.innerHTML = `<span class="item-pref">${indices[slot]}.</span> <span>${text}</span>`;
+    card.onclick = () => evaluateChoice(slot, card);
+    optionsBox.appendChild(card);
+  });
+}
+
+function dispatchSound(audioId) {
+  const elem = document.getElementById(audioId);
+  if(elem){
+    elem.currentTime = 0;
+    elem.play().catch(() => {});
+  }
+}
+
+function evaluateChoice(chosenPos, elementNode){
+  const targetObj = ch8Questions[activeIdx];
+  if(chosenPos === targetObj.a){
+    if(!dynamicLock){
+      computedScore++;
+      document.getElementById('runtime-score').textContent = computedScore;
+    }
+    dispatchSound('sound-pass');
+    elementNode.style.borderColor = 'var(--pass-text)';
+    elementNode.style.background = 'var(--pass-bg)';
+    document.getElementById('alert-view').innerHTML = `<div class="alert-box alert-pass"><b>✓ Metric Verified.</b> ${targetObj.e}</div>`;
+    lockMatrix();
+    document.getElementById('next-step-btn').classList.remove('hidden');
+  } else {
+    if(!dynamicLock){
+      dynamicLock = true;
+      dispatchSound('sound-fail');
+      elementNode.style.borderColor = 'var(--fail-orange)';
+      elementNode.style.background = 'var(--fail-bg)';
+      document.getElementById('alert-view').innerHTML = `<div class="alert-box alert-fail"><b>⚠️ Parameter Anomaly.</b> The selected choice fails to meet infrastructure principles. Re-evaluate structural variables.</div>`;
+    } else {
+      triggerMasterReveal();
+    }
+  }
+}
+
+function triggerMasterReveal(){
+  lockMatrix();
+  const targetObj = ch8Questions[activeIdx];
+  const tags = ['A','B','C','D'];
+  document.getElementById('alert-view').innerHTML = `<div class="alert-box alert-fail"><b>🔍 System Realignment.</b> Optimal metric alignment is <b>${tags[targetObj.a]}. ${targetObj.o[targetObj.a]}</b>.<br><br>${targetObj.e}</div>`;
+  document.getElementById('next-step-btn').classList.remove('hidden');
+}
+
+function lockMatrix(){
+  document.querySelectorAll('.matrix-item').forEach(item => item.onclick = null);
+}
+
+function progressNext(){
+  activeIdx++;
+  if(activeIdx < ch8Questions.length){
+    loadQuizQuestion();
+  } else {
+    assembleReport();
+  }
+}
+
+function assembleReport(){
+  document.getElementById('quiz-panel').classList.add('hidden');
+  document.getElementById('end-panel').classList.remove('hidden');
+
+  const emoji = document.getElementById('panel-emoji');
+  const title = document.getElementById('panel-title');
+  const desc = document.getElementById('panel-desc');
+  const rank = document.getElementById('panel-rank');
+
+  desc.textContent = `You correctly synchronized ${computedScore} out of ${ch8Questions.length} resource framework questions.`;
+
+  if(computedScore >= 9){
+    emoji.textContent = '👑';
+    title.textContent = 'Director of Resource Architecture';
+    rank.textContent = 'Sustainability Strategist';
+  } else if(computedScore >= 6){
+    emoji.textContent = '🔬';
+    title.textContent = 'Environmental Auditor';
+    rank.textContent = 'Conservation Officer';
+  } else {
+    emoji.textContent = '🌱';
+    title.textContent = 'Resource Assistant';
+    rank.textContent = 'Junior Surveyor';
+  }
+}
+</script>
+</body>
+</html>
+
+```
