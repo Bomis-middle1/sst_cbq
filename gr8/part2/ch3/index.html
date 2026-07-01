@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Interactive Learning Core: Agricultural Systems & Dynamics</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',system-ui,-apple-system,sans-serif}
+:root{
+  --bg-main:#f4f7f4;
+  --panel-bg:#ffffff;
+  --farm-primary:#1b4332;
+  --farm-bright:#2d6a4f;
+  --harvest-amber:#d97706;
+  --text-dark:#111827;
+  --text-muted:#4b5563;
+  --border-line:rgba(45,106,79,0.2);
+  --pass-bg:#ecfdf5;
+  --pass-text:#047857;
+  --pass-border:rgba(52,211,153,0.4);
+  --fail-orange:#b91c1c;
+  --fail-bg:#fef2f2;
+  --fail-border:rgba(248,113,113,0.4);
+}
+body{background:linear-gradient(135deg,#e8f5e9,#f4f7f4);min-height:100vh;color:var(--text-dark);padding:16px;display:flex;align-items:center;justify-content:center}
+
+/* Card Framework components */
+.hidden { display: none !important; }
+.app-container { background: var(--panel-bg); width: 100%; max-width: 680px; padding: 28px; border-radius: 16px; box-shadow: 0 20px 40px rgba(27,67,50,0.08); border: 1px solid rgba(27,67,50,0.05); position: relative; transition: all 0.3s ease; }
+@media (max-width: 480px) { .app-container { padding: 18px; } }
+.app-container::before { content:''; position:absolute; top:0; left:0; width:100%; height:6px; background:linear-gradient(90deg, var(--farm-primary), var(--farm-bright)); border-radius:16px 16px 0 0; }
+.center { text-align: center; }
+.pill { display: inline-block; background: rgba(45,106,79,0.1); color: var(--farm-bright); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; padding: 6px 14px; border-radius: 6px; border: 1px solid rgba(45,106,79,0.2); margin-bottom: 18px; }
+
+/* HUD Header elements */
+.hud-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; font-size:11px; font-weight:700; color:var(--text-muted); border-bottom:1px solid rgba(45,106,79,0.1); padding-bottom:8px; text-transform:uppercase; letter-spacing:1px }
+.hud-meta span { color: var(--farm-bright); font-size: 14px; font-weight: 800; }
+
+/* Horizontal Tracker Segment */
+.track-bar{display:flex;gap:5px;margin-bottom:20px}
+.track-dot{height:6px;flex:1;background:rgba(45,106,79,0.15);border-radius:3px;transition:all .3s ease}
+.track-dot.active{background:var(--harvest-amber);box-shadow:0 0 8px rgba(217,119,6,0.5)}
+.track-dot.passed{background:var(--farm-bright)}
+
+/* Interactive Context Box */
+.doc-box { background: #f9fafb; border-left: 4px solid var(--farm-bright); padding: 14px 16px; margin-bottom: 20px; border-radius: 0 8px 8px 0; font-size: 14.5px; line-height: 1.6; color: var(--text-dark); border-top: 1px solid #e5e7eb; border-right: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb; }
+
+/* Choice Matrix selections */
+h2{font-size:18px;line-height:1.45;color:var(--text-dark);margin-bottom:20px;font-weight:700}
+.matrix-wrapper{display:flex;flex-direction:column;gap:11px}
+.matrix-item{background:#ffffff;border:2px solid #e5e7eb;border-radius:8px;padding:14px 16px;cursor:pointer;font-size:14.5px;line-height:1.45;color:var(--text-dark);transition:all 0.2s ease;display:flex;align-items:start;gap:12px;box-shadow:0 2px 4px rgba(0,0,0,0.01)}
+.matrix-item:hover{background:rgba(45,106,79,0.03);border-color:var(--farm-bright);transform:translateY(-1px);box-shadow:0 4px 12px rgba(27,67,50,0.06)}
+.item-pref{font-weight:800;color:var(--farm-bright);font-size:15px}
+
+/* Message feedback system */
+.alert-box{margin-top:18px;padding:14px;border-radius:8px;font-size:14.5px;line-height:1.5;font-weight:500}
+.alert-pass{background:var(--pass-bg);color:var(--pass-text);border:2px solid var(--pass-border)}
+.alert-fail{background:var(--fail-bg);color:var(--fail-orange);border:2px solid var(--fail-border)}
+
+button.nav-btn{width:100%;background:linear-gradient(135deg, var(--farm-primary), var(--farm-bright));border:none;color:white;padding:15px;border-radius:8px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;cursor:pointer;margin-top:18px;transition:all .2s ease;box-shadow:0 4px 14px rgba(27,67,50,0.25)}
+button.nav-btn:hover{background:linear-gradient(135deg, var(--farm-bright), var(--farm-primary));transform:translateY(-1px);box-shadow:0 6px 20px rgba(27,67,50,0.35)}
+#next-step-btn { background: linear-gradient(135deg, var(--harvest-amber), #f59e0b); box-shadow: 0 4px 14px rgba(217,119,6,0.25); }
+#next-step-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(217,119,6,0.35); }
+</style>
+</head>
+<body>
+
+<div id="splash-screen" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#ffffff;display:flex;justify-content:center;align-items:center;z-index:99999;transition:opacity .3s ease">
+  <div class="center">
+    <img id="brand-logo" src="assets/innovine-logo.png" alt="Logo" style="width:230px;height:auto;" onerror="this.style.display='none'; document.getElementById('splash-text-fallback').style.display='block';">
+    <h1 id="splash-text-fallback" style="display:none;color:#1b4332;letter-spacing:2px;font-weight:800;font-size:20px;">INNOVINE LEARNING</h1>
+  </div>
+</div>
+
+<div id="welcome-panel" class="app-container center hidden">
+  <div class="pill">Economic & Agronomic Systems</div>
+  <h1 style="font-size:24px;margin-bottom:12px;color:var(--text-dark);font-weight:800;">Agriculture: Foundations & Systems</h1>
+  <p style="color:var(--text-muted);font-size:14.5px;line-height:1.6;margin-bottom:22px">Examine the stages of the farm system, differentiate economic activity sectors, categorize specialized agrarian practices, and contrast global cultivation profiles.</p>
+  <div style="font-size:46px;margin-bottom:18px;letter-spacing:10px;">🌾🚜🐛🍇</div>
+  <button class="nav-btn" onclick="initCoreApp()">Initialize Simulator</button>
+</div>
+
+<div id="quiz-panel" class="app-container hidden">
+  <div class="hud-meta">
+    <div id="runtime-lbl">Agronomic Domain Analysis</div>
+    <div>Score: <span id="runtime-score">0</span></div>
+  </div>
+  <div class="track-bar" id="dot-holder"></div>
+  <div id="doc-view" class="doc-box hidden"></div>
+  <h2 id="question-view"></h2>
+  <div class="matrix-wrapper" id="matrix-options"></div>
+  <div id="alert-view"></div>
+  <button id="next-step-btn" class="nav-btn hidden" onclick="progressNext()">Next Parameter →</button>
+</div>
+
+<div id="end-panel" class="app-container center hidden">
+  <div style="font-size:55px;margin-bottom:12px" id="panel-emoji"></div>
+  <h1 id="panel-title" style="margin-bottom:8px;color:var(--text-dark);font-weight:800;"></h1>
+  <p id="panel-desc" style="color:var(--text-muted);font-size:15px;margin-bottom:20px"></p>
+  <div class="pill" id="panel-rank"></div>
+  <br><br>
+  <button class="nav-btn" onclick="window.location.reload()">Re-Run Assessment</button>
+</div>
+
+<audio id="sound-pass" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="sound-fail" src="assets/wrong.mp3" preload="auto"></audio>
+
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    const splash = document.getElementById('splash-screen');
+    splash.style.opacity = '0';
+    setTimeout(() => {
+      splash.style.display = 'none';
+      document.getElementById('welcome-panel').classList.remove('hidden');
+    }, 300);
+  }, 1300);
+});
+
+const ch3Questions = [
+  {
+    case: "<b>Sectoral Economic Classification:</b><br>'During a walk through the village of Sui, Riya observes three distinct activities: her grandfather harvesting wheat from the field, a group of workers unloading bags of wheat into a village mill to grind them into flour, and a local doctor providing medical check-ups to children at the community clinic.'",
+    q: "Based on the narrative, which option accurately classifies the economic activities of the grandfather, the mill workers, and the doctor in sequence?",
+    o: [
+      "Primary, Tertiary, Secondary",
+      "Primary, Secondary, Tertiary",
+      "Secondary, Primary, Tertiary",
+      "Tertiary, Secondary, Primary"
+    ],
+    a: 1,
+    e: "The grandfather works directly with nature to harvest resources (Primary activity); the mill transforms raw wheat into processed flour (Secondary activity); and the doctor provides a critical service rather than a tangible good (Tertiary activity)."
+  },
+  {
+    case: "<b>Specialised Culture Matrices:</b><br>'An agricultural institute runs three test plots: Plot 1 rears silkworms fed on mulberry leaves to extract textile fibers; Plot 2 features controlled breeding tanks for channel catfish and tilapia; Plot 3 consists of a small plot intensively growing ornamental flowers and nursery shrubs.'",
+    q: "Which terms correctly identify the specialized agricultural practices carried out in Plots 1, 2, and 3 respectively?",
+    o: [
+      "Viticulture, Pisciculture, Horticulture",
+      "Sericulture, Viticulture, Pisciculture",
+      "Sericulture, Pisciculture, Horticulture",
+      "Horticulture, Pisciculture, Sericulture"
+    ],
+    a: 2,
+    e: "According to the text, sericulture is the rearing of silkworms for silk, pisciculture is the controlled breeding and harvesting of fish in enclosures, and horticulture focuses on intensively cultivated fruits, vegetables, flowers, and ornamental plants."
+  },
+  {
+    q: "An agricultural engineer tracks a set of farm metrics: seeds, chemical fertilizers, and tractor machinery on one side, and actions like ploughing, sowing, and irrigation on the other. How are these items categorized within the step-by-step system of farming?",
+    o: [
+      "Both sets are considered natural outputs of the ecosystem.",
+      "Seeds, fertilizers, and machinery are <b>Inputs</b>, while ploughing, sowing, and irrigation represent the <b>Processes</b>.",
+      "Seeds and machinery are <b>Processes</b>, while ploughing and irrigation are the <b>Outputs</b>.",
+      "Fertilisers and sowing are <b>Inputs</b>, while machinery is the final <b>Output</b>."
+    ],
+    a: 1,
+    e: "The text outlines a clear step-by-step farming system where gathering tools and materials (seeds, machinery, fertilizers) constitutes the Input Stage, whereas field actions (ploughing, sowing, irrigation, weeding) make up the operational activities."
+  },
+  {
+    case: "<b>Ecological Balance in Shifting Cultivation:</b><br>'A community living in a tropical woodland ecosystem practices slash-and-burn agriculture. They clear a small forest patch, cultivate staple crops like maize and cassava until the yield drops, and then move to a fresh plot, leaving the old field alone.'",
+    q: "Based on the textbook details, under what structural conditions is this practice sustainable, and what hazard does it pose if practiced extensively?",
+    o: [
+      "It is sustainable only in densely populated cities and causes water logging.",
+      "It is sustainable in low population densities, but extensive practice causes deforestation and a loss of biodiversity.",
+      "It is permanently sustainable at any scale because it relies entirely on synthetic chemicals.",
+      "It is unsustainable at low populations but restores old-growth biodiversity at high populations."
+    ],
+    a: 1,
+    e: "The text explicitly states that while shifting cultivation can be sustainable under low population densities, it leads to deforestation and a loss of biodiversity if it is practiced extensively over too large an area."
+  },
+  {
+    case: "<b>Topographic Adaptation in High-Relief Terrains:</b><br>'An agricultural field survey team is mapping a mountainous region with steep slopes. The area experiences heavy seasonal downpours, leading to rapid rainwater runoff that strips away fertile topsoil before crops can take root.'",
+    q: "Which farming practice from the text is specifically designed to solve these topographic challenges, and how does it function?",
+    o: [
+      "Nomadic herding; animals compact the vertical soil slopes with their hooves.",
+      "Shifting cultivation; burning the trees hardens the steep hillside dirt.",
+      "Commercial monoculture; planting a single grain crop naturally stops water runoff.",
+      "Terrace farming; carving flat steps out of the slopes prevents soil erosion and facilitates better water retention."
+    ],
+    a: 3,
+    e: "Terrace farming is practiced on hilly or mountainous terrains where flat areas are carved out of the slopes. This structure prevents soil erosion and runoff while facilitating water distribution along steep gradients."
+  },
+  {
+    q: "A commercial estate integrates a crop cultivation plot directly with a livestock barn. The animals are fed clover grown on the property, and their manure is systematically collected and applied back to the soil as organic fertilizer. What primary economic advantage does this system offer the operator according to the text?",
+    o: [
+      "It forces the farm to rely exclusively on international migrant labor.",
+      "It eliminates the need for storage facilities like warehouses or cold silos.",
+      "It reduces financial risk, as the operator is not reliant on a single source of market income.",
+      "It changes the operation from a primary activity into a purely tertiary service sector."
+    ],
+    a: 2,
+    e: "The text highlights that mixed farming creates a mutually beneficial loop (manure for crops, crops for feed) and reduces financial risk because if crop prices drop, the farmer can still profit from livestock sales."
+  },
+  {
+    case: "<b>Commercial Plantation Realities:</b><br>'An agribusiness firm operates an extensive estate in a hot, tropical region dedicated entirely to growing high volumes of tea and coffee. The crop requires massive initial capital investments, specialized processing facilities, and a large labor force to manually pluck tender leaves at regular intervals.'",
+    q: "Which category of commercial agriculture does this setup represent, and where are these products primarily directed?",
+    o: [
+      "Intensive subsistence farming; consumed entirely by the workers' families.",
+      "Plantation agriculture; grown primarily for sale in international markets.",
+      "Nomadic herding; traded locally with neighboring pastoral communities.",
+      "Shifting cultivation; aimed at restoring local woodland environments."
+    ],
+    a: 1,
+    e: "Plantation agriculture involves the large-scale cultivation of cash crops (like tea, coffee, rubber, and sugarcane) in tropical or subtropical zones, relying on significant labor inputs, with the products intended primarily for sale in international markets."
+  },
+  {
+    q: "A regional planning board is identifying zones suitable for cultivating Jute. Based on the botanical requirements specified in the text, which climatic and geographic profile must they choose?",
+    o: [
+      "Cold, temperate plains that experience low rainfall and low humidity.",
+      "Arid desert sand dunes with high sunshine hours and minimal water supply.",
+      "Mountain slopes with cool temperatures and rapid vertical drainage.",
+      "Hot, humid tropical lowlands that receive substantial rainfall."
+    ],
+    a: 3,
+    e: "The text details that Jute (the 'golden fibre') requires a hot, humid climate with substantial rainfall and well-drained soil, making tropical lowlands the ideal environment for its cultivation."
+  },
+  {
+    case: "<b>Cross-Country Comparative Frameworks:</b><br>'Ramesh operates a small ancestral plot in India, managing risk against unpredictable monsoon rains using family labor and basic tools. Meanwhile, David manages a massive multi-thousand-acre corporate farm in the USA using GPS-guided tractors, aerial drones, and genetically modified seed varieties.'",
+    q: "What core conclusion about global agricultural development is illustrated by the contrasting lives of Ramesh and David?",
+    o: [
+      "Indian farmers refuse to use modern tools due to cultural preferences.",
+      "Farmers in developed countries face identical infrastructural challenges to smallholders in developing countries.",
+      "Daily challenges, resource access, and farming approaches are heavily shaped by distinct economic and infrastructural environments.",
+      "Commercial grain farming is less efficient than basic manual tools over large areas."
+    ],
+    a: 2,
+    e: "The comparison highlights how economic development and advanced infrastructure allow farmers in developed countries to use precision technology and subsidies to maximize yields, whereas smallholders in developing regions remain highly vulnerable to natural inputs like monsoon rains."
+  },
+  {
+    q: "According to the 'Fascinating Fact' provided in the text, which operational parameters must a certified organic farm strictly follow?",
+    o: [
+      "Rely heavily on synthetic pesticides and GMO seeds to maximize profits.",
+      "Maximize the use of artificial chemical fertilizers to keep the soil hyper-productive.",
+      "Completely avoid synthetic chemicals and GMOs, relying instead on natural inputs like compost, green manure, and biological pest controls.",
+      "Abandon crop rotation entirely to practice high-input monoculture grain farming."
+    ],
+    a: 2,
+    e: "The text defines organic farming as a method that promotes ecological balance and avoids synthetic chemicals or genetically modified organisms (GMOs). It relies on natural alternatives like compost, green manure, crop rotation, and biological pest control."
+  }
+];
+
+let activeIdx = 0;
+let computedScore = 0;
+let dynamicLock = false;
+
+function initCoreApp(){
+  document.getElementById('welcome-panel').classList.add('hidden');
+  document.getElementById('quiz-panel').classList.remove('hidden');
+  renderTrackDots();
+  loadQuizQuestion();
+}
+
+function renderTrackDots(){
+  const holder = document.getElementById('dot-holder');
+  holder.innerHTML = '';
+  ch3Questions.forEach(() => {
+    let dot = document.createElement('div');
+    dot.className = 'track-dot';
+    holder.appendChild(dot);
+  });
+}
+
+function loadQuizQuestion(){
+  dynamicLock = false;
+  document.getElementById('alert-view').innerHTML = '';
+  document.getElementById('next-step-btn').classList.add('hidden');
+
+  const dots = document.querySelectorAll('.track-dot');
+  dots.forEach((dt, i) => {
+    if(i === activeIdx) dt.className = 'track-dot active';
+    else if(i < activeIdx) dt.className = 'track-dot passed';
+    else dt.className = 'track-dot';
+  });
+
+  if(activeIdx >= 6){
+    document.getElementById('runtime-lbl').textContent = "⚠️ Advanced Comparative Scrutiny";
+    document.getElementById('runtime-lbl').style.color = "var(--harvest-amber)";
+  } else {
+    document.getElementById('runtime-lbl').textContent = "Standard Agronomic Quiz";
+    document.getElementById('runtime-lbl').style.color = "var(--text-muted)";
+  }
+
+  const currentItem = ch3Questions[activeIdx];
+  const docView = document.getElementById('doc-view');
+   
+  if(currentItem.case){
+    docView.innerHTML = currentItem.case;
+    docView.classList.remove('hidden');
+  } else {
+    docView.classList.add('hidden');
+  }
+
+  document.getElementById('question-view').innerHTML = `${activeIdx + 1}. ${currentItem.q}`;
+   
+  const optionsBox = document.getElementById('matrix-options');
+  optionsBox.innerHTML = '';
+
+  const indices = ['A','B','C','D'];
+  currentItem.o.forEach((text, slot) => {
+    let card = document.createElement('div');
+    card.className = 'matrix-item';
+    card.innerHTML = `<span class="item-pref">${indices[slot]}.</span> <span>${text}</span>`;
+    card.onclick = () => evaluateChoice(slot, card);
+    optionsBox.appendChild(card);
+  });
+}
+
+function dispatchSound(audioId) {
+  const elem = document.getElementById(audioId);
+  if(elem){
+    elem.currentTime = 0;
+    elem.play().catch(() => {});
+  }
+}
+
+function evaluateChoice(chosenPos, elementNode){
+  const targetObj = ch3Questions[activeIdx];
+  if(chosenPos === targetObj.a){
+    if(!dynamicLock){
+      computedScore++;
+      document.getElementById('runtime-score').textContent = computedScore;
+    }
+    dispatchSound('sound-pass');
+    elementNode.style.borderColor = 'var(--pass-text)';
+    elementNode.style.background = 'var(--pass-bg)';
+    document.getElementById('alert-view').innerHTML = `<div class="alert-box alert-pass"><b>✓ Parameter Verified.</b> ${targetObj.e}</div>`;
+    lockMatrix();
+    document.getElementById('next-step-btn').classList.remove('hidden');
+  } else {
+    if(!dynamicLock){
+      dynamicLock = true;
+      dispatchSound('sound-fail');
+      elementNode.style.borderColor = 'var(--fail-orange)';
+      elementNode.style.background = 'var(--fail-bg)';
+      document.getElementById('alert-view').innerHTML = `<div class="alert-box alert-fail"><b>⚠️ System Misalignment.</b> The selected choice does not align with agricultural text records. Re-evaluate input configurations.</div>`;
+    } else {
+      triggerMasterReveal();
+    }
+  }
+}
+
+function triggerMasterReveal(){
+  lockMatrix();
+  const targetObj = ch3Questions[activeIdx];
+  const tags = ['A','B','C','D'];
+  document.getElementById('alert-view').innerHTML = `<div class="alert-box alert-fail"><b>🔍 System Realignment.</b> Correct choice is <b>${tags[targetObj.a]}. ${targetObj.o[targetObj.a]}</b>.<br><br>${targetObj.e}</div>`;
+  document.getElementById('next-step-btn').classList.remove('hidden');
+}
+
+function lockMatrix(){
+  document.querySelectorAll('.matrix-item').forEach(item => item.onclick = null);
+}
+
+function progressNext(){
+  activeIdx++;
+  if(activeIdx < ch3Questions.length){
+    loadQuizQuestion();
+  } else {
+    assembleReport();
+  }
+}
+
+function assembleReport(){
+  document.getElementById('quiz-panel').classList.add('hidden');
+  document.getElementById('end-panel').classList.remove('hidden');
+
+  const emoji = document.getElementById('panel-emoji');
+  const title = document.getElementById('panel-title');
+  const desc = document.getElementById('panel-desc');
+  const rank = document.getElementById('panel-rank');
+
+  desc.textContent = `You calibrated ${computedScore} out of ${ch3Questions.length} macroeconomic and agronomic variables correctly.`;
+
+  if(computedScore >= 9){
+    emoji.textContent = '🌾';
+    title.textContent = 'Master Agronomic Planner';
+    rank.textContent = 'Macroagricultural Strategist';
+  } else if(computedScore >= 6){
+    emoji.textContent = '🚜';
+    title.textContent = 'Farming Systems Inspector';
+    rank.textContent = 'Agronomic Analyst';
+  } else {
+    emoji.textContent = '🌱';
+    title.textContent = 'Junior Field Representative';
+    rank.textContent = 'Assistant Surveyor';
+  }
+}
+</script>
+</body>
+</html>
