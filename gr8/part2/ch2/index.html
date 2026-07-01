@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Interactive Learning Core: Land, Soil, Water, & Wildlife</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',system-ui,-apple-system,sans-serif}
+:root{
+  --bg-main:#f0f9ff;
+  --panel-bg:#ffffff;
+  --ocean-primary:#0284c7;
+  --ocean-bright:#38bdf8;
+  --accent-orange:#f97316;
+  --text-dark:#0f172a;
+  --text-muted:#475569;
+  --border-line:rgba(2,132,199,0.2);
+  --pass-bg:#f0fdf4;
+  --pass-text:#16a34a;
+  --pass-border:rgba(22,163,74,0.3);
+  --fail-orange:#dc2626;
+  --fail-bg:#fef2f2;
+  --fail-border:rgba(220,38,38,0.25);
+}
+body{background:linear-gradient(135deg,#e0f2fe,#f0f9ff);min-height:100vh;color:var(--text-dark);padding:16px;display:flex;align-items:center;justify-content:center}
+
+/* Card Framework components */
+.hidden { display: none !important; }
+.app-container { background: var(--panel-bg); width: 100%; max-width: 680px; padding: 28px; border-radius: 16px; box-shadow: 0 20px 40px rgba(2,132,199,0.1); border: 1px solid rgba(2,132,199,0.1); position: relative; transition: all 0.3s ease; }
+@media (max-width: 480px) { .app-container { padding: 18px; } }
+.app-container::before { content:''; position:absolute; top:0; left:0; width:100%; height:6px; background:linear-gradient(90deg, var(--ocean-primary), var(--ocean-bright)); border-radius:16px 16px 0 0; }
+.center { text-align: center; }
+.pill { display: inline-block; background: rgba(2,132,199,0.1); color: var(--ocean-primary); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; padding: 6px 14px; border-radius: 6px; border: 1px solid rgba(2,132,199,0.2); margin-bottom: 18px; }
+
+/* HUD Header elements */
+.hud-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; font-size:11px; font-weight:700; color:var(--text-muted); border-bottom:1px solid rgba(2,132,199,0.1); padding-bottom:8px; text-transform:uppercase; letter-spacing:1px }
+.hud-meta span { color: var(--ocean-primary); font-size: 14px; font-weight: 800; }
+
+/* Horizontal Tracker Segment */
+.track-bar{display:flex;gap:5px;margin-bottom:20px}
+.track-dot{height:6px;flex:1;background:rgba(2,132,199,0.15);border-radius:3px;transition:all .3s ease}
+.track-dot.active{background:var(--accent-orange);box-shadow:0 0 8px rgba(249,115,22,0.5)}
+.track-dot.passed{background:var(--ocean-primary)}
+
+/* Interactive Context Box */
+.doc-box { background: #f8fafc; border-left: 4px solid var(--ocean-bright); padding: 14px 16px; margin-bottom: 20px; border-radius: 0 8px 8px 0; font-size: 14.5px; line-height: 1.6; color: var(--text-dark); border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; }
+
+/* Choice Matrix selections */
+h2{font-size:18px;line-height:1.45;color:var(--text-dark);margin-bottom:20px;font-weight:700}
+.matrix-wrapper{display:flex;flex-direction:column;gap:11px}
+.matrix-item{background:#ffffff;border:2px solid #e2e8f0;border-radius:8px;padding:14px 16px;cursor:pointer;font-size:14.5px;line-height:1.45;color:var(--text-dark);transition:all 0.2s ease;display:flex;align-items:start;gap:12px;box-shadow:0 2px 4px rgba(0,0,0,0.01)}
+.matrix-item:hover{background:rgba(56,189,248,0.04);border-color:var(--ocean-bright);transform:translateY(-1px);box-shadow:0 4px 12px rgba(2,132,199,0.08)}
+.item-pref{font-weight:800;color:var(--ocean-primary);font-size:15px}
+
+/* Message feedback system */
+.alert-box{margin-top:18px;padding:14px;border-radius:8px;font-size:14.5px;line-height:1.5;font-weight:500}
+.alert-pass{background:var(--pass-bg);color:var(--pass-text);border:2px solid var(--pass-border)}
+.alert-fail{background:var(--fail-bg);color:var(--fail-orange);border:2px solid var(--fail-border)}
+
+button.nav-btn{width:100%;background:linear-gradient(135deg, var(--ocean-primary), var(--ocean-bright));border:none;color:white;padding:15px;border-radius:8px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;cursor:pointer;margin-top:18px;transition:all .2s ease;box-shadow:0 4px 14px rgba(2,132,199,0.3)}
+button.nav-btn:hover{background:linear-gradient(135deg, var(--ocean-bright), var(--ocean-primary));transform:translateY(-1px);box-shadow:0 6px 20px rgba(2,132,199,0.4)}
+#next-step-btn { background: linear-gradient(135deg, var(--accent-orange), #fb923c); box-shadow: 0 4px 14px rgba(249,115,22,0.3); }
+#next-step-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(249,115,22,0.4); }
+</style>
+</head>
+<body>
+
+<div id="splash-screen" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#ffffff;display:flex;justify-content:center;align-items:center;z-index:99999;transition:opacity .3s ease">
+  <div class="center">
+    <img id="brand-logo" src="assets/innovine-logo.png" alt="Logo" style="width:230px;height:auto;" onerror="this.style.display='none'; document.getElementById('splash-text-fallback').style.display='block';">
+    <h1 id="splash-text-fallback" style="display:none;color:#0284c7;letter-spacing:2px;font-weight:800;font-size:20px;">INNOVINE LEARNING</h1>
+  </div>
+</div>
+
+<div id="welcome-panel" class="app-container center hidden">
+  <div class="pill">Geosphere & Biosphere Dynamics</div>
+  <h1 style="font-size:24px;margin-bottom:12px;color:var(--text-dark);font-weight:800;">Land, Soil, & Water</h1>
+  <p style="color:var(--text-muted);font-size:14.5px;line-height:1.6;margin-bottom:22px">Evaluate land allocation metrics, analyze lithospheric profiling models, evaluate hydrological cycle balances, and scrutinize wildlife conservation treaties.</p>
+  <div style="font-size:46px;margin-bottom:18px;letter-spacing:10px;">⛰️🌱💧🐾</div>
+  <button class="nav-btn" onclick="initCoreApp()">Initialize Simulator</button>
+</div>
+
+<div id="quiz-panel" class="app-container hidden">
+  <div class="hud-meta">
+    <div id="runtime-lbl">Biophysical Domain Analysis</div>
+    <div>Score: <span id="runtime-score">0</span></div>
+  </div>
+  <div class="track-bar" id="dot-holder"></div>
+  <div id="doc-view" class="doc-box hidden"></div>
+  <h2 id="question-view"></h2>
+  <div class="matrix-wrapper" id="matrix-options"></div>
+  <div id="alert-view"></div>
+  <button id="next-step-btn" class="nav-btn hidden" onclick="progressNext()">Next Parameter →</button>
+</div>
+
+<div id="end-panel" class="app-container center hidden">
+  <div style="font-size:55px;margin-bottom:12px" id="panel-emoji"></div>
+  <h1 id="panel-title" style="margin-bottom:8px;color:var(--text-dark);font-weight:800;"></h1>
+  <p id="panel-desc" style="color:var(--text-muted);font-size:15px;margin-bottom:20px"></p>
+  <div class="pill" id="panel-rank"></div>
+  <br><br>
+  <button class="nav-btn" onclick="window.location.reload()">Re-Run Assessment</button>
+</div>
+
+<audio id="sound-pass" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="sound-fail" src="assets/wrong.mp3" preload="auto"></audio>
+
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    const splash = document.getElementById('splash-screen');
+    splash.style.opacity = '0';
+    setTimeout(() => {
+      splash.style.display = 'none';
+      document.getElementById('welcome-panel').classList.remove('hidden');
+    }, 300);
+  }, 1300);
+});
+
+const ch2Questions = [
+  {
+    case: "<b>Demographic Settlement Matrix:</b><br>'Data reports state that approximately 90% of the entire human population occupies a mere 30% of the total land surface area on Earth, leaving the remaining 70% completely uninhabited or sparsely populated.'",
+    q: "Based on the text, what is the primary determinant causing this highly uneven global distribution of human population?",
+    o: [
+      "Varying political structures and administrative choices across continents.",
+      "The global distribution of heavy industrial factories and digital tech sectors.",
+      "The variations in physical factors like rugged topography, extreme climates, and soil fertility profiles.",
+      "Vast differences in individual wealth and personal property ownership boundaries."
+    ],
+    a: 2,
+    e: "The text establishes that rugged mountain peaks, extreme desert climates, marshy areas, and poor soils keep populations low, whereas flat plains and fertile river valleys naturally attract dense settlement."
+  },
+  {
+    case: "<b>Comparative Regional Study:</b><br>'Arhaam cultivates hardy crops on steep slopes in the rocky Himalayas. Amara lives on flat, dark-soiled African savannas suitable for corn and livestock grazing. Adriana operates a tropical fruit farm in humid coastal Brazil.'",
+    q: "What fundamental dynamic do these three contrasting personal narratives illustrate about resource patterns?",
+    o: [
+      "Human choices can override all geographical and climatic barriers permanently.",
+      "Land use patterns are heavily driven and configured by physical factors such as terrain, soil profiles, and regional climates.",
+      "Global trade frameworks always force distinct regions to adopt uniform agricultural layouts.",
+      "Coastal regions are systematically inferior to mountain biomes for resource extraction."
+    ],
+    a: 1,
+    e: "The stories of the three friends verify that landscape features, soil profiles, and ambient climate determine the specialized ways distinct human communities utilize their local land resources."
+  },
+  {
+    case: "<b>Disaster Case File: Kedarnath (2013)</b><br>'In June 2013, torrential monsoon rains paired with rapid glacier melting breached Chorabari Lake, channeling flash floods and catastrophic landslides into Uttarakhand. The disaster took 5,000+ lives and destroyed complete regional settlements.'",
+    q: "According to the case study, how did human actions worsen this natural hazard into an ecosystem catastrophe?",
+    o: [
+      "By setting up scientific meteorological tracking centers along the slopes.",
+      "Through unregulated construction, extensive deforestation, and unmanaged tourism in ecologically sensitive settings.",
+      "By heavily limiting the entry of tourists and pilgrims into mountain zones.",
+      "Through the widespread installation of slope retaining structures and drainage check-dams."
+    ],
+    a: 1,
+    e: "The text explains that while heavy rains triggered the landslide, the destructive impacts were vastly compounded by uncontrolled development, heavy tree clearance, and tourist over-saturation in vulnerable ecological units."
+  },
+  {
+    q: "A team of environmental planners is designing stabilization structures for an unstable hillside village. Which package of structural and non-structural interventions perfectly aligns with the text's landslide mitigation guidelines?",
+    o: [
+      "Clearing remaining hillside forests and setting up heavy mineral processing units.",
+      "Terracing flat plains and installing large windbreak lines at sea-level zones.",
+      "Implementing widespread afforestation on slopes, building retaining walls, and installing surface drainage arrays.",
+      "Expanding cattle grazing permissions along high-slope crests to pack down loose sediments."
+    ],
+    a: 2,
+    e: "The text highlights planting trees to hold soil together via their roots, building heavy retaining walls, and engineering advanced drainage structures to minimize deep water buildup that triggers slope failure."
+  },
+  {
+    q: "During an analytical examination of a pristine vertical soil section, a researcher documents distinct layering. Which layout correctly maps the structural soil profile from top to bottom?",
+    o: [
+      "Bedrock -> Parent Material -> Subsoil -> Topsoil with organic matter.",
+      "Topsoil (rich in organic matter) -> Subsoil (with mineral deposits) -> Partially weathered parent material -> Solid bedrock.",
+      "Subsoil -> Bare Parent Material -> Humus-rich Bedrock -> Exposed Topsoil layer.",
+      "Organic Humus -> Solid Unweathered Bedrock -> Mineral Subsoil -> Runoff Sediments."
+    ],
+    a: 1,
+    e: "The textbook model defines the soil profile sequence moving downward as: nutrient-rich topsoil, mineral-collecting subsoil, partially broken parent material fragments, and solid base bedrock."
+  },
+  {
+    q: "Assertion (A): Soil formation is a highly gradual process that takes hundreds or thousands of years to build just a few centimeters of depth.\nReason (R): Parent rock properties, regional climate variables, biological activities, topography, and duration must interact continuously over long periods.",
+    o: [
+      "Both A and R are true and R provides the ideal explanation for A.",
+      "Both A and R are true but R does not explain structural timeline metrics.",
+      "A is true but R is completely false.",
+      "A is false but R is true."
+    ],
+    a: 0,
+    e: "Soil creation is an exceptionally slow evolutionary process where climatic weathering and organic decay slowly break down rock, validating both statements as interconnected."
+  },
+  {
+    case: "<b>Soil Conservation Experiment:</b><br>'Two identical trays are filled with matching soil and set at a slant. Tray A is layered with dry organic leaves and straw, while Tray B remains uncovered. Water is poured equally over both setups.'",
+    q: "What conservation technique does Tray A showcase, and what structural effect will be observed?",
+    o: [
+      "Contour ploughing; it forces the water runoff to speed up dramatically.",
+      "Mulching; it cushions the soil from water impacts, keeping the drainage water clear and reducing erosion.",
+      "Shelter belts; it completely blocks wind currents from scattering fine sand particles.",
+      "Rock dam configuration; it traps large silt deposits behind a heavy stone barrier."
+    ],
+    a: 1,
+    e: "Covering bare ground with straw or leaf layers represents mulching. As demonstrated in the experiment, it retains moisture, guards against rain impacts, and prevents soil from washing away."
+  },
+  {
+    q: "An agricultural cluster located in an arid, open plain experiences high wind speeds that strip away fertile surface soils and dry out crop fields. Which management strategy should they apply?",
+    o: [
+      "Constructing a stone check-dam along local riverbeds.",
+      "Planting systematic shelter belts composed of dense rows of trees and shrubs to reduce wind speeds.",
+      "Applying chemical fertilizers to bind loose surface sediments together.",
+      "Carrying out deep vertical contour ploughing across flat zones."
+    ],
+    a: 1,
+    e: "Shelter belts are dense rows of trees or shrubs planted along field perimeters. They serve as windbreaks, reducing wind speed to protect topsoil from wind erosion and limit moisture loss."
+  },
+  {
+    case: "<b>Hydrological Data Matrix:</b><br>'Analysis of global water metrics indicates that roughly 97% of Earth's water is salt-laden marine water. Out of the 3% freshwater reserve, about 69% is locked up in polar ice caps and glaciers, and around 30% resides as underground water.'",
+    q: "What operational conclusion must planners draw from this global distribution profile?",
+    o: [
+      "Accessible surface freshwater in rivers and lakes makes up less than 1% of total freshwater, demanding strict conservation.",
+      "Deserts can easily access glacial storage reserves through standard atmospheric evaporation networks.",
+      "Human consumption patterns should rely entirely on marine oceans because freshwater is infinite.",
+      "Groundwater arrays are fully protected from pollution due to polar ice cap shields."
+    ],
+    a: 0,
+    e: "The data shows that easily accessible surface freshwater (lakes, ponds, rivers) represents under 1% of the total 3% freshwater pool, underscoring our high vulnerability to water scarcity."
+  },
+  {
+    q: "Which option provides a perfect match between an endangered animal species, its native home range, and the specific driver causing its population decline as outlined in the text?",
+    o: [
+      "The Arctic polar bear, native to African savannas, declining due to industrial logging arrays.",
+      "The Asian elephant, found in India and Southeast Asia, threatened by habitat loss, human-wildlife conflict, and poaching.",
+      "The American bison, residing in tropical rainforest streams, threatened by coral bleaching.",
+      "The global leopard population, restricted to desert sand dunes, dropping due to lack of irrigation systems."
+    ],
+    a: 1,
+    e: "The text specifies that the Asian elephant, found across India and Southeast Asia, faces extinction risk driven directly by shrinking natural habitats, conflicts with local communities, and illegal poaching."
+  }
+];
+
+let activeIdx = 0;
+let computedScore = 0;
+let dynamicLock = false;
+
+function initCoreApp(){
+  document.getElementById('welcome-panel').classList.add('hidden');
+  document.getElementById('quiz-panel').classList.remove('hidden');
+  renderTrackDots();
+  loadQuizQuestion();
+}
+
+function renderTrackDots(){
+  const holder = document.getElementById('dot-holder');
+  holder.innerHTML = '';
+  ch2Questions.forEach(() => {
+    let dot = document.createElement('div');
+    dot.className = 'track-dot';
+    holder.appendChild(dot);
+  });
+}
+
+function loadQuizQuestion(){
+  dynamicLock = false;
+  document.getElementById('alert-view').innerHTML = '';
+  document.getElementById('next-step-btn').classList.add('hidden');
+
+  const dots = document.querySelectorAll('.track-dot');
+  dots.forEach((dt, i) => {
+    if(i === activeIdx) dt.className = 'track-dot active';
+    else if(i < activeIdx) dt.className = 'track-dot passed';
+    else dt.className = 'track-dot';
+  });
+
+  if(activeIdx >= 6){
+    document.getElementById('runtime-lbl').textContent = "⚠️ Critical Advanced Evaluation";
+    document.getElementById('runtime-lbl').style.color = "var(--accent-orange)";
+  } else {
+    document.getElementById('runtime-lbl').textContent = "Standard Biophysical Quiz";
+    document.getElementById('runtime-lbl').style.color = "var(--text-muted)";
+  }
+
+  const currentItem = ch2Questions[activeIdx];
+  const docView = document.getElementById('doc-view');
+   
+  if(currentItem.case){
+    docView.innerHTML = currentItem.case;
+    docView.classList.remove('hidden');
+  } else {
+    docView.classList.add('hidden');
+  }
+
+  document.getElementById('question-view').innerHTML = `${activeIdx + 1}. ${currentItem.q}`;
+   
+  const optionsBox = document.getElementById('matrix-options');
+  optionsBox.innerHTML = '';
+
+  const indices = ['A','B','C','D'];
+  currentItem.o.forEach((text, slot) => {
+    let card = document.createElement('div');
+    card.className = 'matrix-item';
+    card.innerHTML = `<span class="item-pref">${indices[slot]}.</span> <span>${text}</span>`;
+    card.onclick = () => evaluateChoice(slot, card);
+    optionsBox.appendChild(card);
+  });
+}
+
+function dispatchSound(audioId) {
+  const elem = document.getElementById(audioId);
+  if(elem){
+    elem.currentTime = 0;
+    elem.play().catch(() => {});
+  }
+}
+
+function evaluateChoice(chosenPos, elementNode){
+  const targetObj = ch2Questions[activeIdx];
+  if(chosenPos === targetObj.a){
+    if(!dynamicLock){
+      computedScore++;
+      document.getElementById('runtime-score').textContent = computedScore;
+    }
+    dispatchSound('sound-pass');
+    elementNode.style.borderColor = 'var(--pass-text)';
+    elementNode.style.background = 'var(--pass-bg)';
+    document.getElementById('alert-view').innerHTML = `<div class="alert-box alert-pass"><b>✓ Metric Verified.</b> ${targetObj.e}</div>`;
+    lockMatrix();
+    document.getElementById('next-step-btn').classList.remove('hidden');
+  } else {
+    if(!dynamicLock){
+      dynamicLock = true;
+      dispatchSound('sound-fail');
+      elementNode.style.borderColor = 'var(--fail-orange)';
+      elementNode.style.background = 'var(--fail-bg)';
+      document.getElementById('alert-view').innerHTML = `<div class="alert-box alert-fail"><b>⚠️ Parameter Anomaly.</b> The selected answer choice contradicts environmental findings. Analyze structural elements again.</div>`;
+    } else {
+      triggerMasterReveal();
+    }
+  }
+}
+
+function triggerMasterReveal(){
+  lockMatrix();
+  const targetObj = ch2Questions[activeIdx];
+  const tags = ['A','B','C','D'];
+  document.getElementById('alert-view').innerHTML = `<div class="alert-box alert-fail"><b>🔍 System Realignment.</b> Correct choice is <b>${tags[targetObj.a]}. ${targetObj.o[targetObj.a]}</b>.<br><br>${targetObj.e}</div>`;
+  document.getElementById('next-step-btn').classList.remove('hidden');
+}
+
+function lockMatrix(){
+  document.querySelectorAll('.matrix-item').forEach(item => item.onclick = null);
+}
+
+function progressNext(){
+  activeIdx++;
+  if(activeIdx < ch2Questions.length){
+    loadQuizQuestion();
+  } else {
+    assembleReport();
+  }
+}
+
+function assembleReport(){
+  document.getElementById('quiz-panel').classList.add('hidden');
+  document.getElementById('end-panel').classList.remove('hidden');
+
+  const emoji = document.getElementById('panel-emoji');
+  const title = document.getElementById('panel-title');
+  const desc = document.getElementById('panel-desc');
+  const rank = document.getElementById('panel-rank');
+
+  desc.textContent = `You correctly synchronized ${computedScore} out of ${ch2Questions.length} resource framework parameters.`;
+
+  if(computedScore >= 9){
+    emoji.textContent = '🌍';
+    title.textContent = 'Chief Biosphere Custodian';
+    rank.textContent = 'Ecosystem Architect';
+  } else if(computedScore >= 6){
+    emoji.textContent = '🗺️';
+    title.textContent = 'Resource Conservation Analyst';
+    rank.textContent = 'Environmental Inspector';
+  } else {
+    emoji.textContent = '🌱';
+    title.textContent = 'Biophysical Field Assistant';
+    rank.textContent = 'Junior Land Surveyor';
+  }
+}
+</script>
+</body>
+</html>
