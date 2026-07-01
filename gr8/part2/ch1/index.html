@@ -7,57 +7,60 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',system-ui,-apple-system,sans-serif}
 :root{
-  --bg-main:#f1f5f9;
+  --bg-main:#f0fdfa;
   --panel-bg:#ffffff;
-  --indigo-primary:#4f46e5;
-  --indigo-bright:#6366f1;
-  --text-dark:#0f172a;
-  --text-muted:#475569;
-  --border-line:rgba(79,70,229,0.2);
-  --pass-bg:rgba(16,185,129,0.1);
-  --pass-text:#059669;
-  --pass-border:rgba(16,185,129,0.3);
-  --fail-orange:#ea580c;
-  --fail-bg:rgba(234,88,12,0.08);
-  --fail-border:rgba(234,88,12,0.25);
+  --teal-primary:#0d9488;
+  --teal-bright:#14b8a6;
+  --coral-accent:#f43f5e;
+  --text-dark:#111827;
+  --text-muted:#4b5563;
+  --border-line:rgba(13,148,136,0.2);
+  --pass-bg:#f0fdf4;
+  --pass-text:#16a34a;
+  --pass-border:rgba(22,163,74,0.3);
+  --fail-orange:#dc2626;
+  --fail-bg:#fef2f2;
+  --fail-border:rgba(220,38,38,0.25);
 }
-body{background:linear-gradient(135deg,var(--bg-main),#e2e8f0);min-height:100vh;color:var(--text-dark);padding:16px;display:flex;align-items:center;justify-content:center}
+body{background:linear-gradient(135deg,#ccfbf1,#f0fdfa);min-height:100vh;color:var(--text-dark);padding:16px;display:flex;align-items:center;justify-content:center}
 
 /* Card Framework components */
 .hidden { display: none !important; }
-.app-container { background: var(--panel-bg); width: 100%; max-width: 680px; padding: 28px; border-radius: 16px; box-shadow: 0 15px 35px rgba(15,23,42,0.08); border: 1px solid rgba(15,23,42,0.05); position: relative; transition: all 0.3s ease; }
+.app-container { background: var(--panel-bg); width: 100%; max-width: 680px; padding: 28px; border-radius: 16px; box-shadow: 0 20px 40px rgba(13,148,136,0.1); border: 1px solid rgba(13,148,136,0.1); position: relative; transition: all 0.3s ease; }
 @media (max-width: 480px) { .app-container { padding: 18px; } }
-.app-container::before { content:''; position:absolute; top:0; left:0; width:100%; height:5px; background:linear-gradient(90deg, var(--indigo-primary), var(--indigo-bright)); border-radius:16px 16px 0 0; }
+.app-container::before { content:''; position:absolute; top:0; left:0; width:100%; height:6px; background:linear-gradient(90deg, var(--teal-primary), var(--teal-bright)); border-radius:16px 16px 0 0; }
 .center { text-align: center; }
-.pill { display: inline-block; background: rgba(79,70,229,0.08); color: var(--indigo-primary); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; padding: 6px 14px; border-radius: 6px; border: 1px solid rgba(79,70,229,0.15); margin-bottom: 18px; }
+.pill { display: inline-block; background: rgba(13,148,136,0.1); color: var(--teal-primary); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; padding: 6px 14px; border-radius: 6px; border: 1px solid rgba(13,148,136,0.2); margin-bottom: 18px; }
 
 /* HUD Header elements */
-.hud-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; font-size:11px; font-weight:700; color:var(--text-muted); border-bottom:1px solid rgba(15,23,42,0.06); padding-bottom:8px; text-transform:uppercase; letter-spacing:1px }
-.hud-meta span { color: var(--indigo-primary); font-size: 13px; }
+.hud-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; font-size:11px; font-weight:700; color:var(--text-muted); border-bottom:1px solid rgba(13,148,136,0.1); padding-bottom:8px; text-transform:uppercase; letter-spacing:1px }
+.hud-meta span { color: var(--teal-primary); font-size: 14px; font-weight: 800; }
 
 /* Horizontal Tracker Segment */
 .track-bar{display:flex;gap:5px;margin-bottom:20px}
-.track-dot{height:5px;flex:1;background:rgba(15,23,42,0.08);border-radius:2.5px;transition:all .3s ease}
-.track-dot.active{background:var(--indigo-bright);box-shadow:0 0 6px rgba(99,102,241,0.4)}
-.track-dot.passed{background:var(--indigo-primary)}
+.track-dot{height:6px;flex:1;background:rgba(13,148,136,0.15);border-radius:3px;transition:all .3s ease}
+.track-dot.active{background:var(--coral-accent);box-shadow:0 0 8px rgba(244,63,94,0.5)}
+.track-dot.passed{background:var(--teal-primary)}
 
 /* Interactive Context Box */
-.doc-box { background: rgba(248,250,252,0.95); border-left: 4px solid var(--indigo-primary); padding: 14px 16px; margin-bottom: 20px; border-radius: 0 8px 8px 0; font-size: 14px; line-height: 1.6; color: var(--text-dark); box-shadow: inset 0 1px 3px rgba(0,0,0,0.02); }
+.doc-box { background: #f8fafc; border-left: 4px solid var(--teal-bright); padding: 14px 16px; margin-bottom: 20px; border-radius: 0 8px 8px 0; font-size: 14.5px; line-height: 1.6; color: var(--text-dark); border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; }
 
 /* Choice Matrix selections */
-h2{font-size:17px;line-height:1.45;color:var(--text-dark);margin-bottom:20px;font-weight:600}
+h2{font-size:18px;line-height:1.45;color:var(--text-dark);margin-bottom:20px;font-weight:700}
 .matrix-wrapper{display:flex;flex-direction:column;gap:11px}
-.matrix-item{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:14px 16px;cursor:pointer;font-size:14.5px;line-height:1.45;color:var(--text-dark);transition:all 0.2s ease;display:flex;align-items:start;gap:12px}
-.matrix-item:hover{background:rgba(79,70,229,0.03);border-color:var(--indigo-bright);transform:translateY(-1px);box-shadow:0 3px 8px rgba(0,0,0,0.02)}
-.item-pref{font-weight:700;color:var(--indigo-primary)}
+.matrix-item{background:#ffffff;border:2px solid #e5e7eb;border-radius:8px;padding:14px 16px;cursor:pointer;font-size:14.5px;line-height:1.45;color:var(--text-dark);transition:all 0.2s ease;display:flex;align-items:start;gap:12px;box-shadow:0 2px 4px rgba(0,0,0,0.01)}
+.matrix-item:hover{background:rgba(20,184,166,0.04);border-color:var(--teal-bright);transform:translateY(-1px);box-shadow:0 4px 12px rgba(13,148,136,0.08)}
+.item-pref{font-weight:800;color:var(--teal-primary);font-size:15px}
 
 /* Message feedback system */
-.alert-box{margin-top:18px;padding:14px;border-radius:8px;font-size:14px;line-height:1.5}
-.alert-pass{background:var(--pass-bg);color:var(--pass-text);border:1px solid var(--pass-border)}
-.alert-fail{background:var(--fail-bg);color:var(--fail-orange);border:1px solid var(--fail-border)}
+.alert-box{margin-top:18px;padding:14px;border-radius:8px;font-size:14.5px;line-height:1.5;font-weight:500}
+.alert-pass{background:var(--pass-bg);color:var(--pass-text);border:2px solid var(--pass-border)}
+.alert-fail{background:var(--fail-bg);color:var(--fail-orange);border:2px solid var(--fail-border)}
 
-button.nav-btn{width:100%;background:linear-gradient(135deg, var(--indigo-primary), var(--indigo-bright));border:none;color:white;padding:15px;border-radius:8px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;cursor:pointer;margin-top:18px;transition:all .2s ease;box-shadow:0 4px 12px rgba(79,70,229,0.2)}
-button.nav-btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(79,70,229,0.3)}
+button.nav-btn{width:100%;background:linear-gradient(135deg, var(--teal-primary), var(--teal-bright));border:none;color:white;padding:15px;border-radius:8px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;cursor:pointer;margin-top:18px;transition:all .2s ease;box-shadow:0 4px 14px rgba(13,148,136,0.3)}
+button.nav-btn:hover{background:linear-gradient(135deg, var(--teal-bright), var(--teal-primary));transform:translateY(-1px);box-shadow:0 6px 20px rgba(13,148,136,0.4)}
+#next-step-btn { background: linear-gradient(135deg, var(--coral-accent), #f43f5e); box-shadow: 0 4px 14px rgba(244,63,94,0.3); }
+#next-step-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(244,63,94,0.4); }
 </style>
 </head>
 <body>
@@ -65,15 +68,15 @@ button.nav-btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(79,70
 <div id="splash-screen" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#ffffff;display:flex;justify-content:center;align-items:center;z-index:99999;transition:opacity .3s ease">
   <div class="center">
     <img id="brand-logo" src="sst_cbq/gr8/part2/ch1/assets/innovine-logo.png" alt="Logo" style="width:230px;height:auto;" onerror="this.style.display='none'; document.getElementById('splash-text-fallback').style.display='block';">
-    <h1 id="splash-text-fallback" style="display:none;color:#0f172a;letter-spacing:2px;font-weight:800;font-size:18px;">INNOVINE LEARNING</h1>
+    <h1 id="splash-text-fallback" style="display:none;color:#0d9488;letter-spacing:2px;font-weight:800;font-size:20px;">INNOVINE LEARNING</h1>
   </div>
 </div>
 
 <div id="welcome-panel" class="app-container center hidden">
   <div class="pill">Ecological & Resource Systems</div>
-  <h1 style="font-size:22px;margin-bottom:12px;color:var(--text-dark);">Resources: Utility, Value, and Conservation</h1>
-  <p style="color:var(--text-muted);font-size:14px;line-height:1.55;margin-bottom:22px">Analyze resource classification models, examine the complex interplay of time and technology, evaluate real-world conservation strategies, and explore the principles of Sustainable Development.</p>
-  <div style="font-size:42px;margin-bottom:18px">🌱💧☀️🚜</div>
+  <h1 style="font-size:24px;margin-bottom:12px;color:var(--text-dark);font-weight:800;">Resources: Utility, Value, and Conservation</h1>
+  <p style="color:var(--text-muted);font-size:14.5px;line-height:1.6;margin-bottom:22px">Analyze resource classification models, examine the complex interplay of time and technology, evaluate real-world conservation strategies, and explore the principles of Sustainable Development.</p>
+  <div style="font-size:46px;margin-bottom:18px;letter-spacing:10px;">🌱💧☀️</div>
   <button class="nav-btn" onclick="initCoreApp()">Initialize Simulator</button>
 </div>
 
@@ -91,9 +94,9 @@ button.nav-btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(79,70
 </div>
 
 <div id="end-panel" class="app-container center hidden">
-  <div style="font-size:50px;margin-bottom:12px" id="panel-emoji"></div>
-  <h1 id="panel-title" style="margin-bottom:8px;color:var(--text-dark);"></h1>
-  <p id="panel-desc" style="color:var(--text-muted);font-size:14px;margin-bottom:20px"></p>
+  <div style="font-size:55px;margin-bottom:12px" id="panel-emoji"></div>
+  <h1 id="panel-title" style="margin-bottom:8px;color:var(--text-dark);font-weight:800;"></h1>
+  <p id="panel-desc" style="color:var(--text-muted);font-size:15px;margin-bottom:20px"></p>
   <div class="pill" id="panel-rank"></div>
   <br><br>
   <button class="nav-btn" onclick="window.location.reload()">Re-Run Assessment</button>
@@ -266,7 +269,7 @@ function loadQuizQuestion(){
 
   if(activeIdx >= 7){
     document.getElementById('runtime-lbl').textContent = "⚠️ Critical Advanced Evaluation";
-    document.getElementById('runtime-lbl').style.color = "var(--fail-orange)";
+    document.getElementById('runtime-lbl').style.color = "var(--coral-accent)";
   } else {
     document.getElementById('runtime-lbl').textContent = "Standard Utility Assessment";
     document.getElementById('runtime-lbl').style.color = "var(--text-muted)";
@@ -274,7 +277,7 @@ function loadQuizQuestion(){
 
   const currentItem = ch8Questions[activeIdx];
   const docView = document.getElementById('doc-view');
-  
+   
   if(currentItem.case){
     docView.innerHTML = currentItem.case;
     docView.classList.remove('hidden');
@@ -283,7 +286,7 @@ function loadQuizQuestion(){
   }
 
   document.getElementById('question-view').innerHTML = `${activeIdx + 1}. ${currentItem.q}`;
-  
+   
   const optionsBox = document.getElementById('matrix-options');
   optionsBox.innerHTML = '';
 
@@ -380,4 +383,3 @@ function assembleReport(){
 </script>
 </body>
 </html>
-
