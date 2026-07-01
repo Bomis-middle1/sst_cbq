@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Interactive Learning Core: Money and Financial Infrastructure</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',system-ui,-apple-system,sans-serif}
+:root{
+  --bg-main:#f1f5f9;
+  --panel-bg:#ffffff;
+  --indigo-primary:#4f46e5;
+  --indigo-bright:#6366f1;
+  --text-dark:#0f172a;
+  --text-muted:#475569;
+  --border-line:rgba(79,70,229,0.2);
+  --pass-bg:rgba(16,185,129,0.1);
+  --pass-text:#059669;
+  --pass-border:rgba(16,185,129,0.3);
+  --fail-orange:#ea580c;
+  --fail-bg:rgba(234,88,12,0.08);
+  --fail-border:rgba(234,88,12,0.25);
+}
+body{background:linear-gradient(135deg,var(--bg-main),#e2e8f0);min-height:100vh;color:var(--text-dark);padding:16px;display:flex;align-items:center;justify-content:center}
+
+/* Card Framework components */
+.hidden { display: none !important; }
+.app-container { background: var(--panel-bg); width: 100%; max-width: 680px; padding: 28px; border-radius: 16px; box-shadow: 0 15px 35px rgba(15,23,42,0.08); border: 1px solid rgba(15,23,42,0.05); position: relative; transition: all 0.3s ease; }
+@media (max-width: 480px) { .app-container { padding: 18px; } }
+.app-container::before { content:''; position:absolute; top:0; left:0; width:100%; height:5px; background:linear-gradient(90deg, var(--indigo-primary), var(--indigo-bright)); border-radius:16px 16px 0 0; }
+.center { text-align: center; }
+.pill { display: inline-block; background: rgba(79,70,229,0.08); color: var(--indigo-primary); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; padding: 6px 14px; border-radius: 6px; border: 1px solid rgba(79,70,229,0.15); margin-bottom: 18px; }
+
+/* HUD Header elements */
+.hud-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; font-size:11px; font-weight:700; color:var(--text-muted); border-bottom:1px solid rgba(15,23,42,0.06); padding-bottom:8px; text-transform:uppercase; letter-spacing:1px }
+.hud-meta span { color: var(--indigo-primary); font-size: 13px; }
+
+/* Horizontal Tracker Segment */
+.track-bar{display:flex;gap:5px;margin-bottom:20px}
+.track-dot{height:5px;flex:1;background:rgba(15,23,42,0.08);border-radius:2.5px;transition:all .3s ease}
+.track-dot.active{background:var(--indigo-bright);box-shadow:0 0 6px rgba(99,102,241,0.4)}
+.track-dot.passed{background:var(--indigo-primary)}
+
+/* Interactive Context Box */
+.doc-box { background: rgba(248,250,252,0.95); border-left: 4px solid var(--indigo-primary); padding: 14px 16px; margin-bottom: 20px; border-radius: 0 8px 8px 0; font-size: 14px; line-height: 1.6; color: var(--text-dark); box-shadow: inset 0 1px 3px rgba(0,0,0,0.02); }
+
+/* Choice Matrix selections */
+h2{font-size:17px;line-height:1.45;color:var(--text-dark);margin-bottom:20px;font-weight:600}
+.matrix-wrapper{display:flex;flex-direction:column;gap:11px}
+.matrix-item{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:14px 16px;cursor:pointer;font-size:14.5px;line-height:1.45;color:var(--text-dark);transition:all 0.2s ease;display:flex;align-items:start;gap:12px}
+.matrix-item:hover{background:rgba(79,70,229,0.03);border-color:var(--indigo-bright);transform:translateY(-1px);box-shadow:0 3px 8px rgba(0,0,0,0.02)}
+.item-pref{font-weight:700;color:var(--indigo-primary)}
+
+/* Message feedback system */
+.alert-box{margin-top:18px;padding:14px;border-radius:8px;font-size:14px;line-height:1.5}
+.alert-pass{background:var(--pass-bg);color:var(--pass-text);border:1px solid var(--pass-border)}
+.alert-fail{background:var(--fail-bg);color:var(--fail-orange);border:1px solid var(--fail-border)}
+
+button.nav-btn{width:100%;background:linear-gradient(135deg, var(--indigo-primary), var(--indigo-bright));border:none;color:white;padding:15px;border-radius:8px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;cursor:pointer;margin-top:18px;transition:all .2s ease;box-shadow:0 4px 12px rgba(79,70,229,0.2)}
+button.nav-btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(79,70,229,0.3)}
+</style>
+</head>
+<body>
+
+<div id="splash-screen" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#ffffff;display:flex;justify-content:center;align-items:center;z-index:99999;transition:opacity .3s ease">
+  <div class="center">
+    <img id="brand-logo" src="assets/innovine-logo.png" alt="Logo" style="width:230px;height:auto;" onerror="this.style.display='none'; document.getElementById('splash-text-fallback').style.display='block';">
+    <h1 id="splash-text-fallback" style="display:none;color:#0f172a;letter-spacing:2px;font-weight:800;font-size:18px;">INNOVINE LEARNING</h1>
+  </div>
+</div>
+
+<div id="welcome-panel" class="app-container center hidden">
+  <div class="pill">Financial Systems Framework</div>
+  <h1 style="font-size:22px;margin-bottom:12px;color:var(--text-dark);">Chapter 8: Money and Banks</h1>
+  <p style="color:var(--text-muted);font-size:14px;line-height:1.55;margin-bottom:22px">Explore the engines of fiscal circulation: analyze interest mechanisms, central banking regulations, stock exchanges, and India's digital payment ecosystem.</p>
+  <div style="font-size:42px;margin-bottom:18px">🏦💰💳📈</div>
+  <button class="nav-btn" onclick="initCoreApp()">Initialize Simulator</button>
+</div>
+
+<div id="quiz-panel" class="app-container hidden">
+  <div class="hud-meta">
+    <div id="runtime-lbl">Fiscal Parameter Matrix</div>
+    <div>Score: <span id="runtime-score">0</span></div>
+  </div>
+  <div class="track-bar" id="dot-holder"></div>
+  <div id="doc-view" class="doc-box hidden"></div>
+  <h2 id="question-view"></h2>
+  <div class="matrix-wrapper" id="matrix-options"></div>
+  <div id="alert-view"></div>
+  <button id="next-step-btn" class="nav-btn hidden" onclick="progressNext()">Next Question →</button>
+</div>
+
+<div id="end-panel" class="app-container center hidden">
+  <div style="font-size:50px;margin-bottom:12px" id="panel-emoji"></div>
+  <h1 id="panel-title" style="margin-bottom:8px;color:var(--text-dark);"></h1>
+  <p id="panel-desc" style="color:var(--text-muted);font-size:14px;margin-bottom:20px"></p>
+  <div class="pill" id="panel-rank"></div>
+  <br><br>
+  <button class="nav-btn" onclick="window.location.reload()">Re-Run Assessment</button>
+</div>
+
+<audio id="sound-pass" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="sound-fail" src="assets/wrong.mp3" preload="auto"></audio>
+
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    const splash = document.getElementById('splash-screen');
+    splash.style.opacity = '0';
+    setTimeout(() => {
+      splash.style.display = 'none';
+      document.getElementById('welcome-panel').classList.remove('hidden');
+    }, 300);
+  }, 1300);
+});
+
+const ch8Questions = [
+  {
+    q: "An organic coffee planter in Assam wants to choose the most efficient tool to manage their regular financial operations. Match the operational scenario with the correct banking utility described in the chapter:",
+    o: [
+      "A Fixed Deposit Account is perfect for daily client payouts because it allows infinite immediate withdrawals without locking funds.",
+      "A Current Account is ideal for businesses requiring frequent daily deposits and transactions, even though it generally offers no interest.",
+      "A Savings Account completely bars users from ever withdrawing cash, making it useful only for secure long-term capital stagnation.",
+      "A Withdrawal Slip acts exactly like a corporate stock share, granting the holder partial ownership of the bank’s branches."
+    ],
+    a: 1,
+    e: "Current Accounts are structured specifically for businesses, corporations, and traders who require high-frequency daily funds circulation, whereas Savings and Fixed Deposits have clear withdrawal limits or maturity locks."
+  },
+  {
+    case: "<b>Intermediary Math Study:</b><br>'Anand deposits ₹200 in a commercial bank at a 2% annual savings interest rate. Simultaneously, Shreya secures a business loan of ₹200 from the same bank, which charges her an interest rate of 5%.'",
+    q: "Based on how banking intermediaries function, how does this structural setup generate economic revenue for the financial institution?",
+    o: [
+      "The bank prints new currency notes equivalent to the 5% interest rate to pay its staff.",
+      "The bank absorbs the difference between the higher borrowing rate and lower deposit rate (the interest spread) as its primary income.",
+      "The bank drops the entire ₹200 into a clay pot until Anand demands it back.",
+      "Shreya directly hands the 2% interest payment to Anand at his home without the bank's involvement."
+    ],
+    a: 1,
+    e: "Commercial banks earn revenue through the 'interest spread'—the dynamic difference between the higher interest rates charged to borrowers and the lower interest rates paid out to depositors."
+  },
+  {
+    q: "A regional planning officer discovers that many low-income households in a rural block still rely on high-interest informal moneylenders because they lack formal documentation. If the officer decides to run an awareness camp for the Pradhan Mantri Jan Dhan Yojana (PMJDY), which core features should they emphasize to help these families?",
+    o: [
+      "The necessity of maintaining a steep minimum balance of ₹10,000 to keep the account active.",
+      "Opening zero-minimum-balance accounts paired with debit cards to encourage secure, inclusive banking access.",
+      "The mandatory conversion of all individual cash deposits into international stock market shares.",
+      "A guaranteed printing press license allowing every household to print their own currency notes."
+    ],
+    a: 1,
+    e: "The PMJDY initiative was launched in 2014 specifically to increase financial inclusion for unbanked low-income populations by offering zero-minimum-balance banking services and debit cards."
+  },
+  {
+    case: "<b>Historical Case Study:</b><br>'In 13th-century Tamil Nadu, stone inscriptions at the Kodumbalur temple recorded that local merchant guilds borrowed community funds preserved by the temple authorities and committed to returning the principal along with an agreed interest amount.'",
+    q: "This historical evidence primarily supports the conclusion that:",
+    o: [
+      "Digital UPI applications were widely functional during the ancient period in southern India.",
+      "Structured elements of banking, credit, and interest-bearing systems have been a key part of India's economic life for centuries.",
+      "Ancient Indian temples only interacted with foreign stock exchanges like the Bombay Stock Exchange.",
+      "Paper currency notes were first printed and distributed by medieval artisans using copper plates."
+    ],
+    a: 1,
+    e: "The historical logs show that foundational pillars of financial infrastructure—such as institutional wealth tracking, credit lending, and interest computation—have existed in India for generations."
+  },
+  {
+    q: "A textile manufacturer needs to raise ₹50,000,000 to construct a modern eco-friendly garment factory. Instead of taking a standard commercial bank loan, the company decides to break its public ownership down into tiny fractional units and sell them to individual retail investors on the Bombay Stock Exchange. What financial tool is this company utilizing?",
+    o: [
+      "National Savings Certificates (NSC)",
+      "Issuing corporate shares to the public",
+      "Filling out a standard bank withdrawal slip",
+      "Requesting a short-term cash credit from NABARD"
+    ],
+    a: 1,
+    e: "Shares represent small structural units of equity ownership in a firm. By issuing shares to the public via a stock exchange, growing enterprises can secure large-scale capital investments directly from public markets."
+  },
+  {
+    q: "Assertion (A): The Reserve Bank of India (RBI) functions as the 'Banker to Banks' and does not handle standard daily retail savings accounts for individual citizens.\nReason (R): As the central bank established in 1935, the RBI's role is to regulate the banking system, supervise commercial financial institutions, control benchmark interest rates, and manage government debt.",
+    o: [
+      "Both A and R are true and R explains A.",
+      "Both A and R are true but R does not explain A.",
+      "A is true but R is false.",
+      "A is false but R is true."
+    ],
+    a: 0,
+    e: "The RBI operates exclusively as the apex central banking authority regulating commercial financial networks, rather than acting as a retail branch for daily individual consumer deposits."
+  },
+  {
+    q: "A student puts ₹1,000 into a long-term fixed deposit that offers a 6% annual return. Thanks to the power of compounding, how will their investment behave by the second year?",
+    o: [
+      "The interest for Year 2 will be lower because the principal automatically shrinks over time.",
+      "The interest for Year 2 will be calculated on the new total of ₹1,060 (principal + Year 1 interest), making the savings grow faster.",
+      "The entire balance will be frozen and transferred to the National Cybercrime Reporting Portal.",
+      "The interest rate will drop to zero because compounding only applies to active current accounts."
+    ],
+    a: 1,
+    e: "Compounding means interest is calculated on both the initial principal amount and any accumulated interest from prior cycles, causing funds to grow exponentially over time."
+  },
+  {
+    q: "A small-scale farmer in a remote mountain village needs a seasonal credit loan to buy high-yield seeds and build a drip-irrigation pipeline. Since there are no commercial bank branches nearby, which set of institutional options best fits their rural location?",
+    o: [
+      "The Bombay Stock Exchange and the Industrial Finance Corporation of India (IFCI).",
+      "Local Post Office savings systems and rural banks supported by NABARD.",
+      "International digital wallet entities operating out of France.",
+      "High-speed urban Point of Sale (POS) terminal networks."
+    ],
+    a: 2,
+    e: "Post offices offer vital accessible financial options across remote regions, while NABARD serves as the primary development institution funding rural banking, agricultural systems, and village credit infrastructure."
+  },
+  {
+    case: "<b>Digital Transformation Focus: Rampur Village</b><br>'Ramesh, a vegetable vendor in Rampur, puts up a UPI-linked QR code at his stall. This allows customers without physical cash to pay instantly using smartphones, automatically sending funds into his verified bank account.'",
+    q: "Analyzing this change, what is a major structural benefit that digital payment networks bring to a local economy compared to traditional cash-only systems?",
+    o: [
+      "They completely eliminate the need for any underlying central banking regulations.",
+      "They provide safe, transparent, and instantly recorded financial transactions that reduce the risk of losing physical cash.",
+      "They give small vendors the authority to print their own physical currency notes.",
+      "They ensure that share prices on the stock exchange never experience a crash."
+    ],
+    a: 1,
+    e: "Digital systems like UPI optimize localized economies by making financial activity fast, transparent, and automatically recorded, eliminating the safety and tracking challenges of cash handling."
+  },
+  {
+    q: "While using a mobile banking application, a small business owner receives an urgent text message from an unknown number claiming that their account will be blocked unless they click a link to verify their secret One-Time Password (OTP). To maintain proper digital security, what action should they take?",
+    o: [
+      "Share the OTP quickly via a reply text to avoid any operational delays.",
+      "Ignore the message, keep their PINs and passwords private, and report the suspicious attempt to the National Cybercrime Helpline (1930).",
+      "Post their complete account configuration on a public social media group to verify the link.",
+      "Deactivate their internet connection and switch entirely to 13th-century copper plate records."
+    ],
+    a: 1,
+    e: "To protect financial infrastructure from cyber fraud, users must keep security credentials confidential (like OTPs) and report phishing attempts via the 1930 national helpline or cybercrime portal."
+  }
+];
+
+let activeIdx = 0;
+let computedScore = 0;
+let dynamicLock = false;
+
+function initCoreApp(){
+  document.getElementById('welcome-panel').classList.add('hidden');
+  document.getElementById('quiz-panel').classList.remove('hidden');
+  renderTrackDots();
+  loadQuizQuestion();
+}
+
+function renderTrackDots(){
+  const holder = document.getElementById('dot-holder');
+  holder.innerHTML = '';
+  ch8Questions.forEach(() => {
+    let dot = document.createElement('div');
+    dot.className = 'track-dot';
+    holder.appendChild(dot);
+  });
+}
+
+function loadQuizQuestion(){
+  dynamicLock = false;
+  document.getElementById('alert-view').innerHTML = '';
+  document.getElementById('next-step-btn').classList.add('hidden');
+
+  const dots = document.querySelectorAll('.track-dot');
+  dots.forEach((dt, i) => {
+    if(i === activeIdx) dt.className = 'track-dot active';
+    else if(i < activeIdx) dt.className = 'track-dot passed';
+    else dt.className = 'track-dot';
+  });
+
+  if(activeIdx >= 7){
+    document.getElementById('runtime-lbl').textContent = "⚠️ High-Tier Challenge Evaluation";
+    document.getElementById('runtime-lbl').style.color = "var(--fail-orange)";
+  } else {
+    document.getElementById('runtime-lbl').textContent = "Standard Utility Assessment";
+    document.getElementById('runtime-lbl').style.color = "var(--text-muted)";
+  }
+
+  const currentItem = ch8Questions[activeIdx];
+  const docView = document.getElementById('doc-view');
+  
+  if(currentItem.case){
+    docView.innerHTML = currentItem.case;
+    docView.classList.remove('hidden');
+  } else {
+    docView.classList.add('hidden');
+  }
+
+  document.getElementById('question-view').innerHTML = `${activeIdx + 1}. ${currentItem.q}`;
+  
+  const optionsBox = document.getElementById('matrix-options');
+  optionsBox.innerHTML = '';
+
+  const indices = ['A','B','C','D'];
+  currentItem.o.forEach((text, slot) => {
+    let card = document.createElement('div');
+    card.className = 'matrix-item';
+    card.innerHTML = `<span class="item-pref">${indices[slot]}.</span> <span>${text}</span>`;
+    card.onclick = () => evaluateChoice(slot, card);
+    optionsBox.appendChild(card);
+  });
+}
+
+function dispatchSound(audioId) {
+  const elem = document.getElementById(audioId);
+  if(elem){
+    elem.currentTime = 0;
+    elem.play().catch(() => {});
+  }
+}
+
+function evaluateChoice(chosenPos, elementNode){
+  const targetObj = ch8Questions[activeIdx];
+  if(chosenPos === targetObj.a){
+    if(!dynamicLock){
+      computedScore++;
+      document.getElementById('runtime-score').textContent = computedScore;
+    }
+    dispatchSound('sound-pass');
+    elementNode.style.borderColor = 'var(--pass-text)';
+    elementNode.style.background = 'var(--pass-bg)';
+    document.getElementById('alert-view').innerHTML = `<div class="alert-box alert-pass"><b>✓ Metric Verified.</b> ${targetObj.e}</div>`;
+    lockMatrix();
+    document.getElementById('next-step-btn').classList.remove('hidden');
+  } else {
+    if(!dynamicLock){
+      dynamicLock = true;
+      dispatchSound('sound-fail');
+      elementNode.style.borderColor = 'var(--fail-orange)';
+      elementNode.style.background = 'var(--fail-bg)';
+      document.getElementById('alert-view').innerHTML = `<div class="alert-box alert-fail"><b>⚠️ Parameter Anomaly.</b> The selected choice fails to meet infrastructure principles. Re-evaluate structural variables.</div>`;
+    } else {
+      triggerMasterReveal();
+    }
+  }
+}
+
+function triggerMasterReveal(){
+  lockMatrix();
+  const targetObj = ch8Questions[activeIdx];
+  const tags = ['A','B','C','D'];
+  document.getElementById('alert-view').innerHTML = `<div class="alert-box alert-fail"><b>🔍 System Realignment.</b> Optimal metric alignment is <b>${tags[targetObj.a]}. ${targetObj.o[targetObj.a]}</b>.<br><br>${targetObj.e}</div>`;
+  document.getElementById('next-step-btn').classList.remove('hidden');
+}
+
+function lockMatrix(){
+  document.querySelectorAll('.matrix-item').forEach(item => item.onclick = null);
+}
+
+function progressNext(){
+  activeIdx++;
+  if(activeIdx < ch8Questions.length){
+    loadQuizQuestion();
+  } else {
+    assembleReport();
+  }
+}
+
+function assembleReport(){
+  document.getElementById('quiz-panel').classList.add('hidden');
+  document.getElementById('end-panel').classList.remove('hidden');
+
+  const emoji = document.getElementById('panel-emoji');
+  const title = document.getElementById('panel-title');
+  const desc = document.getElementById('panel-desc');
+  const rank = document.getElementById('panel-rank');
+
+  desc.textContent = `You correctly synchronized ${computedScore} out of ${ch8Questions.length} core fiscal architecture questions.`;
+
+  if(computedScore >= 9){
+    emoji.textContent = '👑';
+    title.textContent = 'Governor of Fiscal Architecture';
+    rank.textContent = 'Macroeconomic Strategist';
+  } else if(computedScore >= 6){
+    emoji.textContent = '💼';
+    title.textContent = 'Financial Auditor';
+    rank.textContent = 'Treasury Supervisor';
+  } else {
+    emoji.textContent = '🪙';
+    title.textContent = 'Account Technician';
+    rank.textContent = 'Junior Cashier';
+  }
+}
+</script>
+</body>
+</html>
