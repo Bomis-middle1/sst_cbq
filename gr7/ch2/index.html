@@ -23,13 +23,11 @@
 body{font-family:'Trebuchet MS','Segoe UI',sans-serif;background:linear-gradient(180deg,#8fb4c9 0%,#cfe3ee 55%,#eef5f8 100%);min-height:100vh;overflow-x:hidden;color:var(--ink)}
 h1,h2,.eyebrow,.tag,button,.top,.stamp{font-family:'Arial Narrow','Helvetica Neue',sans-serif}
 
-/* ---- Splash ---- */
-#splash{position:fixed;inset:0;background:var(--sky-deep);display:flex;justify-content:center;align-items:center;z-index:9999}
-.splash-content{text-align:center;color:var(--paper)}
-.dial{width:130px;height:130px;border-radius:50%;background:radial-gradient(circle,var(--paper),#dbe7ee 75%);display:flex;align-items:center;justify-content:center;font-size:54px;margin:0 auto 18px;border:5px solid var(--sun);box-shadow:0 0 50px rgba(63,142,168,.5);position:relative}
-.dial::after{content:"🌪️";display:block;animation:spin 5s linear infinite}
-@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-.splash-content h2{letter-spacing:2px;font-weight:700;text-transform:uppercase;font-size:14px;color:var(--sun)}
+/* ---- Splash Screen Modified For White Background & Brand Logo Assets ---- */
+#splash{position:fixed;inset:0;background:#ffffff;display:flex;justify-content:center;align-items:center;z-index:9999}
+.splash-content{text-align:center}
+.splash-logo {max-width:240px;height:auto;animation:pulseLogo 2.5s ease-in-out infinite}
+@keyframes pulseLogo{0%{transform:scale(0.96);opacity:0.9}50%{transform:scale(1.02);opacity:1}100%{transform:scale(0.96);opacity:0.9}}
 
 .hidden{display:none!important}
 .container{max-width:760px;margin:auto;padding:24px}
@@ -92,8 +90,7 @@ button:hover{background:var(--sky-deep)}
 
 <div id="splash">
  <div class="splash-content">
-  <div class="dial"></div>
-  <h2>Innovine Learning Adventure</h2>
+  <img src="assets/innovine-logo.png" alt="Innovine Logo" class="splash-logo">
  </div>
 </div>
 
@@ -121,7 +118,7 @@ button:hover{background:var(--sky-deep)}
 </div>
 <div class="panel-inner">
 <div class="top">
-<div>⛅ Score: <span id="score">0</span></div>
+<div>⛅ Score: <span id="scoreDisplay">0</span></div>
 <div>⏳ Time: <span id="time">45</span>s</div>
 <div>Reading <span id="qnum">1</span>/10</div>
 </div>
@@ -193,8 +190,9 @@ if(score>=9){title.textContent='🏆 Master Meteorologist';resultIcon.textConten
 else if(score>=6){title.textContent='🌦️ Skilled Forecaster';resultIcon.textContent='🌦️';resultStamp.textContent='CLOUD READER — FORECASTER RANK';}
 else{title.textContent='🌤️ Young Weather Watcher';resultIcon.textContent='🌤️';resultStamp.textContent='SKY GAZER — APPRENTICE RANK';}
 finalScore.textContent='You correctly read '+score+' out of 10 weather clues.';}
-function scoreEl(){score.textContent=score}
+function scoreEl(){document.getElementById('scoreDisplay').textContent=score}
 function confetti(){const sym=['💧','☀️','✨'];for(let i=0;i<10;i++){let s=document.createElement('div');s.className='confetti';s.innerHTML=sym[i%sym.length];s.style.left=Math.random()*innerWidth+'px';s.style.top=(innerHeight-80)+'px';document.body.appendChild(s);setTimeout(()=>s.remove(),1300);}}
 </script>
 </body>
 </html>
+
