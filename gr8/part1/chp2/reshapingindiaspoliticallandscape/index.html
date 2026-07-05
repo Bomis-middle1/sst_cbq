@@ -1,1 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reshaping India's Political Landscape - Quiz</title>
+    <style>
+        :root {
+            --primary: #2d5a27; /* Deep Jungle Green */
+            --primary-dark: #1b3817;
+            --secondary: #a0522d; /* Sienna/Clay Earth */
+            --success: #3cb371; /* Leaf Green */
+            --danger: #b22222; /* Crimson Earth */
+            --background: #fdfaf4; /* Soft Khaki Sand */
+            --card-bg: #ffffff;
+            --text: #2c352a; /* Forest Charcoal */
+            --text-light: #5d6a5a;
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Georgia, serif;
+        }
+
+        body {
+            background: var(--background);
+            background-image: radial-gradient(rgba(45, 90, 39, 0.08) 1.5px, transparent 0);
+            background-size: 28px 28px;
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Jungle Canopy / Foliage Background Layer */
+        .jungle-canopy {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .ambient-leaf {
+            position: absolute;
+            background: rgba(45, 90, 39, 0.06);
+            border-radius: 80% 0% 85% 0%;
+            animation: jungleDrift 14s infinite linear;
+        }
+
+        @keyframes jungleDrift {
+            0% { transform: translateY(-5vh) rotate(0deg) translateX(0px); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(105vh) rotate(240deg) translateX(30px); opacity: 0; }
+        }
+
+        /* Container & Cards Frame */
+        .container {
+            width: 100%;
+            max-width: 680px;
+            padding: 20px;
+            z-index: 10;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 14px;
+            box-shadow: 0 8px 24px rgba(27, 56, 23, 0.08);
+            padding: 35px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border-left: 6px solid var(--primary);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* 5-Second Brand Splash Overlay */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease;
+        }
+
+        #splash-screen img {
+            max-width: 210px;
+            height: auto;
+            animation: pulse-grow 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse-grow {
+            0% { transform: scale(0.96); }
+            50% { transform: scale(1.04); }
+            100% { transform: scale(0.96); }
+        }
+
+        /* Typography & Custom Elements */
+        h1 { color: var(--primary-dark); margin-bottom: 15px; font-size: 1.65rem; font-weight: 700; }
+        h2 { color: var(--primary); margin-bottom: 20px; font-size: 1.3rem; }
+        p { color: var(--text-light); line-height: 1.6; margin-bottom: 20px; font-size: 0.98rem; }
+
+        .chapter-tag {
+            display: inline-block;
+            background: #ebdcc9;
+            color: #5a3a22;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin: 4px;
+            text-transform: uppercase;
+            border: 1px solid #d2b48c;
+        }
+
+        /* Dynamic Header Trackers */
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eef2ed;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .timer-box {
+            background: #fbf4ee;
+            color: var(--secondary);
+            padding: 5px 12px;
+            border-radius: 20px;
+            border: 1px solid #f3e0cf;
+        }
+
+        .score-box {
+            background: #edf5ed;
+            color: var(--primary);
+            padding: 5px 12px;
+            border-radius: 20px;
+            border: 1px solid #daebd8;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: #e9eee8;
+            border-radius: 3px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        /* Core Question Layout Elements */
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-align: left;
+            margin-bottom: 20px;
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        /* Embedded Dynamic Matrix Table */
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 22px;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+        }
+        .matrix-table th, .matrix-table td {
+            border: 1px solid #d0dad0;
+            padding: 10px 12px;
+            text-align: left;
+        }
+        .matrix-table th { 
+            background-color: #edf2ed; 
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+
+        /* Selection Interactivity Matrices */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            background: #fbfcfb;
+            border: 2px solid #e4eae3;
+            border-radius: 8px;
+            padding: 14px 18px;
+            text-align: left;
+            font-size: 0.93rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text);
+            position: relative;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background: #f3f7f2;
+            border-color: var(--primary);
+            transform: translateX(2px);
+        }
+
+        .option-btn:disabled { cursor: not-allowed; }
+
+        /* Correction Overlays */
+        .option-btn.correct-glow {
+            background: #eef7ee !important;
+            border-color: var(--success) !important;
+            color: #244b20 !important;
+        }
+
+        .option-btn.wrong-glow {
+            background: #fdf0f0 !important;
+            border-color: var(--danger) !important;
+            color: #5c1b1b !important;
+        }
+
+        .wrong-cross::after {
+            content: '✕';
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--danger);
+            font-weight: 700;
+        }
+
+        /* Main Earthy Action Buttons */
+        .btn {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 12px 30px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 10px rgba(45, 90, 39, 0.2);
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        /* Informative Context Logs Panels */
+        .feedback-panel {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: left;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            animation: panelFade 0.25s ease;
+        }
+
+        .feedback-panel.retry { background: #fdf5e6; color: #764b1d; border: 1px solid #f2dfc1; }
+        .feedback-panel.explanation { background: #f1f5f0; color: var(--primary-dark); border: 1px solid #dae5d8; }
+
+        /* Custom Leaf-Shaped Confetti Feedback Particles */
+        .leaf-confetti {
+            position: absolute;
+            color: #3cb371;
+            font-size: 22px;
+            pointer-events: none;
+            animation: leafScatter 0.8s ease-out forwards;
+            z-index: 99;
+        }
+
+        @keyframes leafScatter {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; }
+            100% { transform: translate(var(--x), var(--y)) scale(0.2) rotate(180deg); opacity: 0; }
+        }
+
+        @keyframes panelFade {
+            from { opacity: 0; transform: translateY(3px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media(max-width: 480px) {
+            .card { padding: 22px; }
+            h1 { font-size: 1.35rem; }
+            .option-btn { font-size: 0.88rem; padding: 12px 14px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="jungle-canopy" id="jungle-frame"></div>
+
+    <div id="splash-screen">
+        <img src="assets/logo.png" alt="Innovine Logo">
+        <div style="margin-top: 15px; color: var(--text-light); font-size: 0.8rem; font-weight: 600; letter-spacing: 2px;">POWERED BY INNOVINE</div>
+    </div>
+
+    <audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="snd-applause" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
+
+    <div class="container">
+        <div id="intro-screen" class="card hidden">
+            <div style="margin-bottom: 12px;">
+                <span class="chapter-tag">Grade 8</span>
+                <span class="chapter-tag">Part 1: Chapter 2</span>
+                <span class="chapter-tag">History</span>
+            </div>
+            <h1>Reshaping India's Political Landscape</h1>
+            <p>Analyze medieval administrative adaptations, territorial shifts, dynastic classifications, and socioeconomic regulations engineered throughout the eras of the Delhi Sultanate.</p>
+            
+            <div style="background: #faf7f2; padding: 15px; border-radius: 8px; margin-bottom: 25px; text-align: left; font-size: 0.88rem; border-left: 4px solid var(--secondary);">
+                <strong style="color: var(--primary-dark);">🌿 Simulation Framework Manual:</strong>
+                <ul style="margin-left: 18px; margin-top: 6px; line-height: 1.5; color: var(--text-light);">
+                    <li><strong>45-Second Interval:</strong> Allocated continuously across each step.</li>
+                    <li><strong>Adaptive Calibration:</strong> Problems structurally ramp in technical difficulty.</li>
+                    <li><strong>Double Attempt Allowance:</strong> 1 backup retry choice allowed upon primary errors.</li>
+                </ul>
+            </div>
+            <button class="btn" onclick="bootQuizSystem()">Launch History Interactive</button>
+        </div>
+
+        <div id="quiz-box" class="card hidden">
+            <div class="quiz-header">
+                <div>Question: <span id="lbl-curr">1</span>/<span id="lbl-total">14</span></div>
+                <div class="timer-box">⏱️ <span id="lbl-clock">45</span>s</div>
+                <div class="score-box">🌳 Score: <span id="lbl-score">0</span></div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-meter"></div>
+            </div>
+
+            <div class="question-text" id="target-q-text"></div>
+            <div id="target-table-space"></div>
+            <div class="options-grid" id="target-options-space"></div>
+
+            <div id="feedback-panel-log" class="feedback-panel hidden"></div>
+
+            <div style="text-align: right; margin-top: 15px;">
+                <button id="next-forward-btn" class="btn hidden" onclick="progressStepNext()">Advance Next Step ➔</button>
+            </div>
+        </div>
+
+        <div id="result-screen" class="card hidden">
+            <h2>Historical Evaluation Concluded</h2>
+            <div style="font-size: 4.5rem; margin: 15px 0; color: var(--secondary);" id="outro-icon">🍃</div>
+            <p style="font-size: 1.15rem; font-weight: 600; color: var(--text);">Cumulative Score: <span id="final-score-val">0</span> / <span id="final-total-val">14</span></p>
+            <p id="outro-narrative-feedback" style="margin-bottom: 25px; padding: 0 8px;"></p>
+            <button class="btn" onclick="rebootQuizSimulation()">Re-Run Analysis</button>
+        </div>
+    </div>
+
+    <script>
+        // Structured Comprehensive Array Dataset
+        const historyDataset = [
+            {
+                q: "While preparing for a history exhibition, four students discussed the reasons behind the establishment of the Delhi Sultanate. One student remarked that the new rulers introduced fresh administrative systems and expanded their political influence over large parts of northern India. Another believed that the Delhi Sultanate was formed only to encourage trade with foreign countries. Which statement best explains the historical significance of the Delhi Sultanate?",
+                options: [
+                    "It was established mainly to encourage sea trade with Europe.",
+                    "It marked the beginning of a period in which new dynasties introduced administrative, political, and cultural changes in northern India.",
+                    "It was created only to spread one language across India.",
+                    "It replaced all regional kingdoms immediately after its formation."
+                ],
+                answer: 1,
+                exp: "The Delhi Sultanate integrated vast subcontinental networks, introducing fundamental systemic adjustments in public institutions, governance matrices, and cultural integrations."
+            },
+            {
+                q: "A museum guide explains that historians divide the Delhi Sultanate into different ruling dynasties such as the Mamluks, Khaljis, Tughlaqs, Sayyids and Lodis. A visitor asks why this classification is useful. Which response best answers the visitor's question?",
+                options: [
+                    "It helps historians understand how power, administration, and policies changed over time under different rulers.",
+                    "It proves that every dynasty ruled exactly the same territories.",
+                    "It shows that every dynasty followed identical military strategies.",
+                    "It indicates that each dynasty ruled for the same number of years."
+                ],
+                answer: 0,
+                exp: "Dividing eras dynastically enables precise scientific analysis of shifting centralization thresholds, legislative preferences, and defensive configurations over sequential epochs."
+            },
+            {
+                q: "Read the following situation carefully. A historian observes that Alauddin Khalji strengthened his army, introduced market regulations, and controlled the prices of essential goods such as food grains, horses, and cloth. These measures helped him maintain a large army without greatly increasing government expenditure. Which objective was most likely achieved through these market reforms?",
+                options: [
+                    "Encouraging people to stop farming completely.",
+                    "Increasing foreign trade with Europe.",
+                    "Supporting military administration by ensuring essential goods remained affordable.",
+                    "Reducing the population of Delhi."
+                ],
+                answer: 2,
+                exp: "Alauddin Khalji's rigid price controls functioned as strategic macroeconomic intervention, ensuring large standing defense forces could survive stably on fixed fiscal compensation rates."
+            },
+            {
+                q: "A student preparing a project writes: 'Muhammad bin Tughlaq shifted the capital because he wanted to improve administration over different parts of his empire.' Another student argues that the decision created several practical difficulties. Which of the following best supports the second student's opinion?",
+                options: [
+                    "The shift immediately increased agricultural production.",
+                    "The movement was easy because everyone willingly relocated.",
+                    "The transfer caused hardship due to the long distance and administrative challenges.",
+                    "The capital remained permanently at Daulatabad without any problems."
+                ],
+                answer: 2,
+                exp: "Forced programmatic cross-regional migrations across massive spatial distances without modern infrastructure generated deep socioeconomic duress and complex systemic breakdowns."
+            },
+            {
+                q: "During a classroom discussion, the teacher asks students to identify a ruler whose policies aimed at improving revenue collection through careful measurement of agricultural land. Which ruler should the students identify?",
+                options: [
+                    "Razia Sultan",
+                    "Firuz Shah Tughlaq",
+                    "Muhammad Ghori",
+                    "Sher Shah Suri"
+                ],
+                answer: 3,
+                exp: "Sher Shah Suri introduced highly advanced cadastral measurement modules, standardizing land surveys to optimize fair agrarian taxation vectors."
+            },
+            {
+                q: "A traveller visiting Delhi during the reign of Alauddin Khalji notices that merchants cannot charge unfair prices for food grains and other essential commodities because government officials regularly inspect the markets. What can the traveller conclude from this observation?",
+                options: [
+                    "The government completely stopped trade in the capital.",
+                    "The administration actively regulated markets to protect economic stability.",
+                    "Merchants were allowed to decide taxes independently.",
+                    "Farmers were prevented from selling their crops."
+                ],
+                answer: 1,
+                exp: "The establishment of special checking officers (Shahna-i-Mandi) shows an assertive centralized administration actively minimizing inflation and retail speculation."
+            },
+            {
+                q: "Read the case carefully. A kingdom has a strong ruler, but after his death several governors begin acting independently. Some provinces refuse to obey the central government, and local kingdoms start becoming more powerful. Which historical development from the chapter does this situation most closely resemble?",
+                options: [
+                    "The weakening of the Delhi Sultanate and the rise of regional kingdoms.",
+                    "The beginning of the Gupta Empire.",
+                    "The arrival of European trading companies.",
+                    "The spread of the Industrial Revolution."
+                ],
+                answer: 0,
+                exp: "As institutional authority within the central leadership deteriorated, far-off provincial heads (Iqtadars) naturally broke away, shifting the system toward a decentralized regional setup."
+            },
+            {
+                q: "A history club compares the achievements of two rulers. One ruler is remembered for introducing market reforms and strengthening the army, while the other is known for constructing canals, gardens, and public buildings. Which ruler is associated with the second set of achievements?",
+                options: [
+                    "Alauddin Khalji",
+                    "Razia Sultan",
+                    "Firuz Shah Tughlaq",
+                    "Qutb-ud-din Aibak"
+                ],
+                answer: 2,
+                exp: "Firuz Shah Tughlaq concentrated state investment heavily on civil infrastructure, creating vast irrigation canal channels, agricultural gardens, and public welfare facilities."
+            },
+            {
+                q: "A group of students studies a map showing the expansion of the Delhi Sultanate under different dynasties. They observe that control over territory changed from one dynasty to another. What does this observation best suggest?",
+                options: [
+                    "Political boundaries changed as rulers expanded or lost control over different regions.",
+                    "Every dynasty ruled exactly the same geographical area.",
+                    "Only southern India experienced political change.",
+                    "Maps cannot be used to study history."
+                ],
+                answer: 0,
+                exp: "Medieval geopolitical footprints were highly dynamic, fluctuating dramatically based on military capability, succession wars, and effective regional administrative control."
+            },
+            {
+                q: "A school organises a debate on medieval administration. One team argues that maintaining efficient communication across a vast empire was a major challenge for rulers. Which situation best supports their argument?",
+                options: [
+                    "Every village had instant communication with the capital.",
+                    "Large empires required officials and governors to manage distant provinces effectively.",
+                    "Kings ruled only small towns around Delhi.",
+                    "Roads were unnecessary for administration."
+                ],
+                answer: 1,
+                exp: "Without technological information channels, vast logistics management required cascading networks of loyal intelligence officers, postal runners, and regional governors."
+            },
+            {
+                q: "Read the following case. An archaeologist discovers an inscription describing the construction of mosques, forts, roads, and educational institutions during the Delhi Sultanate. The inscription also mentions that these buildings reflected the artistic styles of different regions. Which conclusion can be drawn from this evidence?",
+                options: [
+                    "Architecture during the Sultanate served both practical and cultural purposes.",
+                    "Medieval rulers built only religious structures.",
+                    "Architecture had no connection with administration.",
+                    "Public buildings were constructed only for military training."
+                ],
+                answer: 0,
+                exp: "Sultanate architecture was deeply functional—serving strategic defence, transport, and communal civic needs—while acting as visual tools for cultural signaling."
+            },
+            {
+                q: "A student preparing for an examination says, 'Whenever a ruler became weak, regional governors and local kingdoms often tried to gain independence.' Why is this statement historically valid?",
+                options: [
+                    "Weak rulers encouraged every province to become a separate country.",
+                    "Strong central control was necessary to keep distant territories united, and its decline allowed regional powers to emerge.",
+                    "Regional kingdoms were formed only because foreign traders demanded them.",
+                    "Governors had no role in administration during the Delhi Sultanate."
+                ],
+                answer: 1,
+                exp: "Feudal structural cohesion required an authoritative center. When the center weakened, regional governors naturally withheld tax balances to claim autonomous sovereignty."
+            },
+            {
+                q: "Imagine you are a merchant travelling through northern India during the later years of the Delhi Sultanate. You notice that different regions are now controlled by powerful local rulers instead of one strong central authority. Trade routes have become less secure in some areas, and taxes vary from one kingdom to another. What is the most reasonable inference from this situation?",
+                options: [
+                    "The authority of the central Sultanate had weakened, leading to the rise of regional powers.",
+                    "India had become a single united kingdom under one ruler.",
+                    "Regional rulers had stopped collecting taxes altogether.",
+                    "The Delhi Sultanate had expanded into every part of southern India."
+                ],
+                answer: 0,
+                exp: "Fragmented tariff scales and unsecured transit points are classic symptoms of macro-political decentralization resulting from a fading central imperial state."
+            },
+            {
+                q: "Based on the information given in the table, a student says: 'If I wanted to study the rulers who focused on controlling prices and maintaining a large army, I would read about the Khalji Dynasty.' Which option best evaluates the student's statement?",
+                table: [
+                    ["Dynasty", "One Important Contribution"],
+                    ["Mamluk (Slave) Dynasty", "Laid the foundation of the Delhi Sultanate"],
+                    ["Khalji Dynasty", "Introduced market control measures and strengthened the army"],
+                    ["Tughlaq Dynasty", "Attempted several administrative reforms"],
+                    ["Lodi Dynasty", "Last ruling dynasty before the establishment of the Mughal Empire"]
+                ],
+                options: [
+                    "The statement is incorrect because the Khalji rulers mainly focused only on sea trade.",
+                    "The statement is incorrect because market reforms were introduced during the Lodi Dynasty.",
+                    "The statement is correct because the table shows that the Khalji Dynasty introduced market control measures and strengthened the army.",
+                    "The statement is correct because the Khalji Dynasty was the last dynasty of the Delhi Sultanate."
+                ],
+                answer: 2,
+                exp: "The target dataset explicitly validates the evaluation criteria, mapping the combination of military expansion and market management squarely to the Khalji line."
+            }
+        ];
+
+        // Runtime Global Management Vectors
+        let activeIndex = 0;
+        let runningScore = 0;
+        let systemClockSeconds = 45;
+        let loopIntervalId = null;
+        let itemFaultCounter = 0;
+        const uniformStepTime = 45;
+
+        // Lifecycle Hooks Configuration
+        window.addEventListener('DOMContentLoaded', () => {
+            spawnJungleFoliage();
+            // Secure exact 5 second branding splash window limit
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                splash.style.opacity = 0;
+                setTimeout(() => splash.classList.add('hidden'), 500);
+                document.getElementById('intro-screen').classList.remove('hidden');
+            }, 5000);
+        });
+
+        function spawnJungleFoliage() {
+            const frame = document.getElementById('jungle-frame');
+            for(let i=0; i<12; i++) {
+                const leaf = document.createElement('div');
+                leaf.classList.add('ambient-leaf');
+                const dimension = Math.random() * 22 + 16;
+                leaf.style.width = `${dimension}px`;
+                leaf.style.height = `${dimension * 1.6}px`;
+                leaf.style.left = `${Math.random() * 100}%`;
+                leaf.style.animationDelay = `${Math.random() * 9}s`;
+                leaf.style.animationDuration = `${Math.random() * 7 + 9}s`;
+                frame.appendChild(leaf);
+            }
+        }
+
+        function bootQuizSystem() {
+            document.getElementById('intro-screen').classList.add('hidden');
+            document.getElementById('quiz-box').classList.remove('hidden');
+            activeIndex = 0;
+            runningScore = 0;
+            document.getElementById('lbl-total').textContent = historyDataset.length;
+            buildQuestionInterface();
+        }
+
+        // Interface Mapping Engine
+        function buildQuestionInterface() {
+            clearInterval(loopIntervalId);
+            itemFaultCounter = 0;
+            systemClockSeconds = uniformStepTime;
+
+            document.getElementById('lbl-clock').textContent = systemClockSeconds;
+            document.getElementById('next-forward-btn').classList.add('hidden');
+            document.getElementById('feedback-panel-log').classList.add('hidden');
+
+            const item = historyDataset[activeIndex];
+
+            // Update Dashboards Metrics
+            document.getElementById('lbl-curr').textContent = activeIndex + 1;
+            document.getElementById('lbl-score').textContent = runningScore;
+
+            const progressRatio = (activeIndex / historyDataset.length) * 100;
+            document.getElementById('progress-meter').style.width = `${progressRatio}%`;
+            document.getElementById('target-q-text').textContent = item.q;
+
+            // Optional Matrix Table Injection Zone
+            const tableZone = document.getElementById('target-table-space');
+            tableZone.innerHTML = '';
+            if(item.table) {
+                const htmlTable = document.createElement('table');
+                htmlTable.classList.add('matrix-table');
+                item.table.forEach((row, rIdx) => {
+                    const tr = document.createElement('tr');
+                    row.forEach(cellText => {
+                        const cellType = rIdx === 0 ? 'th' : 'td';
+                        const element = document.createElement(cellType);
+                        element.textContent = cellText;
+                        tr.appendChild(element);
+                    });
+                    htmlTable.appendChild(tr);
+                });
+                tableZone.appendChild(htmlTable);
+            }
+
+            // Options Population Matrix
+            const optionsZone = document.getElementById('target-options-space');
+            optionsZone.innerHTML = '';
+
+            item.options.forEach((txt, indexKey) => {
+                const optButton = document.createElement('button');
+                optButton.classList.add('option-btn');
+                optButton.textContent = txt;
+                optButton.setAttribute('data-id', indexKey);
+                optButton.onclick = () => auditSelectedChoice(indexKey, optButton);
+                optionsZone.appendChild(optButton);
+            });
+
+            // Clock Sequence Routine
+            loopIntervalId = setInterval(() => {
+                systemClockSeconds--;
+                document.getElementById('lbl-clock').textContent = systemClockSeconds;
+                if(systemClockSeconds <= 0) {
+                    clearInterval(loopIntervalId);
+                    processTimeoutFailure();
+                }
+            }, 1000);
+        }
+
+        // Analytical Validation Module
+        function auditSelectedChoice(chosenId, targetElement) {
+            const item = historyDataset[activeIndex];
+            const logPanel = document.getElementById('feedback-panel-log');
+            const optionsZone = document.getElementById('target-options-space');
+
+            if(chosenId === item.answer) {
+                // Success Path Execution
+                clearInterval(loopIntervalId);
+                targetElement.classList.add('correct-glow');
+                disableInterfaceControls();
+                burstOrganicConfetti(targetElement);
+
+                if(itemFaultCounter === 0) {
+                    runningScore++;
+                    document.getElementById('lbl-score').textContent = runningScore;
+                }
+
+                document.getElementById('snd-correct').play().catch(()=>{});
+
+                logPanel.className = "feedback-panel explanation";
+                logPanel.innerHTML = `<strong>✨ Correct Insight:</strong> ${item.exp}`;
+                logPanel.classList.remove('hidden');
+                document.getElementById('next-forward-btn').classList.remove('hidden');
+            } else {
+                // Mistake Processing Branch
+                itemFaultCounter++;
+                document.getElementById('snd-wrong').play().catch(()=>{});
+                targetElement.classList.add('wrong-glow', 'wrong-cross');
+                targetElement.disabled = true;
+
+                if(itemFaultCounter === 1) {
+                    // One-file retry trigger phase
+                    logPanel.className = "feedback-panel retry";
+                    logPanel.innerHTML = "<strong>⚠️ Discrepancy Found:</strong> This interpretation creates practical contradictions. Re-evaluate the historical data and try again. (1 attempt remaining)";
+                    logPanel.classList.remove('hidden');
+                } else {
+                    // Ultimate state resolution cap
+                    clearInterval(loopIntervalId);
+                    disableInterfaceControls();
+
+                    const correctElement = optionsZone.querySelector(`[data-id='${item.answer}']`);
+                    if(correctElement) correctElement.classList.add('correct-glow');
+
+                    logPanel.className = "feedback-panel explanation";
+                    logPanel.innerHTML = `<strong>💡 Historical Analysis:</strong> ${item.exp}`;
+                    logPanel.classList.remove('hidden');
+                    document.getElementById('next-forward-btn').classList.remove('hidden');
+                }
+            }
+        }
+
+        function processTimeoutFailure() {
+            disableInterfaceControls();
+            const item = historyDataset[activeIndex];
+            const optionsZone = document.getElementById('target-options-space');
+            const logPanel = document.getElementById('feedback-panel-log');
+
+            const correctElement = optionsZone.querySelector(`[data-id='${item.answer}']`);
+            if(correctElement) correctElement.classList.add('correct-glow');
+
+            logPanel.className = "feedback-panel explanation";
+            logPanel.innerHTML = `<strong>⏰ Chronological Timeout:</strong> ${item.exp}`;
+            logPanel.classList.remove('hidden');
+            document.getElementById('next-forward-btn').classList.remove('hidden');
+        }
+
+        function disableInterfaceControls() {
+            const targets = document.querySelectorAll('.option-btn');
+            targets.forEach(btn => btn.disabled = true);
+        }
+
+        // Custom Leaf Confetti Burst Effect
+        function burstOrganicConfetti(element) {
+            const box = element.getBoundingClientRect();
+            const posX = box.left + box.width / 2;
+            const posY = box.top + box.height / 2;
+
+            for (let i = 0; i < 14; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('leaf-confetti');
+                // Use a mix of leaf-like characters
+                particle.innerHTML = i % 2 === 0 ? '🌿' : '🍃';
+                particle.style.left = `${posX}px`;
+                particle.style.top = `${posY}px`;
+
+                const vectorAngle = Math.random() * Math.PI * 2;
+                const dispersionScale = Math.random() * 90 + 50;
+                particle.style.setProperty('--x', `${Math.cos(vectorAngle) * dispersionScale}px`);
+                particle.style.setProperty('--y', `${Math.sin(vectorAngle) * dispersionScale}px`);
+
+                document.body.appendChild(particle);
+                setTimeout(() => particle.remove(), 800);
+            }
+        }
+
+        function progressStepNext() {
+            activeIndex++;
+            if(activeIndex < historyDataset.length) {
+                buildQuestionInterface();
+            } else {
+                displayOutroSummary();
+            }
+        }
+
+        // Outro Compilation Output
+        function displayOutroSummary() {
+            document.getElementById('quiz-box').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+
+            document.getElementById('final-score-val').textContent = runningScore;
+            document.getElementById('final-total-val').textContent = historyDataset.length;
+
+            const commentaryBox = document.getElementById('outro-narrative-feedback');
+            const iconBox = document.getElementById('outro-icon');
+            const finalRatio = runningScore / historyDataset.length;
+
+            if(finalRatio >= 0.8) {
+                document.getElementById('snd-applause').play().catch(()=>{});
+                iconBox.textContent = "🌴";
+                commentaryBox.textContent = "Exceptional historical proficiency! Your analytical grasp over medieval administrative systems, structural reforms, and dynastic evolutions is absolute.";
+            } else if(finalRatio >= 0.5) {
+                iconBox.textContent = "🌱";
+                commentaryBox.textContent = "Sound structural knowledge base. Reviewing specific administrative shifts and pricing policies under different rulers will refine your mastery.";
+            } else {
+                iconBox.textContent = "🍂";
+                commentaryBox.textContent = "Re-evaluation recommended. Consider re-examining chronological dynastic data footprints and the socio-political challenges of managing sprawling empires.";
+            }
+        }
+
+        function rebootQuizSimulation() {
+            document.getElementById('result-screen').classList.add('hidden');
+            bootQuizSystem();
+        }
+    </script>
+</body>
+</html>
