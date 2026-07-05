@@ -1,1 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Understanding the Factors of Production | Grade 8 Economics</title>
+    <style>
+        :root {
+            --primary: #1A3A2A;       /* Deep Forest Green */
+            --primary-dark: #0F251A;  /* Darker Shade for deep accents */
+            --secondary: #D97706;     /* Sun Amber */
+            --success: #22C55E;       /* Mint Green */
+            --danger: #B91C1C;        /* Rust Red */
+            --background: #F9F6F0;    /* Warm Sand Tint */
+            --text: #2B2D2F;
+            --text-light: #5A5E61;
+            --card-bg: #FFFFFF;
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Ambient Performance-friendly Background Animation Layer */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .floating-star {
+            position: absolute;
+            background: rgba(26, 58, 42, 0.12);
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            animation: floatUp 14s linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(105vh) rotate(0deg) scale(0.5); opacity: 0; }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.7; }
+            100% { transform: translateY(-5vh) rotate(360deg) scale(1.1); opacity: 0; }
+        }
+
+        /* Layout Container */
+        .container {
+            width: 90%;
+            max-width: 680px;
+            background: var(--card-bg);
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 12px 30px rgba(26, 58, 42, 0.06);
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        /* Screens Manager */
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        /* Splash Screen Layer */
+        #splash-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #FFFFFF;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+        #splash-screen img {
+            max-width: 230px;
+            height: auto;
+            animation: pulse 2s infinite ease-in-out;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.04); }
+        }
+
+        /* Typography & Headings */
+        h1 { font-size: 25px; margin-bottom: 8px; color: var(--primary); font-weight: 700; }
+        h2 { font-size: 21px; margin-bottom: 20px; color: var(--primary); }
+        p.subtitle { color: var(--text-light); margin-bottom: 25px; font-size: 15px; }
+        
+        /* HUD Display Bar */
+        .hud-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #EBF1ED;
+        }
+        .hud-item {
+            font-weight: 700;
+            font-size: 14px;
+            background: #EBF1ED;
+            padding: 8px 15px;
+            border-radius: 4px;
+            color: var(--primary);
+        }
+        .timer-badge { background: #FEF3C7; color: #92400E; border: 1px solid #FCD34D; }
+
+        /* Progress Framework */
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: #E5E7EB;
+            border-radius: 3px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--primary);
+            transition: width 0.4s ease;
+        }
+
+        /* Question Frame Box */
+        .question-box {
+            font-size: 17px;
+            font-weight: 600;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            text-align: left;
+            padding: 20px;
+            background: #F9FAFB;
+            border-left: 5px solid var(--secondary);
+            border-radius: 4px;
+        }
+
+        /* Scrolled Data Tables Layer */
+        .scollable-table {
+            overflow-x: auto;
+            margin-bottom: 18px;
+            border-radius: 4px;
+            border: 1px solid #D1D5DB;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            text-align: left;
+        }
+        .data-table th, .data-table td {
+            padding: 10px 14px;
+            border: 1px solid #D1D5DB;
+        }
+        .data-table th {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        /* Grid Configuration Options Buttons */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .option-btn {
+            background: #FFFFFF;
+            border: 2px solid #E5E7EB;
+            padding: 15px 20px;
+            border-radius: 6px;
+            font-size: 15px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--primary);
+            background: #F9FAFB;
+        }
+        .option-btn:disabled { cursor: not-allowed; }
+        
+        .option-btn.correct {
+            background: #DCFCE7 !important;
+            border-color: var(--success) !important;
+            color: #14532D !important;
+            font-weight: 600;
+        }
+        .option-btn.wrong {
+            background: #FEE2E2 !important;
+            border-color: var(--danger) !important;
+            color: #7F1D1D !important;
+        }
+
+        /* Explanations Display Panel */
+        .feedback-box {
+            margin-top: 15px;
+            padding: 15px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            line-height: 1.5;
+            display: none;
+            text-align: left;
+            background: #F3F4F6;
+            border-left: 4px solid var(--primary);
+        }
+
+        /* Control / Action Buttons */
+        .btn-action {
+            background: var(--primary);
+            color: #FFF;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 100%;
+            margin-top: 15px;
+        }
+        .btn-action:hover { background: var(--primary-dark); }
+
+        /* Custom Cross & Star Particle Layouts */
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            z-index: 999;
+            animation: popOut 0.6s ease-out forwards;
+        }
+        @keyframes popOut {
+            0% { transform: translate(-50%, -50%) scale(0) rotate(0deg); opacity: 1; }
+            100% { transform: translate(var(--mx), var(--my)) scale(1) rotate(var(--rot)); opacity: 0; }
+        }
+
+        /* Final Stage Banner */
+        .final-challenge-badge {
+            background: linear-gradient(135deg, #1A3A2A, #D97706);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        @media(max-width: 480px) {
+            .container { padding: 25px 15px; width: 95%; }
+            h1 { font-size: 21px; }
+            .question-box { font-size: 15px; padding: 15px; }
+            .option-btn { font-size: 14px; padding: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-animation" id="ambient-bg"></div>
+
+    <div id="splash-screen">
+        <img src="assets/logo.png" alt="Innovine Logo" onerror="this.style.display='none'; document.getElementById('splash-fallback').style.display='block';">
+        <h2 id="splash-fallback" style="display:none; color: #1A3A2A;">Innovine</h2>
+    </div>
+
+    <div class="container">
+        <div id="intro-screen" class="screen">
+            <h1>Understanding the Factors of Production</h1>
+            <p class="subtitle">Grade 8 Economic Resource Assessment Challenge</p>
+            <div style="background: #F9FAFB; padding: 20px; border-radius: 6px; text-align: left; margin-bottom: 25px; font-size: 14px; line-height: 1.6; border: 1px solid #E5E7EB;">
+                <strong>🎮 Operational Guidelines:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>You will resolve <strong>10 competency case studies</strong> on land, labor, capital, and enterprise.</li>
+                    <li>A strict limit of <strong>45 seconds</strong> is allocated for each question item.</li>
+                    <li>If your first selection is wrong, you receive **one retry** opportunity.</li>
+                    <li>An additional failure locks choices and displays the economic concept breakdown.</li>
+                </ul>
+            </div>
+            <button class="btn-action" onclick="startQuiz()">Initialize Production Analysis</button>
+        </div>
+
+        <div id="quiz-screen" class="screen">
+            <div class="hud-bar">
+                <div class="hud-item" id="q-tracker">Question 1/10</div>
+                <div class="hud-item timer-badge" id="timer-display">⏱️ 45s</div>
+                <div class="hud-item" id="score-tracker">Score: 0</div>
+            </div>
+            <div class="progress-container"><div class="progress-bar" id="progress"></div></div>
+            
+            <div id="final-badge-container"></div>
+            <div id="table-display-container"></div>
+            <div class="question-box" id="question-text">Loading resource case profile...</div>
+            <div class="options-grid" id="options-container"></div>
+            <div class="feedback-box" id="feedback-container"></div>
+            
+            <button class="btn-action" id="next-btn" style="display: none;" onclick="handleNext()">Advance Operation</button>
+        </div>
+
+        <div id="result-screen" class="screen">
+            <h2>Analysis Cycle Complete! ⚙️</h2>
+            <p class="subtitle">Production Strategy Performance Log</p>
+            <div style="margin: 30px 0; font-size: 24px; font-weight: 700;">
+                Final Score: <span id="final-score" style="color: var(--success); font-size: 36px;">0</span> / 10
+            </div>
+            <div style="background: #F3F4F6; padding: 18px; border-radius: 6px; font-size: 15px; margin-bottom: 25px; line-height: 1.5;" id="performance-msg"></div>
+            <button class="btn-action" onclick="restartQuiz()">Restart System Audit</button>
+        </div>
+    </div>
+
+    <audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="audio-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="audio-cheer" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
+
+    <script>
+        // 10 Unique Competency Questions Array
+        const quizData = [
+            {
+                q: "A group of Class VIII students plans to start a small eco-friendly notebook business during the school exhibition. Riya designs attractive covers, Arjun arranges ₹5,000 as investment, Kabir brings paper-cutting machines from his uncle's workshop, and Meera prepares a marketing plan. During the discussion, one student says that only money is needed to run a successful business. Their teacher disagrees. Which statement best explains why the teacher's opinion is correct?",
+                a: [
+                    "A business succeeds only if it has expensive machinery.",
+                    "Money alone cannot produce goods unless it is supported by land, labour, entrepreneurship, and capital working together.",
+                    "Businesses can operate successfully without workers if enough money is available.",
+                    "Capital is more important than all the other factors of production."
+                ],
+                correct: 1,
+                exp: "Production requires a combination of elements. Money (financial capital) is useless unless combined with natural resources (land), human effort (labour), physical assets (machinery), and coordination (entrepreneurship)."
+            },
+            {
+                q: "A farmer owns fertile land and modern irrigation facilities. He has also purchased high-quality seeds and farming equipment. However, during the harvesting season, he is unable to find enough workers to harvest the crop on time, causing heavy losses. Which factor of production is most directly responsible for this problem?",
+                a: ["Labour", "Land", "Capital", "Entrepreneurship"],
+                correct: 0,
+                exp: "The physical human input required to carry out the crop harvesting is 'Labour'. Lacking human resources caused the production process to fail despite having abundant land and capital."
+            },
+            {
+                q: "A young entrepreneur wants to establish a bakery in her town. Before opening the business, she studies customer preferences, estimates the investment required, hires trained workers, purchases ovens, and prepares a plan to manage profits and risks. Which role of an entrepreneur is best reflected in this situation?",
+                a: [
+                    "Producing all goods personally without workers.",
+                    "Supplying natural resources for production.",
+                    "Organising resources, taking risks, and making important business decisions.",
+                    "Providing loans to other businesses."
+                ],
+                correct: 2,
+                exp: "An entrepreneur acts as the organizational coordinator. They allocate land, labor, and capital assets while absorbing systemic risks under variable economic environments."
+            },
+            {
+                q: "A textile company replaces several outdated machines with energy-efficient automated equipment. Although the company spends a large amount initially, production increases, electricity costs decrease, and workers complete orders more quickly. What is the most appropriate conclusion from this situation?",
+                a: [
+                    "Modern capital always replaces the need for skilled workers.",
+                    "Technology reduces the importance of entrepreneurship.",
+                    "Businesses should avoid investing in machines because they are expensive.",
+                    "Investment in modern capital can improve productivity and efficiency when used effectively."
+                ],
+                correct: 3,
+                exp: "Physical capital improvements (automated machinery) boost production efficiency, amplifying output values per individual labor unit."
+            },
+            {
+                q: "A school organises a workshop on skill development. One student learns computer programming, another improves communication skills, while a third completes a course in electrical repair. The teacher explains that these abilities will increase their future employment opportunities. How do these improvements contribute to production?",
+                a: [
+                    "They increase human capital by improving knowledge and skills, making people more productive.",
+                    "They convert natural resources into capital.",
+                    "They reduce the need for entrepreneurship.",
+                    "They eliminate the importance of physical resources."
+                ],
+                correct: 0,
+                exp: "Human capital represents the aggregate of expertise, experience, and educational skills inside a workforce, driving optimized labor execution."
+            },
+            {
+                q: "A furniture manufacturer has sufficient timber, advanced machines, and skilled workers. However, the owner fails to estimate customer demand correctly and produces far more furniture than the market requires. As a result, the company suffers financial losses. Which factor of production was used least effectively?",
+                a: ["Labour", "Entrepreneurship", "Land", "Physical capital"],
+                correct: 1,
+                exp: "Forecasting demands, resource planning, and market strategy execution are key responsibilities of Entrepreneurship. Miscalculating structural market needs leads to operational losses."
+            },
+            {
+                q: "A district administration wants to encourage employment among young people. Instead of giving direct financial assistance, it starts vocational training centres where students learn electrical work, tailoring, computer applications, and digital marketing. Which outcome is most likely if the programme is successful?",
+                a: [
+                    "The amount of land available for production will increase.",
+                    "Natural resources will become unlimited.",
+                    "Human capital will improve because people acquire useful skills and become more productive.",
+                    "Entrepreneurs will no longer be required in businesses."
+                ],
+                correct: 2,
+                exp: "Vocational centers build skilled human capital, enabling individuals to offer highly productive inputs across diverse industrial systems."
+            },
+            {
+                q: "Study the table provided in the display box carefully. A student concludes that every factor performs a different function but all are necessary for successful production. Which option best evaluates the student's conclusion?",
+                a: [
+                    "The conclusion is incorrect because only capital is necessary for production.",
+                    "The conclusion is incorrect because entrepreneurs do not contribute to production.",
+                    "The conclusion is correct because production depends on the combined contribution of different factors.",
+                    "The conclusion is correct because land alone determines business success."
+                ],
+                correct: 2,
+                exp: "Production models show a structural chain: land provides raw materials, labor carries out operations, physical capital speeds up assembly, and entrepreneurs manage the overall workflow.",
+                hasTable: true
+            },
+            {
+                q: "A local grocery shop begins accepting digital payments, uses barcode scanners for billing, installs inventory management software, and offers online home delivery. Within a year, customer satisfaction improves and sales increase. Which factor has contributed most to this improvement?",
+                a: [
+                    "Adoption of appropriate technology to improve business efficiency.",
+                    "Increase in the size of agricultural land.",
+                    "Reduction in the number of workers.",
+                    "Elimination of entrepreneurship."
+                ],
+                correct: 0,
+                exp: "Integrating modern technology directly improves physical capital frameworks, enabling faster point-of-sale processing and superior inventory turnover cycles."
+            },
+            {
+                q: "Two small manufacturing units produce similar products. Factory X regularly trains its employees, upgrades machinery, and encourages workers to suggest new ideas. Factory Y continues using old equipment and provides no training. Which factory is more likely to remain competitive in the long run?",
+                a: [
+                    "Factory Y, because training increases business costs.",
+                    "Both factories will perform equally because machines do not affect productivity.",
+                    "Factory Y, because experienced workers never need new skills.",
+                    "Factory X, because investment in human capital and technology improves efficiency and innovation."
+                ],
+                correct: 3,
+                exp: "Continuous investments in both human capital (training profiles) and physical capital (upgraded systems) grant firms sustainable advantages through systematic innovation and lower unit costs.",
+                isFinalChallenge: true
+            }
+        ];
+
+        // Core Engine Variables
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let timerValue = 45; // Grade 8 Constraints configuration
+        let timerInterval = null;
+        let attemptsMade = 0;
+        let hasAnsweredCurrent = false;
+
+        function initBackground() {
+            const bgContainer = document.getElementById('ambient-bg');
+            for (let i = 0; i < 7; i++) {
+                const element = document.createElement('div');
+                element.className = 'floating-star';
+                element.style.left = Math.random() * 100 + 'vw';
+                element.style.top = Math.random() * 100 + 'vh';
+                element.style.width = element.style.height = (Math.random() * 18 + 10) + 'px';
+                element.style.animationDelay = (Math.random() * 7) + 's';
+                bgContainer.appendChild(element);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initBackground();
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                splash.style.opacity = '0';
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                    showScreen('intro-screen');
+                }, 500);
+            }, 5000);
+        });
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            showScreen('quiz-screen');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            hasAnsweredCurrent = false;
+            attemptsMade = 0;
+            timerValue = 45;
+            document.getElementById('next-btn').style.display = 'none';
+            document.getElementById('feedback-container').style.display = 'none';
+            
+            const currentQuestion = quizData[currentQuestionIndex];
+            
+            // Set Final Challenge Stage indicator tags on the final question
+            const badgeContainer = document.getElementById('final-badge-container');
+            if(currentQuestion.isFinalChallenge) {
+                badgeContainer.innerHTML = `<span class="final-challenge-badge">🌾 Final Challenge Stage</span>`;
+            } else {
+                badgeContainer.innerHTML = '';
+            }
+
+            // Generate conditional data table component if specified inside current index
+            const tableContainer = document.getElementById('table-display-container');
+            if (currentQuestion.hasTable) {
+                tableContainer.innerHTML = `
+                    <div class="scollable-table">
+                        <table class="data-table">
+                            <thead>
+                                <tr><th>Business Activity</th><th>Factor of Production Mainly Involved</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Fertile farmland</td><td><strong>Land</strong></td></tr>
+                                <tr><td>Skilled carpenter</td><td><strong>Labour</strong></td></tr>
+                                <tr><td>Wood-cutting machine</td><td><strong>Capital</strong></td></tr>
+                                <tr><td>Business owner planning production</td><td><strong>Entrepreneurship</strong></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } else {
+                tableContainer.innerHTML = '';
+            }
+
+            document.getElementById('q-tracker').innerText = `Question ${currentQuestionIndex + 1}/${quizData.length}`;
+            document.getElementById('score-tracker').innerText = `Score: ${score}`;
+            document.getElementById('progress').style.width = `${((currentQuestionIndex) / quizData.length) * 100}%`;
+            document.getElementById('question-text').innerText = currentQuestion.q;
+
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            
+            currentQuestion.a.forEach((optionText, idx) => {
+                const button = document.createElement('button');
+                button.className = 'option-btn';
+                button.innerText = optionText;
+                button.onclick = (e) => handleOptionSelection(idx, button, e);
+                optionsContainer.appendChild(button);
+            });
+
+            startTimer();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            document.getElementById('timer-display').innerText = `⏱️ ${timerValue}s`;
+            
+            timerInterval = setInterval(() => {
+                timerValue--;
+                document.getElementById('timer-display').innerText = `⏱️ ${timerValue}s`;
+                
+                if (timerValue <= 0) {
+                    clearInterval(timerInterval);
+                    revealCorrectAnswer();
+                }
+            }, 1000);
+        }
+
+        function playSound(audioId) {
+            const sound = document.getElementById(audioId);
+            if(sound && sound.play) {
+                sound.currentTime = 0;
+                sound.play().catch(() => {});
+            }
+        }
+
+        function triggerFeedbackAnimation(e, isCorrect) {
+            const container = document.getElementById('quiz-screen');
+            const rect = container.getBoundingClientRect();
+            const x = e ? (e.clientX - rect.left) : (rect.width / 2);
+            const y = e ? (e.clientY - rect.top) : (rect.height / 3);
+
+            for(let i = 0; i < (isCorrect ? 12 : 4); i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                if(isCorrect) {
+                    particle.style.background = ['#D97706', '#22C55E', '#1A3A2A'][Math.floor(Math.random()*3)];
+                    particle.style.clipPath = 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)';
+                    particle.style.width = particle.style.height = (Math.random() * 11 + 7) + 'px';
+                } else {
+                    particle.innerHTML = '✕';
+                    particle.style.color = '#B91C1C';
+                    particle.style.fontWeight = 'bold';
+                    particle.style.fontSize = '18px';
+                }
+
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                
+                const mx = (Math.random() * 180 - 90) + 'px';
+                const my = (Math.random() * 180 - 90) + 'px';
+                const rot = (Math.random() * 360) + 'deg';
+                
+                particle.style.setProperty('--mx', mx);
+                particle.style.setProperty('--my', my);
+                particle.style.setProperty('--rot', rot);
+
+                container.appendChild(particle);
+                setTimeout(() => particle.remove(), 600);
+            }
+        }
+
+        function handleOptionSelection(selectedIndex, clickedButton, event) {
+            if (hasAnsweredCurrent) return;
+
+            const currentQuestion = quizData[currentQuestionIndex];
+
+            if (selectedIndex === currentQuestion.correct) {
+                clearInterval(timerInterval);
+                hasAnsweredCurrent = true;
+                clickedButton.classList.add('correct');
+                playSound('audio-correct');
+                triggerFeedbackAnimation(event, true);
+                
+                score++;
+                document.getElementById('score-tracker').innerText = `Score: ${score}`;
+                showFeedback(true);
+            } else {
+                attemptsMade++;
+                playSound('audio-wrong');
+                triggerFeedbackAnimation(event, false);
+                clickedButton.classList.add('wrong');
+                clickedButton.disabled = true;
+
+                if (attemptsMade === 1) {
+                    alert("Incorrect allocation. Re-evaluate the production factors and utilize your remaining retry attempt!");
+                } else {
+                    clearInterval(timerInterval);
+                    hasAnsweredCurrent = true;
+                    revealCorrectAnswer();
+                }
+            }
+        }
+
+        function revealCorrectAnswer() {
+            hasAnsweredCurrent = true;
+            clearInterval(timerInterval);
+            
+            const currentQuestion = quizData[currentQuestionIndex];
+            const buttons = document.querySelectorAll('#options-container .option-btn');
+            
+            buttons.forEach((btn, idx) => {
+                btn.disabled = true;
+                if (idx === currentQuestion.correct) {
+                    btn.classList.add('correct');
+                }
+            });
+
+            showFeedback(false);
+        }
+
+        function showFeedback(wasCorrect) {
+            const feedbackBox = document.getElementById('feedback-container');
+            const currentQuestion = quizData[currentQuestionIndex];
+            
+            feedbackBox.style.display = 'block';
+            feedbackBox.innerHTML = `
+                <strong style="color: ${wasCorrect ? 'var(--success)' : 'var(--danger)'}">
+                    ${wasCorrect ? '✓ Resource Allocation Optimal' : '✕ Structural System Failure'}
+                </strong>
+                <p style="margin-top: 6px;">${currentQuestion.exp}</p>
+            `;
+            
+            document.getElementById('next-btn').style.display = 'block';
+        }
+
+        function handleNext() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) {
+                loadQuestion();
+            } else {
+                endQuiz();
+            }
+        }
+
+        function endQuiz() {
+            clearInterval(timerInterval);
+            document.getElementById('progress').style.width = '100%';
+            showScreen('result-screen');
+            
+            document.getElementById('final-score').innerText = score;
+            playSound('audio-cheer');
+
+            let msg = "";
+            if(score === quizData.length) {
+                msg = "🏆 Microeconomic Mastermind! You hold an flawless comprehensive understanding of resource allocation, returns, and human capital metrics.";
+            } else if (score >= 7) {
+                msg = "⚡ Industrialist Profile Verified! You are well adept at distinguishing variable resource roles, technology factors, and structural risks.";
+            } else {
+                msg = "📚 Review recommended. Spend extra focus studying how land, capital tools, and labor interconnect to minimize enterprise operational losses.";
+            }
+            document.getElementById('performance-msg').innerText = msg;
+        }
+
+        function restartQuiz() {
+            startQuiz();
+        }
+    </script>
+</body>
+</html>
