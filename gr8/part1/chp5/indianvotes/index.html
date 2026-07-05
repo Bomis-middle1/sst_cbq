@@ -1,1 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indian Votes - Cyber Democratic Simulation</title>
+    <style>
+        :root {
+            --bg-dark: #0b0f19; /* Deep Space Vacuum */
+            --bg-card: #131a2a; /* Futuristic Terminal Panel */
+            --primary-neon: #38ef7d; /* EVM Vote Success Green */
+            --primary-glow: rgba(56, 239, 125, 0.25);
+            --secondary-neon: #4facfe; /* Indelible Ink Cyan */
+            --secondary-glow: rgba(79, 172, 254, 0.3);
+            --danger-neon: #ff4757; /* System Alert Red */
+            --accent-saffron: #ff9f43; /* Democratic Republic Highlight */
+            --text-main: #f1f2f6;
+            --text-muted: #a4b0be;
+            --border-glow: #1e272e;
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        body {
+            background: var(--bg-dark);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Deep Cosmic Space Nebula Grid Overlays */
+        .cosmic-void-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+            background-image: 
+                radial-gradient(rgba(79, 172, 254, 0.08) 1px, transparent 0),
+                radial-gradient(rgba(56, 239, 125, 0.05) 1.5px, transparent 0);
+            background-size: 40px 40px, 60px 60px;
+        }
+
+        .cyber-stardust {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #fff;
+            animation: starPulse 7s infinite ease-in-out;
+        }
+
+        @keyframes starPulse {
+            0%, 100% { transform: scale(0.3); opacity: 0.2; }
+            50% { transform: scale(1.2); opacity: 0.9; }
+        }
+
+        /* Layout Framework Panels */
+        .container {
+            width: 100%;
+            max-width: 700px;
+            padding: 20px;
+            z-index: 10;
+        }
+
+        .terminal-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 0 1px 1px rgba(255, 255, 255, 0.05);
+            padding: 40px;
+            text-align: center;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+            border-top: 4px solid var(--secondary-neon);
+            border-bottom: 4px solid var(--primary-neon);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* 5-Seconds Performance Brand Splash Layer */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: var(--bg-dark);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease;
+        }
+
+        #splash-screen img {
+            max-width: 210px;
+            height: auto;
+            animation: evm-glow-pulse 2s infinite ease-in-out;
+        }
+
+        @keyframes evm-glow-pulse {
+            0% { transform: scale(0.96); filter: drop-shadow(0 0 5px rgba(79, 172, 254, 0.2)); }
+            50% { transform: scale(1.04); filter: drop-shadow(0 0 25px var(--secondary-neon)); }
+            100% { transform: scale(0.96); filter: drop-shadow(0 0 5px rgba(79, 172, 254, 0.2)); }
+        }
+
+        /* Typography & Custom Cyber Tags */
+        h1 { color: var(--text-main); margin-bottom: 12px; font-size: 1.8rem; font-weight: 700; letter-spacing: -0.5px; }
+        h2 { color: var(--accent-saffron); margin-bottom: 18px; font-size: 1.35rem; }
+        p { color: var(--text-muted); line-height: 1.65; margin-bottom: 22px; font-size: 0.98rem; }
+
+        .democracy-pill {
+            display: inline-block;
+            background: rgba(79, 172, 254, 0.1);
+            color: var(--secondary-neon);
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid rgba(79, 172, 254, 0.3);
+        }
+
+        /* Metric Diagnostic Status Trackers */
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .timer-box {
+            background: rgba(255, 71, 87, 0.1);
+            color: var(--danger-neon);
+            padding: 5px 14px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 71, 87, 0.25);
+        }
+
+        .score-box {
+            background: rgba(56, 239, 125, 0.1);
+            color: var(--primary-neon);
+            padding: 5px 14px;
+            border-radius: 4px;
+            border: 1px solid rgba(56, 239, 125, 0.25);
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 2px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary-neon), var(--primary-neon));
+            width: 0%;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Structural Content Nodes */
+        .question-text {
+            font-size: 1.12rem;
+            font-weight: 500;
+            text-align: left;
+            margin-bottom: 22px;
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        /* Interactive Custom Lists */
+        .cyber-bullet-list {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            padding: 15px 20px;
+            margin-bottom: 22px;
+            text-align: left;
+        }
+        .cyber-bullet-list li {
+            list-style: none;
+            position: relative;
+            padding-left: 25px;
+            margin-bottom: 8px;
+            font-size: 0.92rem;
+            color: var(--text-muted);
+        }
+        .cyber-bullet-list li::before {
+            content: '⚡';
+            position: absolute;
+            left: 0;
+            color: var(--accent-saffron);
+        }
+
+        /* Interactive Fluid Flowcharts */
+        .cyber-flowchart {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 25px;
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+        .flow-node {
+            background: rgba(79, 172, 254, 0.12);
+            border: 1px solid rgba(79, 172, 254, 0.25);
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.82rem;
+            color: var(--text-main);
+            font-weight: 600;
+        }
+        .flow-arrow {
+            color: var(--text-muted);
+            align-self: center;
+            font-weight: bold;
+        }
+
+        /* Matrix Data Verification Tables */
+        .matrix-data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+            font-size: 0.88rem;
+            background: rgba(0, 0, 0, 0.15);
+        }
+        .matrix-data-table th, .matrix-data-table td {
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 12px 14px;
+            text-align: left;
+        }
+        .matrix-data-table th {
+            background-color: rgba(79, 172, 254, 0.15);
+            color: var(--secondary-neon);
+            font-weight: 700;
+        }
+
+        /* EVM Option Presentation Architecture */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-glow);
+            border-radius: 6px;
+            padding: 16px 20px;
+            text-align: left;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            color: var(--text-muted);
+            position: relative;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: var(--secondary-neon);
+            color: var(--text-main);
+            transform: scale(1.01) translateX(4px);
+        }
+
+        .option-btn:disabled { cursor: not-allowed; }
+
+        /* Dynamic Neon Glow System Feedback */
+        .option-btn.correct-glow {
+            background: rgba(56, 239, 125, 0.1) !important;
+            border-color: var(--primary-neon) !important;
+            color: var(--primary-neon) !important;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .option-btn.wrong-glow {
+            background: rgba(255, 71, 87, 0.1) !important;
+            border-color: var(--danger-neon) !important;
+            color: var(--danger-neon) !important;
+            box-shadow: 0 0 15px rgba(255, 71, 87, 0.15);
+        }
+
+        .wrong-cross::after {
+            content: '✕';
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--danger-neon);
+            font-weight: bold;
+        }
+
+        /* Action Controls Buttons Layout */
+        .btn {
+            background: linear-gradient(135deg, var(--secondary-neon), var(--primary-neon));
+            color: #000;
+            border: none;
+            padding: 12px 34px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(56, 239, 125, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+        }
+
+        /* Interactive Diagnostics Log Panels */
+        .feedback-panel {
+            margin-top: 15px;
+            padding: 16px;
+            border-radius: 6px;
+            text-align: left;
+            font-size: 0.92rem;
+            line-height: 1.6;
+            animation: terminalReveal 0.3s ease-out;
+        }
+
+        .feedback-panel.retry { 
+            background: rgba(255, 159, 67, 0.1); 
+            color: var(--accent-saffron); 
+            border: 1px solid rgba(255, 159, 67, 0.25); 
+        }
+        .feedback-panel.explanation { 
+            background: rgba(79, 172, 254, 0.08); 
+            color: var(--text-main); 
+            border: 1px solid rgba(79, 172, 254, 0.2); 
+        }
+
+        /* Cyber Holographic Hologram Confetti Particle */
+        .hologram-confetti {
+            position: absolute;
+            font-size: 24px;
+            pointer-events: none;
+            animation: ejectHologram 0.95s cubic-bezier(0.08, 0.8, 0.2, 1) forwards;
+            z-index: 99;
+        }
+
+        @keyframes ejectHologram {
+            0% { transform: translate(0, 0) scale(1.5) rotate(0deg); opacity: 1; filter: drop-shadow(0 0 8px var(--primary-neon)); }
+            100% { transform: translate(var(--x), var(--y)) scale(0.3) rotate(360deg); opacity: 0; }
+        }
+
+        @keyframes terminalReveal {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media(max-width: 480px) {
+            .terminal-card { padding: 25px 18px; }
+            h1 { font-size: 1.45rem; }
+            .option-btn { font-size: 0.88rem; padding: 14px 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cosmic-void-container" id="cosmic-void-frame"></div>
+
+    <div id="splash-screen">
+        <img src="assets/logo.png" alt="Innovine Logo">
+        <div style="margin-top: 15px; color: var(--text-muted); font-size: 0.8rem; font-weight: 700; letter-spacing: 2px;">POWERED BY INNOVINE</div>
+    </div>
+
+    <audio id="snd-success" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="snd-failure" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="snd-applause" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
+
+    <div class="container">
+        <div id="intro-screen" class="terminal-card hidden">
+            <div style="margin-bottom: 12px;">
+                <span class="democracy-pill">Grade 8</span>
+                <span class="democracy-pill">Civics</span>
+                <span class="democracy-pill">Electoral Process</span>
+            </div>
+            <h1>Indian Votes - Electoral System</h1>
+            <p>Access the structural architecture of the world's largest democratic franchise. Analyze constitutional laws, candidate frameworks, and independent monitoring metrics.</p>
+            
+            <div style="background: rgba(0,0,0,0.25); padding: 18px; border-radius: 6px; margin-bottom: 25px; text-align: left; font-size: 0.88rem; border-left: 4px solid var(--secondary-neon); border-right: 1px solid rgba(255,255,255,0.03);">
+                <strong style="color: var(--text-main);">🗳️ Terminal Diagnostics Manual:</strong>
+                <ul style="margin-left: 18px; margin-top: 6px; line-height: 1.5; color: var(--text-muted);">
+                    <li><strong>45-Second Framework:</strong> Static system sync loop allocated per diagnostic challenge.</li>
+                    <li><strong>Resilience Logic:</strong> Erroneous routes provide 1 single automatic recalculation lane.</li>
+                    <li><strong>Functional Pipelines:</strong> Flowcharts, lists, and structured matrix configurations integrated cleanly.</li>
+                </ul>
+            </div>
+            <button class="btn" onclick="engageElectoralSimulation()">Initialize Core Terminal</button>
+        </div>
+
+        <div id="quiz-box" class="terminal-card hidden">
+            <div class="quiz-header">
+                <div>Metric Vector: <span id="lbl-curr">1</span>/<span id="lbl-total">15</span></div>
+                <div class="timer-box">⏱️ <span id="lbl-clock">45</span>s</div>
+                <div class="score-box">🗳️ Sync: <span id="lbl-score">0</span></div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-indicator"></div>
+            </div>
+
+            <div class="question-text" id="slot-question-content"></div>
+            <div id="slot-custom-visuals"></div>
+            <div class="options-grid" id="slot-options-container"></div>
+
+            <div id="feedback-log-panel" class="feedback-panel hidden"></div>
+
+            <div style="text-align: right; margin-top: 15px;">
+                <button id="forward-step-btn" class="btn hidden" onclick="advanceNextRecord()">Next Record ➔</button>
+            </div>
+        </div>
+
+        <div id="result-screen" class="terminal-card hidden">
+            <h2>Electoral Synchronization Concluded</h2>
+            <div style="font-size: 4.5rem; margin: 15px 0; color: var(--primary-neon);" id="outro-hologram">🗳️</div>
+            <p style="font-size: 1.15rem; font-weight: 600; color: var(--text-main);">Democratic Index Rating: <span id="final-score-val">0</span> / <span id="final-total-val">15</span></p>
+            <p id="outro-terminal-critique" style="margin-bottom: 25px; padding: 0 10px;"></p>
+            <button class="btn" onclick="restartElectoralSimulation()">Re-initialize System</button>
+        </div>
+    </div>
+
+    <script>
+        // Structured Comprehensive Array Dataset Containing All 15 Questions
+        const electoralDataset = [
+            {
+                q: "A village in Rajasthan is preparing for the upcoming Lok Sabha elections. During a community meeting, some villagers suggest that only educated people should be allowed to vote because they can make better decisions. Others disagree and argue that every adult citizen has an equal right to vote regardless of education, income, religion, or occupation. Which constitutional principle best supports the second group's opinion?",
+                options: [
+                    "Wealthier citizens should have greater voting power because they pay more taxes.",
+                    "Only citizens with government jobs should participate in elections.",
+                    "Voting rights should be based on educational qualifications.",
+                    "Every adult citizen who meets the legal age requirement has an equal right to vote under Universal Adult Franchise."
+                ],
+                answer: 3,
+                exp: "Universal Adult Franchise establishes that equality is basic to democracy—guaranteeing every citizen above 18 the right to one vote, with no systemic discrimination."
+            },
+            {
+                q: "Read the following case carefully. Meera has recently turned 18 years old. She visits the Election Commission office to register as a voter. However, she has shifted to a new city for higher studies and is unsure whether she should register there or continue using her previous address. Which institution is primarily responsible for helping eligible citizens register as voters and preparing accurate electoral rolls?",
+                options: [
+                    "Supreme Court of India",
+                    "Election Commission of India",
+                    "Ministry of Education",
+                    "Finance Commission"
+                ],
+                answer: 1,
+                exp: "The Election Commission of India is the sovereign body that continuously updates the official voter rolls to include new 18-year-old citizens and manage address changes."
+            },
+            {
+                q: "A teacher explains that India conducts elections regularly to ensure that governments remain accountable to the people. During a classroom discussion, one student asks why elections are considered an essential feature of democracy rather than simply a political event. Which response best answers the student's question?",
+                options: [
+                    "Elections allow only political leaders to decide who should govern.",
+                    "Elections ensure that governments remain answerable to citizens and provide people with the opportunity to choose or replace their representatives peacefully.",
+                    "Elections are conducted mainly to increase government revenue.",
+                    "Elections are organised only to appoint judges and civil servants."
+                ],
+                answer: 1,
+                exp: "Elections act as a primary civic checkpoint, offering voters a peaceful, institutional method to voice approval or completely replace their representatives."
+            },
+            {
+                q: "Read the following situation. During an election campaign, a candidate distributes expensive gifts to voters and promises money in return for votes. Another candidate focuses only on public meetings, discussions, and explaining future development plans. According to the Model Code of Conduct and the principles of free and fair elections, which candidate is following appropriate democratic practices?",
+                options: [
+                    "The candidate distributing gifts because it attracts more voters.",
+                    "Both candidates because every campaign method is acceptable.",
+                    "Neither candidate because campaigning is not allowed.",
+                    "The candidate who explains policies without influencing voters through gifts or money."
+                ],
+                answer: 3,
+                exp: "The Model Code of Conduct expressly forbids bribery, threats, or distribution of items, ensuring that choices are free of financial corruption."
+            },
+            {
+                q: "A group of students is studying the responsibilities of the Election Commission of India. They prepare the following list:",
+                list: [
+                    "Preparing electoral rolls",
+                    "Conducting free and fair elections",
+                    "Monitoring election expenditure",
+                    "Declaring election results"
+                ],
+                options: [
+                    "The Election Commission plays an important role in ensuring that elections remain transparent and impartial.",
+                    "The Election Commission functions only after elections are completed.",
+                    "The Election Commission prepares the Union Budget every year.",
+                    "The Election Commission appoints the Prime Minister directly."
+                ],
+                answer: 0,
+                exp: "By tracking variables from register setup to counting configurations, the Election Commission protects impartiality throughout the entire election process."
+            },
+            {
+                q: "A first-time voter notices that election officials verify every voter's identity before allowing them to cast their vote. Although the process takes extra time, the officials insist on following the procedure carefully. Why is this verification important?",
+                options: [
+                    "It increases the total number of votes cast.",
+                    "It helps prevent impersonation and ensures that each eligible voter votes only once.",
+                    "It allows voters to change the election results.",
+                    "It helps political parties identify their supporters."
+                ],
+                answer: 1,
+                exp: "Identity verification processes stop illegal proxy voting, matching documentation against local registers to verify one legitimate vote per individual."
+            },
+            {
+                q: "Read the case carefully. After the election results are announced, one political party wins only 220 seats in the Lok Sabha, while another party wins 60 seats. Several smaller parties decide to support the first party so that it can form the government. Which democratic principle is illustrated in this situation?",
+                options: [
+                    "A government can be formed when a party or coalition secures the required majority in the legislature.",
+                    "Every political party automatically becomes part of the government.",
+                    "Only the President decides which party should rule, regardless of election results.",
+                    "Political parties cannot work together after elections."
+                ],
+                answer: 0,
+                exp: "When single platforms fail to clear the legislative majority line, allied groups can link structural numbers together to build a functional coalition government."
+            },
+            {
+                q: "Based on the table, which statement is most appropriate?",
+                table: [
+                    ["Election Activity", "Institution Responsible"],
+                    ["Preparing voter lists", "Election Commission of India"],
+                    ["Conducting polling", "Election Commission of India"],
+                    ["Counting votes", "Election Commission of India"],
+                    ["Declaring official results", "Election Commission of India"]
+                ],
+                options: [
+                    "Different ministries conduct different stages of elections.",
+                    "Political parties conduct polling independently.",
+                    "The Election Commission supervises every major stage of the electoral process to ensure fairness.",
+                    "Parliament conducts elections directly."
+                ],
+                answer: 2,
+                exp: "The systematic layout illustrates that a single independent body handles the entire sequence of events, ensuring structural security and preventing interference from reigning political groups."
+            },
+            {
+                q: "During an election campaign, a television channel invites candidates from different political parties to discuss their ideas on employment, education, healthcare, and environmental protection. Citizens watch the debate before deciding whom to support. What is the greatest advantage of such discussions in a democracy?",
+                options: [
+                    "They help voters compare policies and make informed decisions before voting.",
+                    "They allow candidates to avoid answering public questions.",
+                    "They replace the need for elections.",
+                    "They determine election results before polling takes place."
+                ],
+                answer: 0,
+                exp: "Public media discussions enhance transparency, allowing people to look past rhetoric and evaluate specific policy plans side by side."
+            },
+            {
+                q: "A student says, 'An independent Election Commission is necessary because the government should not control every stage of the election process.' Why is this statement correct?",
+                options: [
+                    "The Election Commission functions independently to conduct free and fair elections without political interference.",
+                    "The Election Commission works only during emergencies.",
+                    "Elections can be conducted fairly only by political parties.",
+                    "Governments are not allowed to participate in elections."
+                ],
+                answer: 0,
+                exp: "If the ruling party controlled election management, impartiality would break down. Separation from executive power keeps the system trustworthy and fair."
+            },
+            {
+                q: "Read the following situation. Two neighbouring villages have different voting percentages during an election. In Village X, almost every eligible voter casts a vote after participating in awareness campaigns organised by teachers and volunteers. In Village Y, many eligible voters stay at home because they believe that one vote cannot make a difference. Which conclusion best reflects the importance of voting?",
+                options: [
+                    "Elections remain valid only if every citizen votes.",
+                    "Individual votes have little impact on democratic governance.",
+                    "Greater voter participation strengthens representative democracy by reflecting the people's collective choice.",
+                    "Only educated citizens should participate in elections."
+                ],
+                answer: 2,
+                exp: "High voter turnouts ensure that elected assemblies closely mirror the public's actual choices, making the democratic system more stable and representative."
+            },
+            {
+                q: "During a mock election in school, students notice that the ballot boxes are sealed immediately after voting ends and are opened only during the counting process in the presence of officials and observers. What democratic value is best reflected through this procedure?",
+                options: [
+                    "Maintaining transparency and protecting the integrity of the voting process.",
+                    "Allowing teachers to change the results later.",
+                    "Giving extra votes to absent students.",
+                    "Preventing students from participating in future elections."
+                ],
+                answer: 0,
+                exp: "Sealing ballot units right away creates a clear audit trail that prevents tampering, building public confidence in the final reported counts."
+            },
+            {
+                q: "Read the following case. A candidate spends far more money on campaigning than the legal limit prescribed by election authorities. During an inquiry, the Election Commission investigates the matter and issues notices seeking an explanation. Why does the Election Commission monitor election expenditure?",
+                options: [
+                    "To ensure that candidates with greater wealth always win elections.",
+                    "To decide which political party should contest elections.",
+                    "To collect campaign funds for the government.",
+                    "To prevent unfair electoral practices and provide equal opportunities to all contestants."
+                ],
+                answer: 3,
+                exp: "Placing legal caps on campaign spending levels prevents wealthy groups from dominating the narrative, keeping the contest fair for all candidates."
+            },
+            {
+                q: "A group of students prepares a flowchart showing the stages of an election:",
+                flowchart: ["Announcement of Election", "Election Campaign", "Polling", "Counting of Votes", "Declaration of Results"],
+                options: [
+                    "It ensures that elections are conducted in an organised, transparent, and systematic manner.",
+                    "It allows political parties to change voter lists after polling.",
+                    "It removes the need for counting votes.",
+                    "It allows candidates to declare themselves winners before polling begins."
+                ],
+                answer: 0,
+                exp: "Following a fixed sequence of phases prevents procedural chaos and ensures that every step can be systematically tracked and verified."
+            },
+            {
+                q: "A social science teacher asks students to imagine a country where elections are never held and citizens have no opportunity to choose or replace their representatives. The teacher then asks them to compare this with the Indian democratic system. Which inference is most appropriate?",
+                options: [
+                    "Elections are important because they give citizens the constitutional power to participate in government by choosing their representatives.",
+                    "Elections are conducted only to increase the popularity of political parties.",
+                    "Democracies function effectively even if citizens are never allowed to vote.",
+                    "Governments should remain in power permanently once elected."
+                ],
+                answer: 0,
+                exp: "Regular elections are the primary way citizens exercise their constitutional power, keeping government authority directly tied to the consent of the people."
+            }
+        ];
+
+        // Core Terminal State Parameters
+        let runningRecordIdx = 0;
+        let runningAccumulatedScore = 0;
+        let countdownTimerSeconds = 45;
+        let trackingIntervalReference = null;
+        let choiceFaultRegistry = 0;
+        const baselineTimeValue = 45;
+
+        // Dom System Initialization Hook
+        window.addEventListener('DOMContentLoaded', () => {
+            initializeStardustEffect();
+            // Secure exact 5 second branding splash window limit
+            setTimeout(() => {
+                const splashPanel = document.getElementById('splash-screen');
+                splashPanel.style.opacity = 0;
+                setTimeout(() => splashPanel.classList.add('hidden'), 500);
+                document.getElementById('intro-screen').classList.remove('hidden');
+            }, 5000);
+        });
+
+        function initializeStardustEffect() {
+            const frame = document.getElementById('cosmic-void-frame');
+            for(let i=0; i<20; i++) {
+                const star = document.createElement('div');
+                star.classList.add('cyber-stardust');
+                const dimension = Math.random() * 3 + 1;
+                star.style.width = `${dimension}px`;
+                star.style.height = `${dimension}px`;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.animationDelay = `${Math.random() * 5}s`;
+                frame.appendChild(star);
+            }
+        }
+
+        function engageElectoralSimulation() {
+            document.getElementById('intro-screen').classList.add('hidden');
+            document.getElementById('quiz-box').classList.remove('hidden');
+            runningRecordIdx = 0;
+            runningAccumulatedScore = 0;
+            document.getElementById('lbl-total').textContent = electoralDataset.length;
+            renderTerminalDocument();
+        }
+
+        // Interface Assembly Engine
+        function renderTerminalDocument() {
+            clearInterval(trackingIntervalReference);
+            choiceFaultRegistry = 0;
+            countdownTimerSeconds = baselineTimeValue;
+
+            document.getElementById('lbl-clock').textContent = countdownTimerSeconds;
+            document.getElementById('forward-step-btn').classList.add('hidden');
+            document.getElementById('feedback-log-panel').classList.add('hidden');
+
+            const activeItem = electoralDataset[runningRecordIdx];
+
+            // Synchronize HUD Panel
+            document.getElementById('lbl-curr').textContent = runningRecordIdx + 1;
+            document.getElementById('lbl-score').textContent = runningAccumulatedScore;
+
+            const computedPercentage = (runningRecordIdx / electoralDataset.length) * 100;
+            document.getElementById('progress-indicator').style.width = `${computedPercentage}%`;
+            document.getElementById('slot-question-content').textContent = activeItem.q;
+
+            // Conditional Multi-Visual Container Sub-Engine
+            const visualAnchor = document.getElementById('slot-custom-visuals');
+            visualAnchor.innerHTML = '';
+
+            // 1. Render List if present
+            if(activeItem.list) {
+                const listEl = document.createElement('ul');
+                listEl.classList.add('cyber-bullet-list');
+                activeItem.list.forEach(txt => {
+                    const node = document.createElement('li');
+                    node.textContent = txt;
+                    listEl.appendChild(node);
+                });
+                visualAnchor.appendChild(listEl);
+            }
+
+            // 2. Render Matrix Table if present
+            if(activeItem.table) {
+                const tableEl = document.createElement('table');
+                tableEl.classList.add('matrix-data-table');
+                activeItem.table.forEach((row, rIdx) => {
+                    const rowWrap = document.createElement('tr');
+                    row.forEach(cellText => {
+                        const cellMarkup = rIdx === 0 ? 'th' : 'td';
+                        const cellNode = document.createElement(cellMarkup);
+                        cellNode.textContent = cellText;
+                        rowWrap.appendChild(cellNode);
+                    });
+                    tableEl.appendChild(rowWrap);
+                });
+                visualAnchor.appendChild(tableEl);
+            }
+
+            // 3. Render Flowchart if present
+            if(activeItem.flowchart) {
+                const flowWrap = document.createElement('div');
+                flowWrap.classList.add('cyber-flowchart');
+                activeItem.flowchart.forEach((nodeText, idx) => {
+                    const node = document.createElement('div');
+                    node.classList.add('flow-node');
+                    node.textContent = nodeText;
+                    flowWrap.appendChild(node);
+
+                    if(idx < activeItem.flowchart.length - 1) {
+                        const arrow = document.createElement('span');
+                        arrow.classList.add('flow-arrow');
+                        arrow.textContent = '➔';
+                        flowWrap.appendChild(arrow);
+                    }
+                });
+                visualAnchor.appendChild(flowWrap);
+            }
+
+            // Options Interface Generation Block
+            const optionsAnchor = document.getElementById('slot-options-container');
+            optionsAnchor.innerHTML = '';
+
+            activeItem.options.forEach((optionString, idx) => {
+                const evmBtn = document.createElement('button');
+                evmBtn.classList.add('option-btn');
+                evmBtn.textContent = optionString;
+                evmBtn.setAttribute('data-index', idx);
+                evmBtn.onclick = () => evaluateTerminalInput(idx, evmBtn);
+                optionsAnchor.appendChild(evmBtn);
+            });
+
+            // Timer Clock Injection loop
+            trackingIntervalReference = setInterval(() => {
+                countdownTimerSeconds--;
+                document.getElementById('lbl-clock').textContent = countdownTimerSeconds;
+                if(countdownTimerSeconds <= 0) {
+                    clearInterval(trackingIntervalReference);
+                    executeTerminalTimeout();
+                }
+            }, 1000);
+        }
+
+        // Analytical Verification Routing Engine
+        function evaluateTerminalInput(userSelectionId, triggeredButtonNode) {
+            const activeItem = electoralDataset[runningRecordIdx];
+            const logPanel = document.getElementById('feedback-log-panel');
+            const optionsWrapperNode = document.getElementById('slot-options-container');
+
+            if(userSelectionId === activeItem.answer) {
+                // Perfect Sync Sequence Path
+                clearInterval(trackingIntervalReference);
+                triggeredButtonNode.classList.add('correct-glow');
+                disableAllGridInputs();
+                emitHologramParticles(triggeredButtonNode);
+
+                if(choiceFaultRegistry === 0) {
+                    runningAccumulatedScore++;
+                    document.getElementById('lbl-score').textContent = runningAccumulatedScore;
+                }
+
+                document.getElementById('snd-success').play().catch(()=>{});
+
+                logPanel.className = "feedback-panel explanation";
+                logPanel.innerHTML = `<strong>✨ Voter Registry Authenticated:</strong> ${activeItem.exp}`;
+                logPanel.classList.remove('hidden');
+                document.getElementById('forward-step-btn').classList.remove('hidden');
+            } else {
+                // Recalculation Path Error
+                choiceFaultRegistry++;
+                document.getElementById('snd-failure').play().catch(()=>{});
+                triggeredButtonNode.classList.add('wrong-glow', 'wrong-cross');
+                triggeredButtonNode.disabled = true;
+
+                if(choiceFaultRegistry === 1) {
+                    logPanel.className = "feedback-panel retry";
+                    logPanel.innerHTML = "<strong>⚠️ Signal Discrepancy:</strong> Selected policy interpretation conflicts with core constitutional parameters. Reroute vote choice. (1 attempt remaining)";
+                    logPanel.classList.remove('hidden');
+                } else {
+                    // Lock input terminal completely
+                    clearInterval(trackingIntervalReference);
+                    disableAllGridInputs();
+
+                    const directCorrectBtn = optionsWrapperNode.querySelector(`[data-index='${activeItem.answer}']`);
+                    if(directCorrectBtn) directCorrectBtn.classList.add('correct-glow');
+
+                    logPanel.className = "feedback-panel explanation";
+                    logPanel.innerHTML = `<strong>💡 System Log:</strong> ${activeItem.exp}`;
+                    logPanel.classList.remove('hidden');
+                    document.getElementById('forward-step-btn').classList.remove('hidden');
+                }
+            }
+        }
+
+        function executeTerminalTimeout() {
+            disableAllGridInputs();
+            const activeItem = electoralDataset[runningRecordIdx];
+            const optionsWrapperNode = document.getElementById('slot-options-container');
+            const logPanel = document.getElementById('feedback-log-panel');
+
+            const directCorrectBtn = optionsWrapperNode.querySelector(`[data-index='${activeItem.answer}']`);
+            if(directCorrectBtn) directCorrectBtn.classList.add('correct-glow');
+
+            logPanel.className = "feedback-panel explanation";
+            logPanel.innerHTML = `<strong>⏰ Connection Timeout:</strong> Polling terminal window locked. ${activeItem.exp}`;
+            logPanel.classList.remove('hidden');
+            document.getElementById('forward-step-btn').classList.remove('hidden');
+        }
+
+        function disableAllGridInputs() {
+            const nodes = document.querySelectorAll('.option-btn');
+            nodes.forEach(el => el.disabled = true);
+        }
+
+        // Cyber Emitter Particle Scatter System
+        function emitHologramParticles(elementNode) {
+            const coordinates = elementNode.getBoundingClientRect();
+            const startX = coordinates.left + coordinates.width / 2;
+            const startY = coordinates.top + coordinates.height / 2;
+
+            for (let i = 0; i < 15; i++) {
+                const singleConfetti = document.createElement('div');
+                singleConfetti.classList.add('hologram-confetti');
+                // Alternates between finger mark stamp and EVM machine emojis
+                singleConfetti.innerHTML = i % 2 === 0 ? '☝️' : '🗳️';
+                singleConfetti.style.left = `${startX}px`;
+                singleConfetti.style.top = `${startY}px`;
+
+                const trajectoryAngle = Math.random() * Math.PI * 2;
+                const distanceMagnitude = Math.random() * 95 + 55;
+                singleConfetti.style.setProperty('--x', `${Math.cos(trajectoryAngle) * distanceMagnitude}px`);
+                singleConfetti.style.setProperty('--y', `${Math.sin(trajectoryAngle) * distanceMagnitude}px`);
+
+                document.body.appendChild(singleConfetti);
+                setTimeout(() => singleConfetti.remove(), 950);
+            }
+        }
+
+        function advanceNextRecord() {
+            runningRecordIdx++;
+            if(runningRecordIdx < electoralDataset.length) {
+                renderTerminalDocument();
+            } else {
+                presentFinalMetricsOutro();
+            }
+        }
+
+        // Summary Calculations Dashboard System Outro Panel
+        function presentFinalMetricsOutro() {
+            document.getElementById('quiz-box').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+
+            document.getElementById('final-score-val').textContent = runningAccumulatedScore;
+            document.getElementById('final-total-val').textContent = electoralDataset.length;
+
+            const assessmentNarrativeNode = document.getElementById('outro-terminal-critique');
+            const visualStampNode = document.getElementById('outro-hologram');
+            const validationRatio = runningAccumulatedScore / electoralDataset.length;
+
+            if(validationRatio >= 0.8) {
+                document.getElementById('snd-applause').play().catch(()=>{});
+                visualStampNode.textContent = "🇮🇳";
+                assessmentNarrativeNode.textContent = "Synchronization optimized! You demonstrate an exceptional understanding of sovereign constitutional franchises, voter verification systems, and Election Commission checks.";
+            } else if(validationRatio >= 0.5) {
+                visualStampNode.textContent = "🗳️";
+                assessmentNarrativeNode.textContent = "Data alignment verified with marginal drift. Reviewing the exact operational limits of the Model Code of Conduct will maximize your electoral command proficiency.";
+            } else {
+                visualStampNode.textContent = "🔌";
+                assessmentNarrativeNode.textContent = "Terminal verification failure. Re-evaluate the underlying rules governing Universal Adult Franchise, voter roll indexing, and expenditure caps.";
+            }
+        }
+
+        function restartElectoralSimulation() {
+            document.getElementById('result-screen').classList.add('hidden');
+            engageElectoralSimulation();
+        }
+    </script>
+</body>
+</html>
