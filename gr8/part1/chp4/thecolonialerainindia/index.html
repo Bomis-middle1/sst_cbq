@@ -1,1 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Colonial Era in India - Interactive Module</title>
+    <style>
+        :root {
+            --primary: #1a365d; /* Royal Indigo Navy */
+            --primary-dark: #0f2340;
+            --secondary: #9b1c1c; /* Imperial Crimson Scarlet */
+            --success: #1e7e34;
+            --danger: #9b1c1c;
+            --background: #fbf8f3; /* Aged Tea-Stained Parchment */
+            --card-bg: #ffffff;
+            --text: #2c3539;
+            --text-light: #5a6b7c;
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Baskerville, Georgia, serif;
+        }
+
+        body {
+            background: var(--background);
+            background-image: radial-gradient(rgba(26, 54, 93, 0.05) 1.5px, transparent 0);
+            background-size: 32px 32px;
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Ambient Historical Document Background Overlays */
+        .ambient-parchment-lines {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .parchment-sparks {
+            position: absolute;
+            background: rgba(155, 28, 28, 0.04);
+            border-radius: 50%;
+            animation: smokeDrift 13s infinite linear;
+        }
+
+        @keyframes smokeDrift {
+            0% { transform: translateY(105vh) scale(0.6) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.6; }
+            80% { opacity: 0.6; }
+            100% { transform: translateY(-5vh) scale(1.4) translateX(40px) rotate(180deg); opacity: 0; }
+        }
+
+        /* Layout Framework Containers */
+        .container {
+            width: 100%;
+            max-width: 680px;
+            padding: 20px;
+            z-index: 10;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 12px 30px rgba(26, 54, 93, 0.06);
+            padding: 40px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #e2d9cb;
+            border-top: 6px solid var(--primary);
+            border-left: 4px solid var(--secondary);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* 5-Seconds Performance Brand Splash Layer */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease;
+        }
+
+        #splash-screen img {
+            max-width: 200px;
+            height: auto;
+            animation: royal-pulse 2.2s infinite ease-in-out;
+        }
+
+        @keyframes royal-pulse {
+            0% { transform: scale(0.97); opacity: 0.9; }
+            50% { transform: scale(1.03); opacity: 1; }
+            100% { transform: scale(0.97); opacity: 0.9; }
+        }
+
+        /* Typography & Document Tags */
+        h1 { color: var(--primary); margin-bottom: 12px; font-size: 1.65rem; font-weight: 700; letter-spacing: -0.3px; }
+        h2 { color: var(--secondary); margin-bottom: 18px; font-size: 1.3rem; }
+        p { color: var(--text-light); line-height: 1.65; margin-bottom: 22px; font-size: 0.96rem; }
+
+        .colonial-tag {
+            display: inline-block;
+            background: #f2ebe1;
+            color: var(--primary-dark);
+            padding: 5px 14px;
+            border-radius: 2px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid #dbcfbd;
+        }
+
+        /* Metric Trackers Headers */
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0e6d6;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .timer-box {
+            background: #fdf2f2;
+            color: var(--secondary);
+            padding: 5px 14px;
+            border-radius: 2px;
+            border: 1px solid #f5dadb;
+        }
+
+        .score-box {
+            background: #eef4fa;
+            color: var(--primary);
+            padding: 5px 14px;
+            border-radius: 2px;
+            border: 1px solid #d4e3f1;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 4px;
+            background: #ebdcc5;
+            border-radius: 2px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        /* Question Layout Blocks */
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-align: left;
+            margin-bottom: 22px;
+            color: var(--primary-dark);
+            line-height: 1.55;
+        }
+
+        /* Dynamic Policy Impact Data Table */
+        .policy-matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+            font-size: 0.88rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            background: #fdfdfd;
+        }
+        .policy-matrix-table th, .policy-matrix-table td {
+            border: 1px solid #dcd1be;
+            padding: 11px 13px;
+            text-align: left;
+        }
+        .policy-matrix-table th {
+            background-color: #f5ede0;
+            color: var(--primary-dark);
+            font-weight: 700;
+        }
+
+        /* Options Presentation Grids */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            background: #fdfdfc;
+            border: 1px solid #cfc3b1;
+            border-radius: 4px;
+            padding: 15px 20px;
+            text-align: left;
+            font-size: 0.94rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text);
+            position: relative;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background: #fcf8f0;
+            border-color: var(--primary);
+            transform: translateX(3px);
+        }
+
+        .option-btn:disabled { cursor: not-allowed; }
+
+        /* Review Overlay Graphics */
+        .option-btn.correct-glow {
+            background: #ebf5ee !important;
+            border-color: var(--success) !important;
+            color: #1b5e20 !important;
+        }
+
+        .option-btn.wrong-glow {
+            background: #faebeb !important;
+            border-color: var(--danger) !important;
+            color: #721c24 !important;
+        }
+
+        .wrong-cross::after {
+            content: '✕';
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--danger);
+            font-weight: bold;
+        }
+
+        /* Imperial Command Action Buttons */
+        .btn {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 12px 32px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 10px rgba(26, 54, 93, 0.15);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        /* Analytical Explanatory Dialogue Logs */
+        .feedback-panel {
+            margin-top: 15px;
+            padding: 16px;
+            border-radius: 4px;
+            text-align: left;
+            font-size: 0.9rem;
+            line-height: 1.55;
+            animation: documentReveal 0.25s ease-out;
+        }
+
+        .feedback-panel.retry { background: #fcf8e3; color: #8a6d3b; border: 1px solid #faebcc; }
+        .feedback-panel.explanation { background: #f2f5f8; color: var(--primary-dark); border: 1px solid #d2dde6; }
+
+        /* Custom Wax Seal Theme Particle Scatter Emitter */
+        .seal-confetti {
+            position: absolute;
+            font-size: 24px;
+            pointer-events: none;
+            animation: blastSeal 0.9s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+            z-index: 99;
+        }
+
+        @keyframes blastSeal {
+            0% { transform: translate(0, 0) scale(1.3) rotate(0deg); opacity: 1; }
+            100% { transform: translate(var(--x), var(--y)) scale(0.4) rotate(270deg); opacity: 0; }
+        }
+
+        @keyframes documentReveal {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media(max-width: 480px) {
+            .card { padding: 25px 20px; }
+            h1 { font-size: 1.4rem; }
+            .option-btn { font-size: 0.88rem; padding: 12px 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-parchment-lines" id="parchment-frame"></div>
+
+    <div id="splash-screen">
+        <img src="assets/logo.png" alt="Innovine Logo">
+        <div style="margin-top: 15px; color: var(--text-light); font-size: 0.8rem; font-weight: 700; letter-spacing: 2px;">POWERED BY INNOVINE</div>
+    </div>
+
+    <audio id="snd-success" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="snd-failure" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="snd-applause" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
+
+    <div class="container">
+        <div id="intro-screen" class="card hidden">
+            <div style="margin-bottom: 12px;">
+                <span class="colonial-tag">Grade 8</span>
+                <span class="colonial-tag">Part 1: Chapter 4</span>
+                <span class="colonial-tag">Modern History</span>
+            </div>
+            <h1>The Colonial Era in India</h1>
+            <p>Analyze the political strategies, land revenue structures, industrial transitions, and social developments that defined India under British East India Company and Imperial administration.</p>
+            
+            <div style="background: #fdfbf7; padding: 16px; border-radius: 4px; margin-bottom: 25px; text-align: left; font-size: 0.88rem; border-left: 4px solid var(--primary); border-right: 1px solid #ebdcc5; border-top: 1px solid #ebdcc5; border-bottom: 1px solid #ebdcc5;">
+                <strong style="color: var(--primary-dark);">📜 Dispatch Instructions:</strong>
+                <ul style="margin-left: 18px; margin-top: 6px; line-height: 1.5; color: var(--text-light);">
+                    <li><strong>45-Second Interval:</strong> Fixed countdown timeline mapped per query step.</li>
+                    <li><strong>Strategic Resilience:</strong> Grants 1 automatic backup choice upon initial selection mismatch.</li>
+                    <li><strong>Analytical Breakdown:</strong> Evaluates data validation pipelines, tables, and case text.</li>
+                </ul>
+            </div>
+            <button class="btn" onclick="initializeColonialQuiz()">Examine Archives</button>
+        </div>
+
+        <div id="quiz-box" class="card hidden">
+            <div class="quiz-header">
+                <div>Document: <span id="lbl-curr">1</span>/<span id="lbl-total">12</span></div>
+                <div class="timer-box">⏱️ <span id="lbl-clock">45</span>s</div>
+                <div class="score-box">📜 Score: <span id="lbl-score">0</span></div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-indicator"></div>
+            </div>
+
+            <div class="question-text" id="slot-question-content"></div>
+            <div id="slot-matrix-table"></div>
+            <div class="options-grid" id="slot-options-container"></div>
+
+            <div id="feedback-log-panel" class="feedback-panel hidden"></div>
+
+            <div style="text-align: right; margin-top: 15px;">
+                <button id="forward-step-btn" class="btn hidden" onclick="advanceNextDocument()">Next Document ➔</button>
+            </div>
+        </div>
+
+        <div id="result-screen" class="card hidden">
+            <h2>Archival Synthesis Complete</h2>
+            <div style="font-size: 4.5rem; margin: 15px 0; color: var(--primary);" id="outro-stamp">📜</div>
+            <p style="font-size: 1.15rem; font-weight: 600; color: var(--primary-dark);">Historical Interpretation Score: <span id="final-score-val">0</span> / <span id="final-total-val">12</span></p>
+            <p id="outro-analytical-critique" style="margin-bottom: 25px; padding: 0 12px;"></p>
+            <button class="btn" onclick="restartColonialSimulation()">Re-examine Archives</button>
+        </div>
+    </div>
+
+    <script>
+        // Structured Comprehensive Array Dataset
+        const colonialDataset = [
+            {
+                q: "During a school exhibition on the Colonial Era, a group of students prepared a model showing how the British East India Company gradually expanded its control in India. One student remarked that the Company initially arrived only as a trading organisation but later began interfering in the political affairs of Indian kingdoms. Which factor best explains how the Company was able to establish its political dominance?",
+                options: [
+                    "It gradually combined military strength, diplomacy, and political agreements to expand its influence.",
+                    "It received complete control of India directly from the Mughal emperors.",
+                    "Indian rulers voluntarily united under the Company's leadership.",
+                    "It stopped all commercial activities immediately after arriving in India."
+                ],
+                answer: 0,
+                exp: "The East India Company successfully established dominance through a complex mixture of direct military expeditions, strategic Subsidiary alliances, and diplomatic treaties."
+            },
+            {
+                q: "Read the following case carefully. A princely ruler died without leaving a biological heir. Although the family had adopted a successor according to Indian customs, the British refused to recognise the adoption and annexed the kingdom into their territory. Which British policy is reflected in this situation?",
+                options: [
+                    "Permanent Settlement",
+                    "Subsidiary Alliance",
+                    "Doctrine of Lapse",
+                    "Dual Government"
+                ],
+                answer: 2,
+                exp: "Introduced aggressively by Lord Dalhousie, the Doctrine of Lapse prohibited dependent states under British paramountcy from passing sovereignty to non-biological adopted heirs."
+            },
+            {
+                q: "A history teacher asks students why many Indian rulers accepted the Subsidiary Alliance even though it reduced their independence. Which explanation best answers the question?",
+                options: [
+                    "It allowed rulers to expand their kingdoms without any conditions.",
+                    "The rulers received British military protection but had to accept British control over important political decisions.",
+                    "It encouraged Indian rulers to form one united empire.",
+                    "It removed all taxes collected by local rulers."
+                ],
+                answer: 1,
+                exp: "The Subsidiary Alliance bartered institutional military protection for sovereign freedom, forcing kingdoms to maintain a British contingent and surrender foreign policy choices."
+            },
+            {
+                q: "A village that once produced handwoven cotton cloth begins facing economic hardship after large quantities of inexpensive machine-made textiles are imported from Britain. Many skilled weavers lose their livelihood and are forced to seek other occupations. Which conclusion can be drawn from this situation?",
+                options: [
+                    "British industrial goods helped Indian handicrafts expand.",
+                    "Indian artisans became wealthier because of imported goods.",
+                    "Imported machine-made products reduced the demand for traditional Indian handicrafts.",
+                    "Textile production completely stopped throughout Britain."
+                ],
+                answer: 2,
+                exp: "The flooding of Indian markets with cheap, duty-free industrial goods from British mills led to de-industrialization, undercutting traditional manual artisanal weavers."
+            },
+            {
+                q: "Read the following situation. A British official introduces a system under which farmers must pay a fixed amount of land revenue regardless of whether the harvest is good or poor. During years of drought, many farmers struggle to pay taxes and fall into debt. What is the most likely impact of such a revenue system?",
+                options: [
+                    "Farmers would experience greater financial difficulties during poor harvests.",
+                    "Agricultural production would automatically double.",
+                    "The government would stop collecting all taxes.",
+                    "Every farmer would become a landowner."
+                ],
+                answer: 0,
+                exp: "Inflexible colonial agrarian revenue metrics forced farmers to borrow from local moneylenders, creating high cycles of permanent rural indebtedness during natural crop failures."
+            },
+            {
+                q: "A student preparing a presentation says, 'Several British policies created dissatisfaction among different sections of Indian society before 1857.' Which of the following best supports the student's statement?",
+                options: [
+                    "British policies increased complete political freedom for Indian rulers.",
+                    "Land revenue policies, annexations, and social as well as military grievances together created widespread resentment.",
+                    "Only traders opposed British rule.",
+                    "Indian rulers and common people fully supported every British decision."
+                ],
+                answer: 1,
+                exp: "The Revolt of 1857 was caused by a buildup of multiple long-term grievances—including forced territory annexations, high economic tax rates, and perceived cultural interference."
+            },
+            {
+                q: "Read the following case. A group of Indian soldiers discovers that the cartridges issued for their new rifles are believed to be greased with substances offensive to their religious beliefs. Many soldiers refuse to use them despite the risk of punishment. Why did this issue become historically significant?",
+                options: [
+                    "It improved relations between the British and Indian soldiers.",
+                    "It became one of the immediate causes that triggered the Revolt of 1857.",
+                    "It encouraged the British to leave India immediately.",
+                    "It resulted in the abolition of the East India Company on the same day."
+                ],
+                answer: 1,
+                exp: "The introduction of greased paper cartridges for the new Enfield rifle offended the religious sentiments of Sepoys, serving as the immediate trigger for the widespread 1857 uprising."
+            },
+            {
+                q: "A historian observes that the Revolt of 1857 involved soldiers, local rulers, peasants, and ordinary citizens in several regions of India. Although the revolt did not succeed in ending British rule, it had long-term consequences. Which statement best explains its historical importance?",
+                options: [
+                    "It permanently ended monarchy throughout India.",
+                    "It forced Britain to grant India complete independence immediately.",
+                    "It had no influence on later political developments.",
+                    "It marked one of the earliest large-scale challenges to British rule and influenced future nationalist movements."
+                ],
+                answer: 3,
+                exp: "Despite failing to push the British out immediately, 1857 broke the illusion of company stability, sparked administrative overhauls under the Crown, and set a precedent for later nationalism."
+            },
+            {
+                q: "A museum displays portraits of social reformers such as Raja Rammohan Roy and Ishwar Chandra Vidyasagar. The exhibition explains that these reformers worked to improve society through education and by opposing harmful social practices. Which common objective did these reformers share?",
+                options: [
+                    "Strengthening social reforms and encouraging education for a more progressive society.",
+                    "Expanding British territories in India.",
+                    "Establishing new trading companies.",
+                    "Increasing land revenue collection."
+                ],
+                answer: 0,
+                exp: "Early Indian intellectual reformers focused on modern education, women's rights, and targeted legislation to strip away retrogressive societal practices."
+            },
+            {
+                q: "Based on the information given above, which conclusion is most appropriate?",
+                table: [
+                    ["British Policy", "Likely Impact"],
+                    ["Subsidiary Alliance", "Reduced the independence of Indian rulers"],
+                    ["Doctrine of Lapse", "Annexation of states without recognised natural heirs"],
+                    ["High Land Revenue", "Financial burden on many farmers"],
+                    ["Import of British Manufactured Goods", "Decline of many traditional Indian handicrafts"]
+                ],
+                options: [
+                    "Every British policy benefited all sections of Indian society equally.",
+                    "Most British policies affected different groups of Indians in political, economic, or social ways.",
+                    "British policies were introduced only for agricultural development.",
+                    "Indian rulers remained completely unaffected by British expansion."
+                ],
+                answer: 1,
+                exp: "The data configuration records deep systemic impacts, demonstrating how administrative, financial, and trade mechanisms disrupted multiple tiers of Indian society."
+            },
+            {
+                q: "Read the following case carefully. A newspaper published by Indian intellectuals criticises unfair government policies, encourages public discussion, and spreads ideas about equality, rights, and national unity. Gradually, people from different regions begin to discuss common political concerns. What role did such newspapers play during the colonial period?",
+                options: [
+                    "They encouraged people to avoid discussing public issues.",
+                    "They helped spread political awareness and strengthened nationalist thinking.",
+                    "They replaced schools as the only source of education.",
+                    "They were published only for British government officials."
+                ],
+                answer: 1,
+                exp: "The early print media served as a key platform for political education, cutting across regional divisions to foster a shared national identity and perspective."
+            },
+            {
+                q: "A student concludes, 'The Colonial Era changed India not only politically but also economically and socially.' Which example best justifies this conclusion?",
+                options: [
+                    "British rule affected administration, trade, agriculture, education, and social life, leading to long-term changes across Indian society.",
+                    "British influence was limited only to military matters.",
+                    "Economic activities remained exactly the same throughout the colonial period.",
+                    "Indian society experienced no significant changes under British rule."
+                ],
+                answer: 0,
+                exp: "Colonial consolidation completely transformed the subcontinental fabric, leaving long-lasting institutional marks on legal architectures, trade paths, and education models."
+            }
+        ];
+
+        // Global Interactive State Framework Vectors
+        let globalProgIndex = 0;
+        let cumulativeScoreCount = 0;
+        let currentTickSeconds = 45;
+        let internalTimerInstance = null;
+        let documentFaultCounter = 0;
+        const uniformLimitPerStep = 45;
+
+        // Lifecycle Hooks Setup
+        window.addEventListener('DOMContentLoaded', () => {
+            buildParchmentAesthetics();
+            // Secure exact 5 second branding splash window limit
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                splash.style.opacity = 0;
+                setTimeout(() => splash.classList.add('hidden'), 500);
+                document.getElementById('intro-screen').classList.remove('hidden');
+            }, 5000);
+        });
+
+        function buildParchmentAesthetics() {
+            const frame = document.getElementById('parchment-frame');
+            for(let i=0; i<12; i++) {
+                const element = document.createElement('div');
+                element.classList.add('parchment-sparks');
+                const scaleValue = Math.random() * 16 + 8;
+                element.style.width = `${scaleValue}px`;
+                element.style.height = `${scaleValue}px`;
+                element.style.left = `${Math.random() * 100}%`;
+                element.style.animationDelay = `${Math.random() * 7}s`;
+                element.style.animationDuration = `${Math.random() * 6 + 9}s`;
+                frame.appendChild(element);
+            }
+        }
+
+        function initializeColonialQuiz() {
+            document.getElementById('intro-screen').classList.add('hidden');
+            document.getElementById('quiz-box').classList.remove('hidden');
+            globalProgIndex = 0;
+            cumulativeScoreCount = 0;
+            document.getElementById('lbl-total').textContent = colonialDataset.length;
+            renderDocumentStep();
+        }
+
+        // Main Rendering Processing Framework
+        function renderDocumentStep() {
+            clearInterval(internalTimerInstance);
+            documentFaultCounter = 0;
+            currentTickSeconds = uniformLimitPerStep;
+
+            document.getElementById('lbl-clock').textContent = currentTickSeconds;
+            document.getElementById('forward-step-btn').classList.add('hidden');
+            document.getElementById('feedback-log-panel').classList.add('hidden');
+
+            const item = colonialDataset[globalProgIndex];
+
+            // Metrics Board Synchronization
+            document.getElementById('lbl-curr').textContent = globalProgIndex + 1;
+            document.getElementById('lbl-score').textContent = cumulativeScoreCount;
+
+            const calculationProgressPercent = (globalProgIndex / colonialDataset.length) * 100;
+            document.getElementById('progress-indicator').style.width = `${calculationProgressPercent}%`;
+            document.getElementById('slot-question-content').textContent = item.q;
+
+            // Conditional Injection of Policy Tables
+            const tableAnchor = document.getElementById('slot-matrix-table');
+            tableAnchor.innerHTML = '';
+            if(item.table) {
+                const matrixMarkupTable = document.createElement('table');
+                matrixMarkupTable.classList.add('policy-matrix-table');
+                item.table.forEach((row, standardRowIdx) => {
+                    const rowContainer = document.createElement('tr');
+                    row.forEach(contentString => {
+                        const cellTargetHeaderMarkup = standardRowIdx === 0 ? 'th' : 'td';
+                        const elementCellNode = document.createElement(cellTargetHeaderMarkup);
+                        elementCellNode.textContent = contentString;
+                        rowContainer.appendChild(elementCellNode);
+                    });
+                    matrixMarkupTable.appendChild(rowContainer);
+                });
+                tableAnchor.appendChild(matrixMarkupTable);
+            }
+
+            // Options Grid Population Matrix
+            const optionsAnchor = document.getElementById('slot-options-container');
+            optionsAnchor.innerHTML = '';
+
+            item.options.forEach((optionTxtString, selectionIdx) => {
+                const actionableBtn = document.createElement('button');
+                actionableBtn.classList.add('option-btn');
+                actionableBtn.textContent = optionTxtString;
+                actionableBtn.setAttribute('data-archive-id', selectionIdx);
+                actionableBtn.onclick = () => evaluateArchivalSelection(selectionIdx, actionableBtn);
+                optionsAnchor.appendChild(actionableBtn);
+            });
+
+            // Clock Execution Configuration
+            internalTimerInstance = setInterval(() => {
+                currentTickSeconds--;
+                document.getElementById('lbl-clock').textContent = currentTickSeconds;
+                if(currentTickSeconds <= 0) {
+                    clearInterval(internalTimerInstance);
+                    handleClockTimeout();
+                }
+            }, 1000);
+        }
+
+        // Verification Logic Mapping Engine
+        function evaluateArchivalSelection(chosenKeyId, structuralButtonElement) {
+            const item = colonialDataset[globalProgIndex];
+            const logBoxPanel = document.getElementById('feedback-log-panel');
+            const masterOptionsWrap = document.getElementById('slot-options-container');
+
+            if(chosenKeyId === item.answer) {
+                // Precise Analysis Validation Complete
+                clearInterval(internalTimerInstance);
+                structuralButtonElement.classList.add('correct-glow');
+                disableOptionsGridInputs();
+                triggerWaxSealBurst(structuralButtonElement);
+
+                if(documentFaultCounter === 0) {
+                    cumulativeScoreCount++;
+                    document.getElementById('lbl-score').textContent = cumulativeScoreCount;
+                }
+
+                document.getElementById('snd-success').play().catch(()=>{});
+
+                logBoxPanel.className = "feedback-panel explanation";
+                logBoxPanel.innerHTML = `<strong>✨ Archival Record Confirmed:</strong> ${item.exp}`;
+                logBoxPanel.classList.remove('hidden');
+                document.getElementById('forward-step-btn').classList.remove('hidden');
+            } else {
+                // Selection Mismatch Found
+                documentFaultCounter++;
+                document.getElementById('snd-failure').play().catch(()=>{});
+                structuralButtonElement.classList.add('wrong-glow', 'wrong-cross');
+                structuralButtonElement.disabled = true;
+
+                if(documentFaultCounter === 1) {
+                    // Inject Adaptive Secondary Attempt Phase
+                    logBoxPanel.className = "feedback-panel retry";
+                    logBoxPanel.innerHTML = "<strong>⚠️ Historical Contradiction:</strong> This policy interpretation misaligns with documentation. Cross-check your variables and re-examine. (1 attempt remaining)";
+                    logBoxPanel.classList.remove('hidden');
+                } else {
+                    // Maximum attempts exhausted, display correct answer
+                    clearInterval(internalTimerInstance);
+                    disableOptionsGridInputs();
+
+                    const validatedCorrectNode = masterOptionsWrap.querySelector(`[data-archive-id='${item.answer}']`);
+                    if(validatedCorrectNode) validatedCorrectNode.classList.add('correct-glow');
+
+                    logBoxPanel.className = "feedback-panel explanation";
+                    logBoxPanel.innerHTML = `<strong>💡 Archival Fact:</strong> ${item.exp}`;
+                    logBoxPanel.classList.remove('hidden');
+                    document.getElementById('forward-step-btn').classList.remove('hidden');
+                }
+            }
+        }
+
+        function handleClockTimeout() {
+            disableOptionsGridInputs();
+            const item = colonialDataset[globalProgIndex];
+            const masterOptionsWrap = document.getElementById('slot-options-container');
+            const logBoxPanel = document.getElementById('feedback-log-panel');
+
+            const validatedCorrectNode = masterOptionsWrap.querySelector(`[data-archive-id='${item.answer}']`);
+            if(validatedCorrectNode) validatedCorrectNode.classList.add('correct-glow');
+
+            logBoxPanel.className = "feedback-panel explanation";
+            logBoxPanel.innerHTML = `<strong>⏰ Archive Session Expired:</strong> ${item.exp}`;
+            logBoxPanel.classList.remove('hidden');
+            document.getElementById('forward-step-btn').classList.remove('hidden');
+        }
+
+        function disableOptionsGridInputs() {
+            const actionableElements = document.querySelectorAll('.option-btn');
+            actionableElements.forEach(btnNode => btnNode.disabled = true);
+        }
+
+        // Custom Wax Seal Theme Emitter
+        function triggerWaxSealBurst(sourceNode) {
+            const boundaries = sourceNode.getBoundingClientRect();
+            const launchX = boundaries.left + boundaries.width / 2;
+            const launchY = boundaries.top + boundaries.height / 2;
+
+            for (let i = 0; i < 14; i++) {
+                const sealNode = document.createElement('div');
+                sealNode.classList.add('seal-confetti');
+                // Alternates between wax seals and vintage locomotive assets
+                sealNode.innerHTML = i % 2 === 0 ? '📜' : '🚂';
+                sealNode.style.left = `${launchX}px`;
+                sealNode.style.top = `${launchY}px`;
+
+                const trajectoryAngle = Math.random() * Math.PI * 2;
+                const distanceMagnitude = Math.random() * 85 + 50;
+                sealNode.style.setProperty('--x', `${Math.cos(trajectoryAngle) * distanceMagnitude}px`);
+                sealNode.style.setProperty('--y', `${Math.sin(trajectoryAngle) * distanceMagnitude}px`);
+
+                document.body.appendChild(sealNode);
+                setTimeout(() => sealNode.remove(), 900);
+            }
+        }
+
+        function advanceNextDocument() {
+            globalProgIndex++;
+            if(globalProgIndex < colonialDataset.length) {
+                renderDocumentStep();
+            } else {
+                presentSynthesisSummary();
+            }
+        }
+
+        // Summary Analytics Presentation Card Outro Dashboard
+        function presentSynthesisSummary() {
+            document.getElementById('quiz-box').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+
+            document.getElementById('final-score-val').textContent = cumulativeScoreCount;
+            document.getElementById('final-total-val').textContent = colonialDataset.length;
+
+            const analyticalSummaryNode = document.getElementById('outro-analytical-critique');
+            const visualStampNode = document.getElementById('outro-stamp');
+            const performanceRatioValue = cumulativeScoreCount / colonialDataset.length;
+
+            if(performanceRatioValue >= 0.8) {
+                document.getElementById('snd-applause').play().catch(()=>{});
+                visualStampNode.textContent = "🏛️";
+                analyticalSummaryNode.textContent = "Outstanding modern synthesis! You possess a highly rigorous command over colonial macroeconomics, administrative expansions, and structural historical turning points.";
+            } else if(performanceRatioValue >= 0.5) {
+                visualStampNode.textContent = "📜";
+                analyticalSummaryNode.textContent = "Solid analytical framework. Reviewing the explicit socio-political impacts of the Subsidiary Alliance and Doctrine of Lapse will lock in total historical accuracy.";
+            } else {
+                visualStampNode.textContent = "🔏";
+                analyticalSummaryNode.textContent = "Re-evaluation recommended. Consider reviewing the interactions between imported industrial textiles, fixed revenue land models, and the immediate triggers of 1857.";
+            }
+        }
+
+        function restartColonialSimulation() {
+            document.getElementById('result-screen').classList.add('hidden');
+            initializeColonialQuiz();
+        }
+    </script>
+</body>
+</html>
