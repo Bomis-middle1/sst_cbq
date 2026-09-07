@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Interactive Learning Core: Industrial Systems & Dynamics</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',system-ui,-apple-system,sans-serif}
+:root{
+  --bg-main:#0f172a;
+  --panel-bg:#1e293b;
+  --steel-primary:#38bdf8;
+  --steel-bright:#7dd3fc;
+  --furnace-orange:#f97316;
+  --text-dark:#f1f5f9;
+  --text-muted:#94a3b8;
+  --border-line:rgba(56,189,248,0.2);
+  --pass-bg:#064e3b;
+  --pass-text:#34d399;
+  --pass-border:rgba(52,211,153,0.4);
+  --fail-orange:#7f1d1d;
+  --fail-bg:#451a03;
+  --fail-border:rgba(239,68,68,0.4);
+}
+body{background:linear-gradient(135deg,#020617,#0f172a);min-height:100vh;color:var(--text-dark);padding:16px;display:flex;align-items:center;justify-content:center}
+
+/* Card Framework components */
+.hidden { display: none !important; }
+.app-container { background: var(--panel-bg); width: 100%; max-width: 680px; padding: 28px; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); border: 1px solid rgba(56,189,248,0.15); position: relative; transition: all 0.3s ease; }
+@media (max-width: 480px) { .app-container { padding: 18px; } }
+.app-container::before { content:''; position:absolute; top:0; left:0; width:100%; height:6px; background:linear-gradient(90deg, var(--steel-primary), var(--furnace-orange)); border-radius:16px 16px 0 0; }
+.center { text-align: center; }
+.pill { display: inline-block; background: rgba(56,189,248,0.1); color: var(--steel-bright); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; padding: 6px 14px; border-radius: 6px; border: 1px solid rgba(56,189,248,0.2); margin-bottom: 18px; }
+
+/* HUD Header elements */
+.hud-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; font-size:11px; font-weight:700; color:var(--text-muted); border-bottom:1px solid rgba(56,189,248,0.1); padding-bottom:8px; text-transform:uppercase; letter-spacing:1px }
+.hud-meta span { color: var(--steel-bright); font-size: 14px; font-weight: 800; }
+
+/* Horizontal Tracker Segment */
+.track-bar{display:flex;gap:5px;margin-bottom:20px}
+.track-dot{height:6px;flex:1;background:rgba(255,255,255,0.1);border-radius:3px;transition:all .3s ease}
+.track-dot.active{background:var(--furnace-orange);box-shadow:0 0 8px rgba(249,115,22,0.6)}
+.track-dot.passed{background:var(--steel-primary)}
+
+/* Interactive Context Box */
+.doc-box { background: #111827; border-left: 4px solid var(--steel-primary); padding: 14px 16px; margin-bottom: 20px; border-radius: 0 8px 8px 0; font-size: 14.5px; line-height: 1.6; color: #e5e7eb; border-top: 1px solid #374151; border-right: 1px solid #374151; border-bottom: 1px solid #374151; }
+
+/* Choice Matrix selections */
+h2{font-size:18px;line-height:1.45;color:var(--text-dark);margin-bottom:20px;font-weight:700}
+.matrix-wrapper{display:flex;flex-direction:column;gap:11px}
+.matrix-item{background:#1e293b;border:2px solid #334155;border-radius:8px;padding:14px 16px;cursor:pointer;font-size:14.5px;line-height:1.45;color:var(--text-dark);transition:all 0.2s ease;display:flex;align-items:start;gap:12px;}
+.matrix-item:hover{background:rgba(56,189,248,0.05);border-color:var(--steel-primary);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.3)}
+.item-pref{font-weight:800;color:var(--steel-primary);font-size:15px}
+
+/* Message feedback system */
+.alert-box{margin-top:18px;padding:14px;border-radius:8px;font-size:14.5px;line-height:1.5;font-weight:500}
+.alert-pass{background:var(--pass-bg);color:var(--pass-text);border:2px solid var(--pass-border)}
+.alert-fail{background:var(--fail-bg);color:#f97316;border:2px solid var(--fail-border)}
+
+button.nav-btn{width:100%;background:linear-gradient(135deg, var(--steel-primary), #0284c7);border:none;color:white;padding:15px;border-radius:8px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;cursor:pointer;margin-top:18px;transition:all .2s ease;box-shadow:0 4px 14px rgba(56,189,248,0.25)}
+button.nav-btn:hover{background:linear-gradient(135deg, #0284c7, var(--steel-primary));transform:translateY(-1px);box-shadow:0 6px 20px rgba(56,189,248,0.35)}
+#next-step-btn { background: linear-gradient(135deg, var(--furnace-orange), #ea580c); box-shadow: 0 4px 14px rgba(249,115,22,0.25); }
+#next-step-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(249,115,22,0.35); }
+</style>
+</head>
+<body>
+
+<div id="splash-screen" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#0f172a;display:flex;justify-content:center;align-items:center;z-index:99999;transition:opacity .3s ease">
+  <div class="center">
+    <img id="brand-logo" src="assets/innovine-logo.png" alt="Logo" style="width:230px;height:auto;" onerror="this.style.display='none'; document.getElementById('splash-text-fallback').style.display='block';">
+    <h1 id="splash-text-fallback" style="display:none;color:#38bdf8;letter-spacing:2px;font-weight:800;font-size:20px;">INNOVINE LEARNING</h1>
+  </div>
+</div>
+
+<div id="welcome-panel" class="app-container center hidden">
+  <div class="pill">Secondary & Tertiary Manufacturing Systems</div>
+  <h1 style="font-size:24px;margin-bottom:12px;color:var(--text-dark);font-weight:800;">Industries: Classification & Value Systems</h1>
+  <p style="color:var(--text-muted);font-size:14.5px;line-height:1.6;margin-bottom:22px">Examine the industrial sectors, map locational parameters, dissect blast furnace operations, and calculate macroeconomic GDP distributions.</p>
+  <div style="font-size:46px;margin-bottom:18px;letter-spacing:10px;">🏭🏗️⚡💻</div>
+  <button class="nav-btn" onclick="initCoreApp()">Initialize Industrial Matrix</button>
+</div>
+
+<div id="quiz-panel" class="app-container hidden">
+  <div class="hud-meta">
+    <div id="runtime-lbl">Industrial Core Dynamics</div>
+    <div>Score: <span id="runtime-score">0</span></div>
+  </div>
+  <div class="track-bar" id="dot-holder"></div>
+  <div id="doc-view" class="doc-box hidden"></div>
+  <h2 id="question-view"></h2>
+  <div class="matrix-wrapper" id="matrix-options"></div>
+  <div id="alert-view"></div>
+  <button id="next-step-btn" class="nav-btn hidden" onclick="progressNext()">Next Matrix Unit →</button>
+</div>
+
+<div id="end-panel" class="app-container center hidden">
+  <div style="font-size:55px;margin-bottom:12px" id="panel-emoji"></div>
+  <h1 id="panel-title" style="margin-bottom:8px;color:var(--text-dark);font-weight:800;"></h1>
+  <p id="panel-desc" style="color:var(--text-muted);font-size:15px;margin-bottom:20px"></p>
+  <div class="pill" id="panel-rank"></div>
+  <br><br>
+  <button class="nav-btn" onclick="window.location.reload()">Restart Diagnostics</button>
+</div>
+
+<audio id="sound-pass" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="sound-fail" src="assets/wrong.mp3" preload="auto"></audio>
+
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    const splash = document.getElementById('splash-screen');
+    splash.style.opacity = '0';
+    setTimeout(() => {
+      splash.style.display = 'none';
+      document.getElementById('welcome-panel').classList.remove('hidden');
+    }, 300);
+  }, 1300);
+});
+
+const ch4Questions = [
+  {
+    case: "<b>Sectoral Value Addition:</b><br>'A local warehouse handles two shipments: Shipment X contains freshly sheared sheep's wool directly from a ranch, while Shipment Y contains finished woolen coats that have been spun, dyed, tailored, and packed in a manufacturing facility. Shipment Y commands a significantly higher market price.'",
+    q: "Based on the textbook definitions of economic activities, which statement correctly explains the difference in value between the two shipments?",
+    o: [
+      "Shipment X represents a secondary activity, which inherently possesses greater value because it involves natural extraction.",
+      "Shipment Y represents a secondary activity that adds value by converting raw resources into finished goods ready for daily use.",
+      "Shipment Y represents a tertiary activity because tailoring garments is entirely an intangible service sector offering.",
+      "Shipment X represents a marine-based industrial product, which loses value when transported to urban markets."
+    ],
+    a: 1,
+    e: "The text explains that secondary activities (manufacturing or processing) involve transforming raw materials into finished products. Unlike primary activities, secondary activities add value to the original raw material by making it more useful."
+  },
+  {
+    case: "<b>Raw Material Typology & Proximity:</b><br>'An economic planning committee is evaluating locations for two new facilities: Factory 1 is an agro-based plant that processes fresh fruits into fruit pulp. Factory 2 is a mineral-based engineering facility that manufactures heavy structural steel beams.'",
+    q: "According to the principles of industrial location and raw materials specified in the text, where should these factories be optimally placed?",
+    o: [
+      "Factory 1 should be near deep-sea shipping ports; Factory 2 should be inside dense forest reserves.",
+      "Factory 1 should be close to farming regions to secure perishable raw materials; Factory 2 should be set up near mining areas rich in metals to reduce bulky transportation costs.",
+      "Factory 1 must be located in an arid desert zone; Factory 2 must be run exclusively as a home-based cottage industry.",
+      "Both factories must be set up in high-altitude mountain terrain to minimize environmental sustainability regulations."
+    ],
+    a: 1,
+    e: "The text states that agro-based industries are often located close to farming regions to ensure a steady supply, while mineral-based industries depend on minerals and metals and are set up near mining areas to significantly reduce heavy transport costs."
+  },
+  {
+    case: "<b>Ownership Sectors:</b><br>'Consider three large entities operating in the Indian economy: Entity 1 is Indian Railways, entirely owned and run by the Government. Entity 2 is Tata Consultancy Services (TCS), owned by individuals and private shareholders for profit. Entity 3 is Amul, managed by a cooperative society where local farmers pool resources and split profits.'",
+    q: "Which classification framework correctly identifies the ownership models of Entity 1, Entity 2, and Entity 3?",
+    o: [
+      "Joint Sector, Public Sector, Private Sector",
+      "Public Sector, Private Sector, Cooperative Sector",
+      "Cooperative Sector, Public Sector, Joint Sector",
+      "Private Sector, Joint Sector, Public Sector"
+    ],
+    a: 1,
+    e: "As per the text, public sector industries are government owned/operated (Indian Railways); private sector industries are owned by individuals/private firms for profit (TCS); and cooperative industries are run by the resource producers/suppliers themselves (Amul)."
+  },
+  {
+    q: "An international electronics company establishes an automated assembly plant. The plant requires a large plot of flat land, an uninterrupted high-voltage power supply, access to an efficient highway network, and proximity to banking institutions for operational loans. Which set of locational factors is this company prioritizing?",
+    o: [
+      "Marine raw materials, Hilly topography, and Public sector subsidies.",
+      "Forest-based timber, Cottage tools, and High agricultural labor density.",
+      "Availability of Land, Power energy sources, Transport facilities, and Capital/Finance.",
+      "Perishable agro-inputs, Traditional family skills, and High carbon waste emission outputs."
+    ],
+    a: 2,
+    e: "The textbook defines the key factors influencing industrial location as including the availability of flat land for infrastructure, reliable power sources for automation, transport links to move goods, and capital/finance from banks."
+  },
+  {
+    q: "An industrial audit of a textile manufacturing plant tracks several variables: raw cotton and electricity supply, weaving and dyeing methods, and finished T-shirts ready for retail sale. How are these variables structured within an 'Industrial System'?",
+    o: [
+      "Cotton and electricity are Processes; weaving is the Output; T-shirts are the Inputs.",
+      "Cotton and electricity are Inputs; weaving and dyeing are the Processes; finished T-shirts are the Outputs.",
+      "Weaving is an Input; T-shirts are Processes; electricity is a waste Output.",
+      "All three components are classified exclusively as Outputs of the tertiary service sector."
+    ],
+    a: 1,
+    e: "The text outlines that the industrial system involves inputs (raw materials, power, labor), processes (actions used to transform raw materials like weaving, dyeing), and outputs (the final finished goods ready for sale)."
+  },
+  {
+    case: "<b>Industrial Catastrophes:</b><br>'An investigation of a historic industrial catastrophe reveals that a pesticide plant was located adjacent to a densely populated residential area. On the night of the incident, water leaked into a storage tank containing toxic methyl isocyanate, causing a violent pressure buildup and a massive gas leak due to neglected safety systems.'",
+    q: "Which historic disaster is described above, and what critical lesson does it present for modern safety protocols?",
+    o: [
+      "The Chernobyl Nuclear Disaster; it shows that nuclear radiation cannot be contained by vegetation.",
+      "The Ruhr Valley Mining Collapse; it highlights the danger of flooding underground coal shafts.",
+      "The Bhopal Gas Tragedy; it underscores the devastating consequences of corporate negligence, poor safety maintenance, and storing toxic chemicals near high-density populations.",
+      "The Pilbara Iron Ore Accident; it demonstrates that smelting in a blast furnace requires coking coal fluxes."
+    ],
+    a: 2,
+    e: "This matches the text's description of the Bhopal Gas Tragedy (December 2-3, 1984) at the Union Carbide plant. The text highlights that poor safety maintenance, cost-cutting, and proximity to densely populated areas caused thousands of deaths."
+  },
+  {
+    q: "A metallurgical engineer feeds iron ore, coking coal, and limestone into a blast furnace heated to extreme temperatures. What is the precise function of this specific industrial process within the iron and steel industry?",
+    o: [
+      "To spin the iron ore into fine textile yarn threads.",
+      "To create a forest-based resin composite sheet that prevents rust.",
+      "To smelt the iron ore, removing its impurities to produce molten iron (pig iron).",
+      "To convert a secondary manufacturing activity directly into an IT software application."
+    ],
+    a: 2,
+    e: "According to the textbook, the smelting step involves heating iron ore, coking coal, and limestone at high temperatures in a blast furnace. This process removes impurities from the iron ore, producing molten iron (pig iron)."
+  },
+  {
+    q: "A financial advisor arranges an investment portfolio, a telecommunications firm provides 5G fiber broadband services, and an NGO manages a community medical check-up camp. Why are these operations grouped under the Service Sector or Tertiary Activities?",
+    o: [
+      "Because they extract metals directly from the Earth's crust.",
+      "Because they melt raw materials in high-temperature blast furnaces to create alloys.",
+      "Because they create economic value through intangible offerings and services rather than producing physical goods.",
+      "Because they rely exclusively on family-run cottage pottery wheels."
+    ],
+    a: 2,
+    e: "The text defines the service sector (tertiary activities) as focusing on providing services rather than producing physical goods, creating value through intangible offerings like finance, banking, transport, and communication."
+  },
+  {
+    case: "<b>Macroeconomic Analysis:</b><br>'A data chart shows that Sector A contributes approximately 17-18% to India's GDP but employs nearly 42% of the population. Meanwhile, Sector B (Information Technology) contributes around 8-9% to the total national GDP while employing only about 4.5 million people directly.'",
+    q: "Based on the text and the data provided, what conclusion can be drawn about Sector B (the IT Sector) in comparison to Sector A (Agriculture)?",
+    o: [
+      "Sector B is a slow-growing, traditional primary sector that is heavily dependent on monsoon rainfall.",
+      "Sector B is highly efficient and dynamic, generating an exceptionally high proportion of economic output (GDP share) relative to its small workforce footprint.",
+      "Sector B employs a much larger share of the population than Sector A, causing massive urban overcrowding.",
+      "Sector B's contribution is insignificant because traditional services like trade and hotels contribute less than 1% to the GDP."
+    ],
+    a: 1,
+    e: "The text illustrates that the IT sector's 8-9% GDP contribution is highly impressive because it achieves this economic output while employing only about 4.5 million people directly, showing immense efficiency compared to agriculture."
+  },
+  {
+    q: "According to the 'Fascinating Fact' shared at the end of the chapter text, how does the textile manufacturing segment of the fashion industry impact global environmental resources?",
+    o: [
+      "It absorbs more carbon dioxide than all the world's natural forest-based industries combined.",
+      "It creates a zero-waste cycle where 100% of garments last forever and never enter dumps.",
+      "It consumes massive amounts of water (700-2,700 liters for a single cotton T-shirt) and generates approximately 1.2 billion tons of CO2 emissions annually.",
+      "It reduces global carbon footprint emissions to absolute zero through public-private joint ventures."
+    ],
+    a: 2,
+    e: "The textbook's 'Fascinating Fact' highlights that textile manufacturing generates approximately 1.2 billion tons of CO2 annually, a single cotton T-shirt requires 700-2,700 liters of water, and 85% of all textiles end up in dumps."
+  }
+];
+
+let activeIdx = 0;
+let computedScore = 0;
+let dynamicLock = false;
+
+function initCoreApp(){
+  document.getElementById('welcome-panel').classList.add('hidden');
+  document.getElementById('quiz-panel').classList.remove('hidden');
+  renderTrackDots();
+  loadQuizQuestion();
+}
+
+function renderTrackDots(){
+  const holder = document.getElementById('dot-holder');
+  holder.innerHTML = '';
+  ch4Questions.forEach(() => {
+    let dot = document.createElement('div');
+    dot.className = 'track-dot';
+    holder.appendChild(dot);
+  });
+}
+
+function loadQuizQuestion(){
+  dynamicLock = false;
+  document.getElementById('alert-view').innerHTML = '';
+  document.getElementById('next-step-btn').classList.add('hidden');
+
+  const dots = document.querySelectorAll('.track-dot');
+  dots.forEach((dt, i) => {
+    if(i === activeIdx) dt.className = 'track-dot active';
+    else if(i < activeIdx) dt.className = 'track-dot passed';
+    else dt.className = 'track-dot';
+  });
+
+  if(activeIdx >= 5){
+    document.getElementById('runtime-lbl').textContent = "⚠️ Critical Risk & Data Diagnostic";
+    document.getElementById('runtime-lbl').style.color = "var(--furnace-orange)";
+  } else {
+    document.getElementById('runtime-lbl').textContent = "Industrial Core Dynamics";
+    document.getElementById('runtime-lbl').style.color = "var(--text-muted)";
+  }
+
+  const currentItem = ch4Questions[activeIdx];
+  const docView = document.getElementById('doc-view');
+   
+  if(currentItem.case){
+    docView.innerHTML = currentItem.case;
+    docView.classList.remove('hidden');
+  } else {
+    docView.classList.add('hidden');
+  }
+
+  document.getElementById('question-view').innerHTML = `${activeIdx + 1}. ${currentItem.q}`;
+   
+  const optionsBox = document.getElementById('matrix-options');
+  optionsBox.innerHTML = '';
+
+  const indices = ['A','B','C','D'];
+  currentItem.o.forEach((text, slot) => {
+    let card = document.createElement('div');
+    card.className = 'matrix-item';
+    card.innerHTML = `<span class="item-pref">${indices[slot]}.</span> <span>${text}</span>`;
+    card.onclick = () => evaluateChoice(slot, card);
+    optionsBox.appendChild(card);
+  });
+}
+
+function dispatchSound(audioId) {
+  const elem = document.getElementById(audioId);
+  if(elem){
+    elem.currentTime = 0;
+    elem.play().catch(() => {});
+  }
+}
+
+function evaluateChoice(chosenPos, elementNode){
+  const targetObj = ch4Questions[activeIdx];
+  if(chosenPos === targetObj.a){
+    if(!dynamicLock){
+      computedScore++;
+      document.getElementById('runtime-score').textContent = computedScore;
+    }
+    dispatchSound('sound-pass');
+    elementNode.style.borderColor = 'var(--pass-text)';
+    elementNode.style.background = 'var(--pass-bg)';
+    document.getElementById('alert-view').innerHTML = `<div class="alert-box alert-pass"><b>✓ Metric Synchronized.</b> ${targetObj.e}</div>`;
+    lockMatrix();
+    document.getElementById('next-step-btn').classList.remove('hidden');
+  } else {
+    if(!dynamicLock){
+      dynamicLock = true;
+      dispatchSound('sound-fail');
+      elementNode.style.borderColor = '#ef4444';
+      elementNode.style.background = 'var(--fail-bg)';
+      document.getElementById('alert-view').innerHTML = `<div class="alert-box alert-fail"><b>⚠️ Out of Bounds.</b> The selected parameters fail standard operational checks. Re-verify structural documentation.</div>`;
+    } else {
+      triggerMasterReveal();
+    }
+  }
+}
+
+function triggerMasterReveal(){
+  lockMatrix();
+  const targetObj = ch4Questions[activeIdx];
+  const tags = ['A','B','C','D'];
+  document.getElementById('alert-view').innerHTML = `<div class="alert-box alert-fail"><b>🔍 Automated Override.</b> Correct blueprint target is <b>${tags[targetObj.a]}. ${targetObj.o[targetObj.a]}</b>.<br><br>${targetObj.e}</div>`;
+  document.getElementById('next-step-btn').classList.remove('hidden');
+}
+
+function lockMatrix(){
+  document.querySelectorAll('.matrix-item').forEach(item => item.onclick = null);
+}
+
+function progressNext(){
+  activeIdx++;
+  if(activeIdx < ch4Questions.length){
+    loadQuizQuestion();
+  } else {
+    assembleReport();
+  }
+}
+
+function assembleReport(){
+  document.getElementById('quiz-panel').classList.add('hidden');
+  document.getElementById('end-panel').classList.remove('hidden');
+
+  const emoji = document.getElementById('panel-emoji');
+  const title = document.getElementById('panel-title');
+  const desc = document.getElementById('panel-desc');
+  const rank = document.getElementById('panel-rank');
+
+  desc.textContent = `You calibrated ${computedScore} out of ${ch4Questions.length} industrial, locational, and economic configurations flawlessly.`;
+
+  if(computedScore >= 9){
+    emoji.textContent = '🏭';
+    title.textContent = 'Chief Industrial Systems Director';
+    rank.textContent = 'Macro-Economic Infrastructure Specialist';
+  } else if(computedScore >= 6){
+    emoji.textContent = '🏗️';
+    title.textContent = 'Plant Safety Inspector';
+    rank.textContent = 'Operations & Systems Analyst';
+  } else {
+    emoji.textContent = '🔧';
+    title.textContent = 'Junior Logistics Controller';
+    rank.textContent = 'Apprentice Systems Overseer';
+  }
+}
+</script>
+</body>
+</html>

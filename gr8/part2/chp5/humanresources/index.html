@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Human Resources Interactive Quiz</title>
+    <style>
+        :root {
+            --primary: #4a6fa5;
+            --primary-dark: #3b5984;
+            --secondary: #ff9f43;
+            --success: #2ed573;
+            --danger: #ff4757;
+            --background: #f0f4f8;
+            --card-bg: #ffffff;
+            --text: #2f3542;
+            --text-light: #747d8c;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: var(--background);
+            background-image: radial-gradient(rgba(74, 111, 165, 0.1) 1px, transparent 0);
+            background-size: 24px 24px;
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Ambient Background Streamers Animation */
+        .ambient-decor {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .streamer {
+            position: absolute;
+            background: linear-gradient(45deg, rgba(74, 111, 165, 0.15), rgba(255, 159, 67, 0.15));
+            border-radius: 50%;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(105vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-5vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Container & Card Layouts */
+        .container {
+            width: 100%;
+            max-width: 650px;
+            padding: 20px;
+            z-index: 10;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Branding Splash Screen */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease;
+        }
+
+        #splash-screen img {
+            max-width: 220px;
+            height: auto;
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(0.95); }
+        }
+
+        /* Headings & Typography */
+        h1 { color: var(--primary-dark); margin-bottom: 15px; font-size: 1.8rem; }
+        h2 { color: var(--primary); margin-bottom: 20px; font-size: 1.4rem; }
+        p { color: var(--text-light); line-height: 1.6; margin-bottom: 20px; font-size: 1rem; }
+
+        /* Meta details tag */
+        .meta-tag {
+            display: inline-block;
+            background: #e1e8f2;
+            color: var(--primary-dark);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin: 5px;
+        }
+
+        /* Progress & Dashboard Elements */
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f4f8;
+            font-weight: 600;
+        }
+
+        .timer-box {
+            background: #ffeaa7;
+            color: #d63031;
+            padding: 6px 14px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .score-box {
+            background: #dff9fb;
+            color: #0097e6;
+            padding: 6px 14px;
+            border-radius: 20px;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: #eee;
+            border-radius: 3px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        /* Questions and Option Layouts */
+        .question-text {
+            font-size: 1.15rem;
+            font-weight: 600;
+            text-align: left;
+            margin-bottom: 20px;
+            color: var(--text);
+        }
+
+        /* Data table custom styling if any question has data table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+        .data-table th, .data-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .data-table th { background-color: #f2f2f2; }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 14px 20px;
+            text-align: left;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text);
+            position: relative;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background: #edf2f7;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .option-btn:disabled { cursor: not-allowed; }
+
+        /* Correct/Wrong Dynamic Classes */
+        .option-btn.correct-glow {
+            background: #d4edda !important;
+            border-color: var(--success) !important;
+            color: #155724 !important;
+        }
+
+        .option-btn.wrong-glow {
+            background: #f8d7da !important;
+            border-color: var(--danger) !important;
+            color: #721c24 !important;
+        }
+
+        /* Overlay indicators */
+        .wrong-cross::after {
+            content: '❌';
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* Buttons & Interactions */
+        .btn {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(74, 111, 165, 0.3);
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        /* Feedback Panels */
+        .feedback-panel {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: left;
+            font-size: 0.95rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .feedback-panel.retry { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+        .feedback-panel.explanation { background: #e2e3e5; color: #383d41; border: 1px solid #d6d8db; }
+
+        /* Confetti Star Generator Element */
+        .star-confetti {
+            position: absolute;
+            color: #ffd700;
+            font-size: 24px;
+            pointer-events: none;
+            animation: starScatter 0.8s ease-out forwards;
+            z-index: 99;
+        }
+
+        @keyframes starScatter {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; }
+            100% { transform: translate(var(--x), var(--y)) scale(0) rotate(360deg); opacity: 0; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive UI Adjustments */
+        @media(max-width: 480px) {
+            .card { padding: 20px; }
+            h1 { font-size: 1.5rem; }
+            .option-btn { font-size: 0.9rem; padding: 12px 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-decor" id="ambient-layer"></div>
+
+    <div id="splash-screen">
+        <img src="assets/logo.png" alt="Innovine Logo">
+        <div style="margin-top: 20px; color: var(--text-light); font-weight: 500; letter-spacing: 1px;">POWERED BY INNOVINE</div>
+    </div>
+
+    <audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="snd-applause" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
+
+    <div class="container">
+        <div id="intro-screen" class="card hidden">
+            <div style="margin-bottom: 15px;">
+                <span class="meta-tag">Grade 8</span>
+                <span class="meta-tag">Geography</span>
+                <span class="meta-tag">Chapter 5</span>
+            </div>
+            <h1 id="quiz-title">Human Resources Challenge</h1>
+            <p>Welcome! This test measures your analytical understanding of human resource development, spatial distribution profiles, and population dynamics. Maximize your strategy to unlock the final challenges!</p>
+            
+            <div style="background: #f8fafc; padding: 15px; border-radius: 10px; margin-bottom: 25px; text-align: left; font-size: 0.9rem;">
+                <strong style="color: var(--primary-dark);">⚡ Game Manual & Rules:</strong>
+                <ul style="margin-left: 20px; margin-top: 5px; line-height: 1.5;">
+                    <li><strong>45 Seconds</strong> tracking bar per statement item.</li>
+                    <li><strong>1 Free Retry Layer</strong> allowed upon tracking an initial false choice.</li>
+                    <li>Detailed analytical answers emerge automatically upon structural failures.</li>
+                </ul>
+            </div>
+            <button class="btn" onclick="startQuiz()">Initialize Challenge</button>
+        </div>
+
+        <div id="quiz-box" class="card hidden">
+            <div class="quiz-header">
+                <div>Question: <span id="q-current">1</span>/<span id="q-total">10</span></div>
+                <div class="timer-box">⏱️ <span id="timer-count">45</span>s</div>
+                <div class="score-box">⭐ Score: <span id="score-count">0</span></div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-indicator"></div>
+            </div>
+
+            <div id="question-payload-container">
+                <div class="question-text" id="question-render"></div>
+                <div id="table-render-zone"></div>
+            </div>
+
+            <div class="options-grid" id="options-zone"></div>
+
+            <div id="feedback-zone" class="feedback-panel hidden"></div>
+
+            <div style="text-align: right; margin-top: 15px;">
+                <button id="next-btn" class="btn hidden" onclick="advanceQuiz()">Proceed Next ➔</button>
+            </div>
+        </div>
+
+        <div id="result-screen" class="card hidden">
+            <h2>Challenge Portfolio Completed!</h2>
+            <div style="font-size: 5rem; margin: 20px 0; color: var(--secondary);" id="final-medal">🏆</div>
+            <p style="font-size: 1.2rem; font-weight: 600; color: var(--text);">You scored <span id="final-score">0</span> out of <span id="final-total">10</span> questions accurately!</p>
+            <p id="performance-feedback" style="margin-bottom: 25px;"></p>
+            <button class="btn" onclick="resetQuiz()">Restart Simulation</button>
+        </div>
+    </div>
+
+    <script>
+        // Data Structures Mapping Complex Competency Vectors
+        const quizData = [
+            {
+                q: "Riya and Arjun completed Class 12 together. Riya joined a government skill training centre where she learned computer programming. Arjun decided not to take any training and remained unemployed. After a year, Riya started working in an IT company and earned a steady income. Which statement best explains why Riya became an example of human capital?",
+                options: [
+                    "She moved to another city for work.",
+                    "She became part of the working population because she received education and skill training.",
+                    "She increased the population of the city.",
+                    "She started using computers at home."
+                ],
+                answer: 1,
+                exp: "Human Capital reflects the analytical value-add injected via systematic setups of health profiles, continuous structural schooling alignments, and critical applied field skill investments."
+            },
+            {
+                q: "A district has many industries, well-developed roads, good schools, hospitals, and a moderate climate. Every year, more people move there in search of employment and better living conditions. Why is the population of this district increasing?",
+                options: [
+                    "It has fewer natural resources than other regions.",
+                    "It has poor transport facilities.",
+                    "It provides favourable economic and physical conditions for settlement.",
+                    "It receives very little rainfall throughout the year."
+                ],
+                answer: 2,
+                exp: "Industrial opportunities, accessible networks, modern basic security matrices, and gentle physical landscapes collectively generate pull factors that accelerate geographic densification patterns."
+            },
+            {
+                q: "Read the following case carefully. Tara and Raj lived in a small town where employment opportunities were limited. Both enrolled in a government vocational training centre. Tara learned software development while Raj completed training as an electrician. Within a few months, both found jobs and contributed to the development of their community. What was the most important factor that transformed Tara and Raj into human capital?",
+                options: [
+                    "Their age",
+                    "Their place of residence",
+                    "Their willingness to migrate",
+                    "Their education, training and acquired skills"
+                ],
+                answer: 3,
+                exp: "Vocational expertise transforms individuals into useful components of an economic system by supplying specialized practical capacities."
+            },
+            {
+                q: "The table below shows the percentage distribution of the world's population by continent. Based on the information given above, which conclusion is most appropriate?",
+                table: [
+                    ["Asia", "60%"],
+                    ["Africa", "17%"],
+                    ["Europe", "10%"],
+                    ["North America", "8%"],
+                    ["South America", "6%"],
+                    ["Australia/Oceania", "0.5%"],
+                    ["Antarctica", "0%"]
+                ],
+                options: [
+                    "Asia contains more than half of the world's population.",
+                    "Europe has the highest population in the world.",
+                    "Australia has more population than Africa.",
+                    "Antarctica has the fastest population growth."
+                ],
+                answer: 0,
+                exp: "With Asia sitting significantly at 60%, it commands more than half of the total cumulative global spatial residency threshold."
+            },
+            {
+                q: "A person has worked as a carpenter for fifteen years but never attended a formal training institute. He wishes to obtain official recognition for the skills he has already acquired through experience. Which feature of PMKVY would be most helpful to him?",
+                options: [
+                    "Industrial Expansion Scheme",
+                    "Recognition of Prior Learning (RPL)",
+                    "Rural Employment Guarantee Programme",
+                    "National Population Policy"
+                ],
+                answer: 1,
+                exp: "The Recognition of Prior Learning (RPL) framework standardizes and legally acknowledges competencies derived via independent functional operational pathways."
+            },
+            {
+                q: "Two regions have the same land area. Region X has fertile soil, rivers, industries and good transport. Region Y has deserts, very little rainfall and poor transport. Which statement is most likely to be true?",
+                options: [
+                    "Region Y will have a higher population density because deserts are easier to settle.",
+                    "Both regions will have equal population density because their land area is the same.",
+                    "Region X is likely to have a higher population density due to favourable conditions.",
+                    "Population density depends only on the size of the region."
+                ],
+                answer: 2,
+                exp: "Geographic ease, fresh water availability, and economic activity systematically drive higher density metrics over difficult environments like deserts."
+            },
+            {
+                q: "The government introduces a new scheme to provide free vocational training to school dropouts so that they can find employment. Which objective of human resource development does this scheme mainly support?",
+                options: [
+                    "Increasing human capital through skill development",
+                    "Reducing the geographical area of cities",
+                    "Controlling migration between countries",
+                    "Increasing agricultural land"
+                ],
+                answer: 0,
+                exp: "Re-integrating school dropouts via free systemic technical vocational modules successfully changes unutilized segments into active human capital."
+            },
+            {
+                q: "A country's population pyramid has a broad base and a narrow top. What does this indicate about the country's population?",
+                options: [
+                    "The country has a large elderly population.",
+                    "Birth rates are very low.",
+                    "The country has a young and rapidly growing population.",
+                    "The country has no working-age population."
+                ],
+                answer: 3, // Typo in prompt answer (it maps to index 2: young and rapidly growing) -> handled cleanly by matching option text mapping accurately. Let's make index matching explicit.
+                answer: 2, 
+                exp: "A robust base reflects elevated initial biological birth factors, combined with top narrowness signifying progressive chronological mortality scales over time."
+            },
+            {
+                q: "A company wants to establish a manufacturing unit that requires a large number of skilled workers. Which location would be the best choice?",
+                options: [
+                    "A mountainous region with very little population.",
+                    "A city with technical institutes and trained workers.",
+                    "A desert with no industries.",
+                    "An isolated island without transport facilities."
+                ],
+                answer: 1,
+                exp: "Industrial localization choices prioritize hubs hosting structural technical academies to tap into specialized talent pools."
+            },
+            {
+                q: "A student says, 'Population density and total population always mean the same thing.' Why is this statement incorrect?",
+                options: [
+                    "Population density refers to the number of people living per unit area, whereas total population refers to the total number of people living in a region.",
+                    "Population density is measured only in villages.",
+                    "Total population is always smaller than population density.",
+                    "Population density can be measured only for continents."
+                ],
+                answer: 0,
+                exp: "Total population counts the absolute aggregate of individuals present, while density tracks spatial concentration ratios per unit of land."
+            }
+        ];
+
+        // Global Orchestration States
+        let currentQuestionIndex = 0;
+        let userScore = 0;
+        let remainingSeconds = 45;
+        let countdownTimerId = null;
+        let currentAttemptsCount = 0;
+        const totalDurationBenchmark = 45;
+
+        // Initialization Logic
+        window.addEventListener('DOMContentLoaded', () => {
+            generateAmbientDecor();
+            // Force 5 second branding splash window
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                splash.style.opacity = 0;
+                setTimeout(() => splash.classList.add('hidden'), 500);
+                document.getElementById('intro-screen').classList.remove('hidden');
+            }, 5000);
+        });
+
+        function generateAmbientDecor() {
+            const container = document.getElementById('ambient-layer');
+            for(let i=0; i<8; i++){
+                const streamer = document.createElement('div');
+                streamer.classList.add('streamer');
+                const dimensions = Math.random() * 60 + 20;
+                streamer.style.width = `${dimensions}px`;
+                streamer.style.height = `${dimensions}px`;
+                streamer.style.left = `${Math.random() * 100}%`;
+                streamer.style.animationDelay = `${Math.random() * 10}s`;
+                streamer.style.animationDuration = `${Math.random() * 10 + 10}s`;
+                container.appendChild(streamer);
+            }
+        }
+
+        function startQuiz() {
+            document.getElementById('intro-screen').classList.add('hidden');
+            document.getElementById('quiz-box').classList.remove('hidden');
+            currentQuestionIndex = 0;
+            userScore = 0;
+            document.getElementById('q-total').textContent = quizData.length;
+            displayCurrentQuestion();
+        }
+
+        // Main Rendering Workflow
+        function displayCurrentQuestion() {
+            clearInterval(countdownTimerId);
+            currentAttemptsCount = 0;
+            remainingSeconds = totalDurationBenchmark;
+            
+            document.getElementById('timer-count').textContent = remainingSeconds;
+            document.getElementById('next-btn').classList.add('hidden');
+            document.getElementById('feedback-zone').classList.add('hidden');
+            
+            const currentItem = quizData[currentQuestionIndex];
+            
+            // Sync Meta Info Text
+            document.getElementById('q-current').textContent = currentQuestionIndex + 1;
+            document.getElementById('score-count').textContent = userScore;
+            
+            const completionPercentage = (currentQuestionIndex / quizData.length) * 100;
+            document.getElementById('progress-indicator').style.width = `${completionPercentage}%`;
+
+            document.getElementById('question-render').textContent = currentItem.q;
+
+            // Render embedded data table matrix dynamically if available
+            const tableZone = document.getElementById('table-render-zone');
+            tableZone.innerHTML = '';
+            if (currentItem.table) {
+                const tableEl = document.createElement('table');
+                tableEl.classList.add('data-table');
+                currentItem.table.forEach(row => {
+                    const tr = document.createElement('tr');
+                    row.forEach(cell => {
+                        const cellType = row === currentItem.table[0] ? 'th' : 'td';
+                        const el = document.createElement(cellType);
+                        el.textContent = cell;
+                        tr.appendChild(el);
+                    });
+                    tableEl.appendChild(tr);
+                });
+                tableZone.appendChild(tableEl);
+            }
+
+            // Options Matrix population
+            const optionsZone = document.getElementById('options-zone');
+            optionsZone.innerHTML = '';
+            
+            currentItem.options.forEach((optionText, idx) => {
+                const button = document.createElement('button');
+                button.classList.add('option-btn');
+                button.textContent = optionText;
+                button.setAttribute('data-index', idx);
+                button.onclick = () => evaluateUserChoice(idx, button);
+                optionsZone.appendChild(button);
+            });
+
+            // Trigger structural clock core counting sequence
+            countdownTimerId = setInterval(() => {
+                remainingSeconds--;
+                document.getElementById('timer-count').textContent = remainingSeconds;
+                if(remainingSeconds <= 0) {
+                    clearInterval(countdownTimerId);
+                    lockFailureStateTimeout();
+                }
+            }, 1000);
+        }
+
+        // Verification Engineering Core
+        function evaluateUserChoice(chosenIndex, targetBtn) {
+            const currentItem = quizData[currentQuestionIndex];
+            const optionsZone = document.getElementById('options-zone');
+            const feedbackZone = document.getElementById('feedback-zone');
+
+            if(chosenIndex === currentItem.answer) {
+                // Correct Choice Logic Flow
+                clearInterval(countdownTimerId);
+                targetBtn.classList.add('correct-glow');
+                disableAllOptionElements();
+                triggerStarExplosion(targetBtn);
+                
+                // Track Scores system
+                if(currentAttemptsCount === 0) {
+                    userScore++;
+                    document.getElementById('score-count').textContent = userScore;
+                }
+
+                document.getElementById('snd-correct').play().catch(()=>{});
+                
+                feedbackZone.className = "feedback-panel explanation";
+                feedbackZone.innerHTML = `<strong>✨ Correct:</strong> ${currentItem.exp}`;
+                feedbackZone.classList.remove('hidden');
+                document.getElementById('next-btn').classList.remove('hidden');
+            } else {
+                // Incorrect Choice Process
+                currentAttemptsCount++;
+                document.getElementById('snd-wrong').play().catch(()=>{});
+                targetBtn.classList.add('wrong-glow', 'wrong-cross');
+                targetBtn.disabled = true;
+
+                if(currentAttemptsCount === 1) {
+                    // Allowed Second Attempt Window Strategy
+                    feedbackZone.className = "feedback-panel retry";
+                    feedbackZone.innerHTML = "<strong>⚠️ Incorrect attempt:</strong> Review carefully. You have 1 remaining retry opportunity.";
+                    feedbackZone.classList.remove('hidden');
+                } else {
+                    // Definitive Dual Fallback Failure Matrix
+                    clearInterval(countdownTimerId);
+                    disableAllOptionElements();
+                    
+                    // Highlight true answer trace
+                    const trueBtn = optionsZone.querySelector(`[data-index='${currentItem.answer}']`);
+                    if(trueBtn) trueBtn.classList.add('correct-glow');
+
+                    feedbackZone.className = "feedback-panel explanation";
+                    feedbackZone.innerHTML = `<strong>💡 Solution Blueprint:</strong> ${currentItem.exp}`;
+                    feedbackZone.classList.remove('hidden');
+                    document.getElementById('next-btn').classList.remove('hidden');
+                }
+            }
+        }
+
+        function lockFailureStateTimeout() {
+            disableAllOptionElements();
+            const currentItem = quizData[currentQuestionIndex];
+            const optionsZone = document.getElementById('options-zone');
+            const feedbackZone = document.getElementById('feedback-zone');
+            
+            const trueBtn = optionsZone.querySelector(`[data-index='${currentItem.answer}']`);
+            if(trueBtn) trueBtn.classList.add('correct-glow');
+
+            feedbackZone.className = "feedback-panel explanation";
+            feedbackZone.innerHTML = `<strong>⏰ Evaluation Time Expired:</strong> ${currentItem.exp}`;
+            feedbackZone.classList.remove('hidden');
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+
+        function disableAllOptionElements() {
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(b => b.disabled = true);
+        }
+
+        // Particle Feedback Animation Mechanics
+        function triggerStarExplosion(element) {
+            const box = element.getBoundingClientRect();
+            const centerX = box.left + box.width / 2;
+            const centerY = box.top + box.height / 2;
+
+            for (let i = 0; i < 12; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star-confetti');
+                star.innerHTML = '★';
+                star.style.left = `${centerX}px`;
+                star.style.top = `${centerY}px`;
+
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.random() * 100 + 50;
+                star.style.setProperty('--x', `${Math.cos(angle) * distance}px`);
+                star.style.setProperty('--y', `${Math.sin(angle) * distance}px`);
+
+                document.body.appendChild(star);
+                setTimeout(() => star.remove(), 800);
+            }
+        }
+
+        function advanceQuiz() {
+            currentQuestionIndex++;
+            if(currentQuestionIndex < quizData.length) {
+                displayCurrentQuestion();
+            } else {
+                renderFinalOutroDashboard();
+            }
+        }
+
+        // Output Result Computations
+        function renderFinalOutroDashboard() {
+            document.getElementById('quiz-box').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+            
+            document.getElementById('final-score').textContent = userScore;
+            document.getElementById('final-total').textContent = quizData.length;
+            
+            const performanceFeedback = document.getElementById('performance-feedback');
+            const medal = document.getElementById('final-medal');
+            
+            const ratio = userScore / quizData.length;
+            if(ratio >= 0.8) {
+                document.getElementById('snd-applause').play().catch(()=>{});
+                medal.textContent = "🏆";
+                performanceFeedback.textContent = "Excellent analytical proficiency! You clearly master spatial variables and dynamic demographic paradigms.";
+            } else if(ratio >= 0.5) {
+                medal.textContent = "🥈";
+                performanceFeedback.textContent = "Good progress. Review human resource investment mechanisms to reinforce foundational learning.";
+            } else {
+                medal.textContent = "📜";
+                performanceFeedback.textContent = "Take time to re-evaluate structural human asset features and demographic distributions.";
+            }
+        }
+
+        function resetQuiz() {
+            document.getElementById('result-screen').classList.add('hidden');
+            startQuiz();
+        }
+    </script>
+</body>
+</html>
