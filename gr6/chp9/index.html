@@ -1,343 +1,394 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>CBQ Interactive - Grade 6 - Chapter 9: Family and Community</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Civic Champion - Chapter 11</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-<style>
-body{
-    margin:0;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg,#e8d9b5,#f7f3e9,#d6b36a);
-    overflow-x:hidden;
-}
+        body {
+            background: linear-gradient(135deg, #fffbeb, #eff6ff, #f0fdf4);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+        }
 
-/* Splash Screen */
-#splash{
-    position:fixed;
-    width:100%;
-    height:100%;
-    background:white;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
-    z-index:10;
-}
+        /* Splash Screen Styling */
+        #splash-screen {
+            position: fixed;
+            inset: 0;
+            background: #ffffff !important;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            transition: opacity 0.5s ease;
+        }
 
-#splash img{
-    width:220px;
-    animation:zoom 2s ease-in-out;
-}
+        #splash-screen.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
 
-@keyframes zoom{
-    from{transform:scale(0.6); opacity:0;}
-    to{transform:scale(1); opacity:1;}
-}
+        .splash-logo {
+            max-width: 200px;
+            display: block;
+        }
 
-/* Game Container */
-#game{
-    display:none;
-    padding:20px;
-    text-align:center;
-}
+        #game-container {
+            background: white;
+            width: 95%;
+            max-width: 650px;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+            border: 1px solid #e5e7eb;
+        }
 
-/* Header (Grade + Chapter) */
-#header{
-    margin-bottom:15px;
-    font-size:22px;
-    font-weight:bold;
-    color:#3b2a1f;
-}
+        .logo {
+            max-width: 130px;
+            margin: 0 auto 15px auto;
+            display: block;
+        }
 
-/* Score */
-#score{
-    font-size:20px;
-    font-weight:bold;
-    margin-bottom:10px;
-}
+        h1 {
+            color: #1e3a8a;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+            letter-spacing: 0.5px;
+        }
 
-/* Question Box */
-.question-box{
-    background:rgba(59,42,31,0.85);
-    color:#fff;
-    padding:20px;
-    border-radius:15px;
-    max-width:700px;
-    margin:auto;
-    box-shadow:0 0 15px rgba(0,0,0,0.3);
-    font-size:22px;
-}
+        .screen {
+            display: none;
+        }
 
-/* Options */
-.option{
-    display:block;
-    margin:12px auto;
-    padding:14px;
-    width:80%;
-    max-width:500px;
-    background:#f7f3e9;
-    border:2px solid #6b4f3a;
-    border-radius:12px;
-    font-size:18px;
-    cursor:pointer;
-    transition:0.3s;
-}
+        .active {
+            display: block;
+        }
 
-.option:hover{
-    transform:scale(1.03);
-    background:#fff;
-}
+        /* Start Screen styling */
+        .intro-text {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin: 20px 0;
+            color: #4b5563;
+        }
 
-/* Correct / Wrong */
-.correct{
-    background:#b6f7b6 !important;
-    border-color:green;
-}
+        .btn {
+            background-color: #1e3a8a;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
+        }
 
-.wrong{
-    background:#f7b6b6 !important;
-    border-color:red;
-}
+        .btn:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-2px);
+        }
 
-/* Confetti */
-.confetti {
-    position: fixed;
-    width: 10px;
-    height: 10px;
-    background: gold;
-    top: -10px;
-    animation: fall 3s linear forwards;
-}
+        /* Gameplay Screen styling */
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 25px;
+            background: #f8fafc;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border: 1px solid #e2e8f0;
+        }
 
-@keyframes fall{
-    to{
-        transform:translateY(100vh) rotate(360deg);
-        opacity:0;
-    }
-}
-</style>
+        .stat-val {
+            color: #1e3a8a;
+        }
+
+        .item-box {
+            background: #f8fafc;
+            border: 3px dashed #3b82f6;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            min-height: 160px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .item-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #64748b;
+            margin-bottom: 10px;
+        }
+
+        .current-item {
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: #1e293b;
+            line-height: 1.5;
+            animation: popIn 0.35s ease;
+        }
+
+        .bins-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .bin {
+            flex: 1;
+            padding: 22px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .bin:hover {
+            transform: scale(1.04);
+        }
+
+        .bin-icon {
+            font-size: 3.2rem;
+        }
+
+        .bin-rights {
+            background: #0284c7;
+            box-shadow: 0 6px 15px rgba(2, 132, 199, 0.35);
+        }
+
+        .bin-duties {
+            background: #16a34a;
+            box-shadow: 0 6px 15px rgba(22, 163, 74, 0.35);
+        }
+
+        /* Sound Control */
+        .audio-toggle {
+            font-size: 0.85rem;
+            margin-top: 20px;
+            color: #9ca3af;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        /* Feedback Area */
+        #feedback {
+            margin-top: 20px;
+            height: 24px;
+            font-weight: bold;
+            font-size: 1.15rem;
+        }
+        .correct { color: #16a34a; }
+        .wrong { color: #dc2626; }
+
+        @keyframes popIn {
+            0% { transform: scale(0.85); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
 </head>
-
 <body>
 
-<!-- SPLASH with Innovine logo -->
-<div id="splash">
-    <img src="assets/logo.png" alt="Innovine Logo">
+<!-- Splash Screen (Innovine logo only on plain white background) -->
+<div id="splash-screen">
+    <img src="gr6/chp9/assets/innovine-logo.png" alt="Innovine Logo" class="splash-logo" onerror="this.style.display='none'">
 </div>
 
-<!-- GAME -->
-<div id="game">
-    <div id="header">Grade 6 - Chapter 9: Family and Community</div>
-    <div id="score">Score: 0</div>
+<div id="game-container">
+    <img src="gr6/chp9/assets/innovine-logo.png" alt="Innovine Logo" class="logo" onerror="this.style.display='none'">
+    
+    <div id="start-screen" class="screen active">
+        <h1>🇮🇳 CIVIC CHAMPION</h1>
+        <p class="intro-text">
+            Welcome to the World's Largest Democracy!<br>
+            The Indian Constitution grants every citizen special protections and rules.<br><br>
+            <strong>Help complete the constitutional balance! Sort the items into:</strong><br><br>
+            🔵 <strong>FUNDAMENTAL RIGHTS</strong> (Your protections & freedoms)<br>
+            🟢 <strong>FUNDAMENTAL DUTIES</strong> (Your civic responsibilities)
+        </p>
+        <button class="btn" onclick="startGame()">🚀 START CITIZENSHIP QUIZ</button>
+    </div>
 
-    <div class="question-box" id="question">Loading...</div>
-    <div id="options"></div>
+    <div id="game-screen" class="screen">
+        <h1>🇮🇳 CIVIC CHAMPION</h1>
+        
+        <div class="stats-bar">
+            <div>⭐ Score: <span id="score-val" class="stat-val">0</span></div>
+            <div>📦 Progress: <span id="sorted-val" class="stat-val">0</span> / 8</div>
+        </div>
+
+        <div class="item-box">
+            <div class="item-label">📋 CONSTITUTIONAL CASE</div>
+            <div id="current-item-display" class="current-item">Loading Card...</div>
+        </div>
+
+        <div class="bins-container">
+            <div class="bin bin-rights" onclick="handleSort('right')">
+                <span class="bin-icon">🛡️⚖️</span>
+                <span>FUNDAMENTAL RIGHTS</span>
+            </div>
+            <div class="bin bin-duties" onclick="handleSort('duty')">
+                <span class="bin-icon">🤝🇮🇳</span>
+                <span>FUNDAMENTAL DUTIES</span>
+            </div>
+        </div>
+
+        <div id="feedback"></div>
+        <div class="audio-toggle" onclick="toggleMute()">🔊 Sound: Enabled (Click to toggle)</div>
+    </div>
+
+    <div id="end-screen" class="screen">
+        <h1>🎉 DEMOCRACY EXPLORER!</h1>
+        <p class="intro-text" id="final-results">
+            Superb work! By knowing your rights and doing your duties, you help Bharat grow strong and unified.
+        </p>
+        <button class="btn" onclick="restartGame()">🔄 PRACTICE AGAIN</button>
+    </div>
 </div>
-
-<!-- AUDIO -->
-<audio id="correctSound" src="assets/correct.mp3"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3"></audio>
-<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
 
 <script>
-// QUESTIONS (will be shuffled once at start)
-let questions = [
-{
-    q:"Aman lives with his parents and sister in one house. His grandparents live in another city. What type of family does Aman belong to?",
-    o:[
-        "Joint family",
-        "Nuclear family",
-        "Community",
-        "Extended family"
-    ],
-    a:1
-},
-{
-    q:"Riya finishes her homework and then helps her younger brother understand a difficult lesson. What value is Riya showing?",
-    o:[
-        "Laziness",
-        "Responsibility",
-        "Competition",
-        "Carelessness"
-    ],
-    a:1
-},
-{
-    q:"Rahul's mother is unwell. His father cooks dinner, his sister cleans the house, and Rahul helps with small chores. What does this situation show?",
-    o:[
-        "Family members should work alone.",
-        "Family support helps during difficult times.",
-        "Only parents should do household work.",
-        "Children should not help at home."
-    ],
-    a:1
-},
-{
-    q:"Statement: Family meetings can help solve problems.\nReason: Everyone gets a chance to share their ideas.\n\nChoose the correct option:",
-    o:[
-        "Both statement and reason are true, and the reason explains the statement.",
-        "Both are true, but the reason does not explain the statement.",
-        "Statement is true, reason is false.",
-        "Statement is false, reason is true."
-    ],
-    a:0
-},
-{
-    q:"During a festival, Meena's grandmother teaches her how to prepare a traditional sweet that has been made in the family for many years. What is being passed on?",
-    o:[
-        "Competition",
-        "Cultural heritage",
-        "Homework",
-        "Sports skills"
-    ],
-    a:1
-},
-{
-    q:"A locality has the following places:\n\nPlace / Purpose\nSchool – Education\nPark – Recreation\nHospital – Healthcare\nMall – Shopping\n\nWhich place mainly helps children learn and develop knowledge?",
-    o:[
-        "Park",
-        "Hospital",
-        "School",
-        "Mall"
-    ],
-    a:2
-},
-{
-    q:"A farmer falls sick during the harvest season. Other villagers help harvest his crops. Why are the villagers helping?",
-    o:[
-        "To earn extra money",
-        "To show community cooperation",
-        "To take over his farm",
-        "To avoid their own work"
-    ],
-    a:1
-},
-{
-    q:"Residents of an apartment complex meet every month to discuss waste management and cleanliness. Which group is most likely organizing these meetings?",
-    o:[
-        "School Committee",
-        "Sports Club",
-        "Residents' Welfare Association (RWA)",
-        "Library Group"
-    ],
-    a:2
-},
-{
-    q:"Which of these does NOT mainly represent a community activity?",
-    o:[
-        "Cleaning a neighbourhood park",
-        "Organizing a recycling drive",
-        "Helping neighbours during floods",
-        "Packing your own school bag"
-    ],
-    a:3
-},
-{
-    q:"A school organizes a tree-planting event. Parents, teachers, and students all participate together. What does this activity show?",
-    o:[
-        "Families and communities can work together.",
-        "Only schools should care for the environment.",
-        "Students do not need family support.",
-        "Communities are separate from families."
-    ],
-    a:0
-},
-{
-    q:"A new playground is being built in a neighbourhood. Families suggest ideas, children share what they would like, and community leaders arrange the work. What is helping the project succeed?",
-    o:[
-        "One person making all decisions",
-        "Cooperation and teamwork",
-        "Competition between families",
-        "Ignoring children's ideas"
-    ],
-    a:1
-},
-{
-    q:"Your neighbour's house is affected by flooding after heavy rain. What is the best way for the community to help?",
-    o:[
-        "Ignore the problem",
-        "Wait for someone else to help",
-        "Work together to provide food, shelter, and support",
-        "Move away from the area"
-    ],
-    a:2
-},
-{
-    q:"Which action would strengthen both a family and a community?",
-    o:[
-        "Refusing to help others",
-        "Keeping problems secret from everyone",
-        "Listening respectfully and helping when needed",
-        "Working only for personal benefit"
-    ],
-    a:2
-}
-];
-
-let current = 0;
-let score = 0;
-
-// Fisher–Yates shuffle to randomise question order
-function shuffleQuestions(arr){
-    for(let i = arr.length - 1; i > 0; i--){
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-}
-
-setTimeout(()=>{
-    document.getElementById("splash").style.display="none";
-    document.getElementById("game").style.display="block";
-    shuffleQuestions(questions);
-    loadQuestion();
-},3000);
-
-function loadQuestion(){
-    if(current >= questions.length){
-        document.getElementById("question").innerHTML = "🎉 Game Completed!";
-        document.getElementById("options").innerHTML = "";
-        document.getElementById("clapSound").play();
-        return;
-    }
-
-    let q = questions[current];
-    document.getElementById("question").innerHTML = q.q.replace(/\n/g,"<br>");
-
-    let optHTML = "";
-    q.o.forEach((opt,i)=>{
-        optHTML += `<div class='option' onclick='checkAnswer(this,${i})'>${opt}</div>`;
+    // Automatically hide splash screen after 2.5 seconds
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            const splash = document.getElementById('splash-screen');
+            if (splash) {
+                splash.classList.add('fade-out');
+                setTimeout(() => splash.remove(), 500);
+            }
+        }, 2500);
     });
 
-    document.getElementById("options").innerHTML = optHTML;
-}
+    const audioCorrect = new Audio('gr6/chp9/assets/correct.mp3');
+    const audioWrong = new Audio('gr6/chp9/assets/wrong.mp3');
+    const audioWin = new Audio('gr6/chp9/assets/freesound_community-claps-44774.mp3');
+    let isMuted = false;
 
-function checkAnswer(el,i){
-    let q = questions[current];
+    const itemsData = [
+        { name: "Anjali demands to play cricket with the boys under the Right to Equality.", type: "right" },
+        { name: "Standing up respectfully during the singing of the National Anthem.", type: "duty" },
+        { name: "Expressing your ideas freely in public (Right to Freedom).", type: "right" },
+        { name: "Protecting local public properties like parks, libraries, and monuments.", type: "duty" },
+        { name: "Ensuring that children under 14 are not forced to work in factories.", type: "right" },
+        { name: "Taking care of the local environment, lakes, and living creatures.", type: "duty" },
+        { name: "The freedom to visit a temple, church, mosque, or gurdwara of your choice.", type: "right" },
+        { name: "Parents providing educational opportunities to their child aged 6-14 years.", type: "duty" },
+        { name: "Communities running their own cultural schools to preserve their language.", type: "right" },
+        { name: "Promoting harmony and treating every classmate equally regardless of language.", type: "duty" }
+    ];
 
-    if(i === q.a){
-        el.classList.add("correct");
-        document.getElementById("correctSound").play();
-        score++;
-        document.getElementById("score").innerText = "Score: " + score;
-        createConfetti();
-        setTimeout(()=>{ current++; loadQuestion(); },1200);
-    }else{
-        el.classList.add("wrong");
-        document.getElementById("wrongSound").play();
+    let gameItems = [];
+    let currentItemIndex = 0;
+    let score = 0;
+    const totalRounds = 8;
+
+    function showScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
     }
-}
 
-function createConfetti(){
-    for(let i=0;i<25;i++){
-        let c = document.createElement("div");
-        c.className = "confetti";
-        c.style.left = Math.random()*100 + "vw";
-        c.style.background = ["gold","orange","#fff","#d6b36a"][Math.floor(Math.random()*4)];
-        document.body.appendChild(c);
-        setTimeout(()=>c.remove(),3000);
+    function toggleMute() {
+        isMuted = !isMuted;
+        document.querySelector('.audio-toggle').textContent = isMuted ? "🔇 Sound: Disabled" : "🔊 Sound: Enabled";
     }
-}
+
+    function playSound(audio) {
+        if (!isMuted) {
+            audio.currentTime = 0;
+            audio.play().catch(() => {});
+        }
+    }
+
+    function startGame() {
+        gameItems = [...itemsData].sort(() => Math.random() - 0.5).slice(0, totalRounds);
+        currentItemIndex = 0;
+        score = 0;
+        
+        updateStats();
+        loadNextItem();
+        showScreen('game-screen');
+    }
+
+    function loadNextItem() {
+        if (currentItemIndex < gameItems.length) {
+            const displayEl = document.getElementById('current-item-display');
+            displayEl.textContent = gameItems[currentItemIndex].name;
+            
+            displayEl.style.animation = 'none';
+            displayEl.offsetHeight; 
+            displayEl.style.animation = null;
+        } else {
+            endGame();
+        }
+    }
+
+    function handleSort(selectedCategory) {
+        const currentItem = gameItems[currentItemIndex];
+        const feedbackEl = document.getElementById('feedback');
+
+        if (currentItem.type === selectedCategory) {
+            score += 10;
+            feedbackEl.textContent = "✅ Correctly Balanced!";
+            feedbackEl.className = "correct";
+            playSound(audioCorrect);
+        } else {
+            feedbackEl.textContent = "❌ Check the Constitution rules again!";
+            feedbackEl.className = "wrong";
+            playSound(audioWrong);
+        }
+
+        currentItemIndex++;
+        updateStats();
+
+        setTimeout(() => {
+            feedbackEl.textContent = "";
+            loadNextItem();
+        }, 1100);
+    }
+
+    function updateStats() {
+        document.getElementById('score-val').textContent = score;
+        document.getElementById('sorted-val').textContent = currentItemIndex;
+    }
+
+    function endGame() {
+        playSound(audioWin);
+        const feedbackText = score >= 60 ? "Excellent Citizen! You understand India's democratic fabric. 🌟" : "Good work! Keep revising your Rights and Duties! 🇮🇳";
+        document.getElementById('final-results').innerHTML = `
+            ${feedbackText}<br><br>
+            <strong>Your Score: ${score} / ${totalRounds * 10}</strong>
+        `;
+        showScreen('end-screen');
+    }
+
+    function restartGame() {
+        showScreen('start-screen');
+    }
 </script>
 
 </body>
