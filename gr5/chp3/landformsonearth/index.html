@@ -63,25 +63,28 @@ body:before{
   display:flex;align-items:center;justify-content:center;
 }
 
+/* Splash screen forced pure white background */
 #splash {
-  background: #ffffff;
+  background: #ffffff !important;
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 99999 !important;
 }
 #splash .panel {
-  background: #ffffff;
-  backdrop-filter: none;
-  border: none;
-  box-shadow: none;
+  background: #ffffff !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 #splash .logo-wrap {
-  background: #ffffff;
-  box-shadow: none;
-  border: none;
+  background: #ffffff !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 #splash .brand {
-  color: #2c1c15;
+  color: #2c1c15 !important;
 }
 #splash .title {
-  color: #2a1a12;
+  color: #2a1a12 !important;
 }
 
 .panel{
@@ -185,13 +188,13 @@ body:before{
 <div class="rock r2"></div>
 <div class="rock r3"></div>
 
-<div id="splash" class="active">
-  <div class="panel splash-box">
-    <div class="logo-wrap">
+<div id="splash" class="active" style="background: #ffffff !important;">
+  <div class="panel splash-box" style="background: #ffffff !important; border: none !important; box-shadow: none !important;">
+    <div class="logo-wrap" style="background: #ffffff !important; border: none !important; box-shadow: none !important;">
       <img src="assets/logo.png" alt="Logo" onerror="this.style.display='none'" />
     </div>
-    <div class="brand">Innovine</div>
-    <div class="title">Chapter 3: Landforms on Earth</div>
+    <div class="brand" style="color: #2c1c15 !important;">Innovine</div>
+    <div class="title" style="color: #2a1a12 !important;">Chapter 3: Landforms on Earth</div>
   </div>
 </div>
 
