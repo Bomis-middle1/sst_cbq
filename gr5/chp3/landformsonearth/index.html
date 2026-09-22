@@ -62,6 +62,32 @@ body:before{
 #splash.active,#intro.active,#game.active,#result.active{
   display:flex;align-items:center;justify-content:center;
 }
+
+/* Splash screen specific styling for complete white background */
+#splash {
+  background: #ffffff !important;
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 99999 !important;
+}
+#splash .panel {
+  background: #ffffff !important;
+  backdrop-filter: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+#splash .logo-wrap {
+  background: #ffffff !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+#splash .brand {
+  color: #2c1c15 !important;
+}
+#splash .title {
+  color: #2a1a12 !important;
+}
+
 .panel{
   width:min(980px,100%);
   background:linear-gradient(180deg,var(--panel),var(--panel2));
