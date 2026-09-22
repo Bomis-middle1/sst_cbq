@@ -63,6 +63,32 @@ body:before{
   align-items:center;
   justify-content:center;
 }
+
+/* Splash screen specific styling for complete white background */
+#splash {
+  background: #ffffff !important;
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 99999 !important;
+}
+#splash .panel {
+  background: #ffffff !important;
+  backdrop-filter: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+#splash .logo-wrap {
+  background: #ffffff !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+#splash .brand {
+  color: #0d1630 !important;
+}
+#splash .title {
+  color: #050814 !important;
+}
+
 .panel{
   width:min(900px,100%);
   background:linear-gradient(180deg,var(--panel),var(--panel2));
