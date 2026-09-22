@@ -105,6 +105,20 @@ body:after{
   align-items:center;
   justify-content:center;
 }
+/* Splash screen specific styling for complete white background */
+#splash {
+  background: #ffffff !important;
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 99999 !important;
+}
+#splash .panel {
+  background: #ffffff !important;
+  backdrop-filter: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
 .panel{
   width:min(980px,100%);
   background:var(--card);
@@ -443,7 +457,7 @@ body:after{
 <div id="splash" class="active">
   <div class="panel splash-box">
     <div class="logo-wrap">
-      <img src="assets/logo.png" alt="Innovine logo" onerror="this.style.display='none'" />
+      <img src="gr5/chp1/mapsandglobe/assets/logo.png" alt="Innovine logo" onerror="this.style.display='none'" />
     </div>
     <div class="brand">Innovine</div>
     <div class="title">Maps and Globe</div>
@@ -510,9 +524,9 @@ body:after{
 
 <div class="cross" id="crossLayer"></div>
 <div class="stars" id="starsLayer"></div>
-<audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
-<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
+<audio id="correctSound" src="gr5/chp1/mapsandglobe/assets/correct.mp3" preload="auto"></audio>
+<audio id="wrongSound" src="gr5/chp1/mapsandglobe/assets/wrong.mp3" preload="auto"></audio>
+<audio id="clapSound" src="gr5/chp1/mapsandglobe/assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
 
 <script>
 const questions = [
@@ -526,7 +540,7 @@ const questions = [
 {q:`During revision, the teacher asks students to identify which list contains only continents. One student is confused because some names look familiar but do not belong to continents. Which is correct?`,o:['Asia, Africa, Europe','India, China, Nepal','Pacific, Atlantic, Indian','Himalayas, Alps, Andes'],a:0,e:'Asia, Africa, and Europe are continents.'},
 {q:`A student observes a world map where oceans appear extremely large and landmasses look smaller or distorted in some areas. What is the MOST correct conclusion?`,o:['Maps can sometimes distort size and shape','Oceans are physically larger than continents on Earth','Continents are not real','Maps only show water bodies'],a:0,e:'Flat maps can distort size and shape.'},
 {q:`During a geography revision class, the teacher explains that globes are helpful but not always practical for everyday use. She shows how students usually carry maps instead of globes when planning travel or studying in classrooms. One student asks why globes are not commonly used for daily navigation even though they are accurate. What is the MOST appropriate explanation?`,o:['Globes cannot show countries','Globes are heavy, bulky, and not easy to carry everywhere','Globes are made only for decoration','Globes do not show Earth'],a:1,e:'Globes are accurate but not convenient to carry around.'},
-{q:`Look at the picture and answer the following questions: What skill are you mainly developing through this activity?`,img:'assets/picture1.png',o:['Memorising names of states','Counting classroom objects','Drawing pictures of India','Understanding map reading, physical features, and directions'],a:3,e:'This activity develops map reading and understanding of directions and features.'},
+{q:`Look at the picture and answer the following questions: What skill are you mainly developing through this activity?`,img:'gr5/chp1/mapsandglobe/assets/picture1.png',o:['Memorising names of states','Counting classroom objects','Drawing pictures of India','Understanding map reading, physical features, and directions'],a:3,e:'This activity develops map reading and understanding of directions and features.'},
 {q:`During a project, students are given different types of maps. One group receives a physical map, another gets a political map, and another gets a thematic map. Each group notices that their map shows different types of information. What is the MOST important learning from this activity?`,o:['All maps show the same information in different colours','Maps are only useful for exams','Different maps are designed for different purposes','Maps are not useful in real life'],a:2,e:'Different maps are made for different purposes.'},
 {q:`After completing their geography lesson, students discuss why map symbols are widely used instead of writing full words like “river,” “mountain,” or “city” everywhere on a map. One student says, “Symbols make maps shorter and easier to read.” What is the BEST understanding of this idea?`,o:['Symbols replace real geography','Symbols are used only for decoration','Symbols simplify and help quickly understand map information','Symbols make maps harder to read'],a:2,e:'Symbols make map information simple and easy to understand.'}
 ];
