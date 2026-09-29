@@ -134,34 +134,45 @@ body:before{
   padding:20px;
 }
 
-.splash{
+#splash{
+  position:fixed;
+  inset:0;
+  z-index:99999;
   background:#fff!important;
-  border:none!important;
-  box-shadow:none!important;
-  text-align:center;
-  padding:36px 20px;
+  padding:0;
 }
 
-.logo-wrap{
-  width:150px;
-  height:150px;
-  margin:0 auto 18px;
-  border-radius:34px;
+#splash .panel{
+  width:100%;
+  height:100%;
+  max-width:none;
+  background:#fff!important;
+  border:none!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  padding:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+#splash .logo-wrap{
+  width:min(240px,52vw);
+  height:min(240px,52vw);
+  margin:0;
+  border-radius:0;
   display:grid;
   place-items:center;
   background:#fff;
 }
 
-.logo-wrap img{
-  max-width:78%;
-  max-height:78%;
+#splash .logo-wrap img{
+  width:100%;
+  height:100%;
+  max-width:none;
+  max-height:none;
   object-fit:contain;
-}
-
-.brand{
-  font-weight:900;
-  color:var(--blue);
-  letter-spacing:1px;
+  display:block;
 }
 
 .title{
@@ -594,14 +605,11 @@ body:before{
 <div class="pin" style="top:20%;left:76%"></div>
 
 <section id="splash" class="screen active">
-  <div class="panel splash">
+  <div class="panel">
     <div class="logo-wrap">
-      <img src="gr5/chp1/mapsandglobe/assets/logo.png" alt="Innovine logo"
-           onerror="this.style.display='none'">
+      <img src="sst_cbq/gr5/chp1/mapsandglobe/assets/logo.png"
+           alt="Innovine logo">
     </div>
-    <div class="brand">INNOVINE</div>
-    <div class="title">🌍 Maps & Globe</div>
-    
   </div>
 </section>
 
@@ -767,15 +775,15 @@ body:before{
 <div class="fx" id="fx"></div>
 
 <audio id="correctSound"
-       src="gr5/chp1/mapsandglobe/assets/correct.mp3"
+       src="sst_cbq/gr5/chp1/mapsandglobe/assets/correct.mp3"
        preload="auto"></audio>
 
 <audio id="wrongSound"
-       src="gr5/chp1/mapsandglobe/assets/wrong.mp3"
+       src="sst_cbq/gr5/chp1/mapsandglobe/assets/wrong.mp3"
        preload="auto"></audio>
 
 <audio id="clapSound"
-       src="gr5/chp1/mapsandglobe/assets/freesound_community-claps-44774.mp3"
+       src="sst_cbq/gr5/chp1/mapsandglobe/assets/freesound_community-claps-44774.mp3"
        preload="auto"></audio>
 
 <script>
