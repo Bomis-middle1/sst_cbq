@@ -1,148 +1,1049 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>CBQ Interactive - Grade 6 - Chapter 14: Economic Activities Around Us</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#234b5d" />
+<title>Grade 6 CBQ - Economic Activities Around Us</title>
 
 <style>
-body{
-    margin:0;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg,#e8d9b5,#f7f3e9,#d6b36a);
-    overflow-x:hidden;
+:root{
+  --navy:#234b5d;
+  --teal:#2f7f7a;
+  --green:#5f8f55;
+  --amber:#e3a93c;
+  --rust:#b7653f;
+  --cream:#faf6ed;
+  --paper:#ffffff;
+  --ink:#263942;
+  --muted:#6f7c82;
+  --line:#dce5e5;
+  --good:#e8f7ee;
+  --good-line:#4fa870;
+  --bad:#fff0ee;
+  --bad-line:#d96a63;
+  --shadow:0 18px 44px rgba(35,75,93,.14);
 }
 
-/* Splash Screen */
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  width:100%;
+  min-height:100%;
+  font-family:Arial,Helvetica,sans-serif;
+  color:var(--ink);
+  background:#eef4f2;
+  -webkit-tap-highlight-color:transparent;
+}
+
+body{
+  min-height:100svh;
+  overflow-x:hidden;
+}
+
+button{font:inherit}
+
+button:focus-visible{
+  outline:3px solid rgba(227,169,60,.55);
+  outline-offset:3px;
+}
+
+/* ---------- SPLASH ---------- */
 #splash{
-    position:fixed;
-    width:100%;
-    height:100%;
-    background:white;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
-    z-index:10;
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#fff;
 }
 
 #splash img{
-    width:220px;
-    animation:zoom 2s ease-in-out;
+  width:min(240px,52vw);
+  max-height:42vh;
+  object-fit:contain;
+  animation:logoIn 1.5s ease both;
 }
 
-@keyframes zoom{
-    from{transform:scale(0.6); opacity:0;}
-    to{transform:scale(1); opacity:1;}
+@keyframes logoIn{
+  from{opacity:0;transform:scale(.82)}
+  to{opacity:1;transform:scale(1)}
 }
 
-/* Game Container */
-#game{
-    display:none;
-    padding:20px;
-    text-align:center;
+/* ---------- COMMON ---------- */
+.screen{
+  display:none;
+  min-height:100svh;
 }
 
-/* Header (Grade + Chapter) */
-#header{
-    margin-bottom:15px;
-    font-size:22px;
-    font-weight:bold;
-    color:#3b2a1f;
+.screen.active{
+  display:flex;
 }
 
-/* Score */
-#score{
-    font-size:20px;
-    font-weight:bold;
-    margin-bottom:10px;
+.econ-bg{
+  width:100%;
+  min-height:100svh;
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 10% 10%,rgba(227,169,60,.18),transparent 24%),
+    radial-gradient(circle at 90% 12%,rgba(47,127,122,.18),transparent 23%),
+    linear-gradient(135deg,#fbf8f1 0%,#eef6f4 48%,#f8efe7 100%);
 }
 
-/* Question Box */
-.question-box{
-    background:rgba(59,42,31,0.85);
-    color:#fff;
-    padding:20px;
-    border-radius:15px;
-    max-width:800px;
-    margin:auto;
-    box-shadow:0 0 15px rgba(0,0,0,0.3);
-    font-size:22px;
+.econ-bg:before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  opacity:.14;
+  background:
+    linear-gradient(rgba(35,75,93,.08) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(35,75,93,.08) 1px,transparent 1px);
+  background-size:50px 50px;
 }
 
-/* Options */
+.shell{
+  width:min(1180px,100%);
+  margin:auto;
+  padding:clamp(12px,2vw,24px);
+}
+
+/* ---------- INTRO ---------- */
+.intro-card{
+  width:min(990px,100%);
+  margin:auto;
+  background:rgba(255,255,255,.97);
+  border:1px solid rgba(255,255,255,.92);
+  border-radius:30px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+
+.intro-grid{
+  display:grid;
+  grid-template-columns:1.04fr .96fr;
+  min-height:min(700px,calc(100svh - 48px));
+}
+
+.intro-copy{
+  padding:clamp(28px,4vw,54px);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+
+.kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  width:max-content;
+  max-width:100%;
+  padding:8px 12px;
+  border-radius:999px;
+  background:#edf6f4;
+  color:var(--teal);
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:.45px;
+  text-transform:uppercase;
+}
+
+h1{
+  margin:16px 0 12px;
+  font-size:clamp(34px,5vw,58px);
+  line-height:1.03;
+  letter-spacing:-1.3px;
+  color:var(--navy);
+}
+
+.intro-copy p{
+  margin:0;
+  color:var(--muted);
+  font-size:clamp(16px,2vw,19px);
+  line-height:1.6;
+}
+
+.rules{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin:24px 0;
+}
+
+.rule{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  padding:12px;
+  border-radius:16px;
+  background:#fbfcfa;
+  border:1px solid #e8ece7;
+  font-size:14px;
+  line-height:1.35;
+}
+
+.rule .icon{
+  font-size:21px;
+  line-height:1;
+}
+
+.rule b{
+  display:block;
+  margin-bottom:2px;
+  color:var(--navy);
+}
+
+.primary{
+  min-height:52px;
+  padding:13px 20px;
+  border:0;
+  border-radius:16px;
+  cursor:pointer;
+  color:#fff;
+  font-weight:800;
+  background:linear-gradient(135deg,var(--navy),var(--teal));
+  box-shadow:0 10px 24px rgba(35,75,93,.22);
+  transition:.18s transform,.18s box-shadow;
+}
+
+.primary:hover{
+  transform:translateY(-1px);
+  box-shadow:0 14px 30px rgba(35,75,93,.26);
+}
+
+.primary:active{transform:scale(.99)}
+
+/* economic flow visual */
+.intro-visual{
+  position:relative;
+  min-height:430px;
+  padding:26px;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 72% 14%,rgba(255,255,255,.24),transparent 18%),
+    linear-gradient(155deg,#367f7a 0%,#234b5d 80%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.flow-wrap{
+  width:min(400px,94%);
+  position:relative;
+  z-index:2;
+}
+
+.flow-title{
+  text-align:center;
+  color:#fff;
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:.4px;
+  text-transform:uppercase;
+  margin-bottom:14px;
+  opacity:.92;
+}
+
+.sector-card{
+  border-radius:22px;
+  padding:16px;
+  background:rgba(255,255,255,.97);
+  box-shadow:0 14px 30px rgba(0,0,0,.16);
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:14px;
+  align-items:center;
+}
+
+.sector-card + .flow-arrow{
+  margin:8px auto;
+}
+
+.sector-icon{
+  width:62px;
+  height:62px;
+  border-radius:18px;
+  display:grid;
+  place-items:center;
+  font-size:32px;
+  flex:none;
+}
+
+.primary-sector .sector-icon{background:#e8f2dd}
+.secondary-sector .sector-icon{background:#faead7}
+.tertiary-sector .sector-icon{background:#e5f2f3}
+
+.sector-card h3{
+  margin:0 0 5px;
+  color:var(--navy);
+  font-size:17px;
+}
+
+.sector-card p{
+  margin:0;
+  color:#6f7777;
+  font-size:12px;
+  line-height:1.4;
+}
+
+.flow-arrow{
+  width:46px;
+  height:32px;
+  border-radius:999px;
+  display:grid;
+  place-items:center;
+  background:rgba(255,255,255,.18);
+  color:#fff;
+  font-size:20px;
+  font-weight:900;
+}
+
+.interdependence{
+  margin-top:14px;
+  border-radius:18px;
+  padding:13px 14px;
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.16);
+  color:#fff;
+  font-size:12px;
+  line-height:1.45;
+  text-align:center;
+}
+
+.econ-deco{
+  position:absolute;
+  font-size:78px;
+  opacity:.08;
+  user-select:none;
+}
+.e1{left:18px;bottom:10px}
+.e2{right:12px;top:8px;transform:rotate(10deg)}
+
+/* ---------- GAME ---------- */
+#game{align-items:stretch}
+
+.game-shell{
+  width:min(1180px,100%);
+  min-height:100svh;
+  margin:auto;
+  padding:clamp(10px,1.8vw,20px);
+  display:flex;
+  flex-direction:column;
+}
+
+.topbar{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:12px;
+  align-items:center;
+  margin-bottom:12px;
+}
+
+.title-wrap{
+  min-width:0;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.chapter-icon{
+  width:44px;
+  height:44px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  flex:none;
+  color:#fff;
+  background:linear-gradient(135deg,var(--navy),var(--teal));
+  font-size:22px;
+  box-shadow:0 8px 20px rgba(35,75,93,.18);
+}
+
+.chapter{min-width:0}
+
+.chapter small{
+  display:block;
+  color:var(--teal);
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.45px;
+  text-transform:uppercase;
+}
+
+.chapter strong{
+  display:block;
+  font-size:clamp(18px,2.4vw,24px);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.stats{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+
+.stat{
+  min-width:92px;
+  padding:9px 12px;
+  border-radius:14px;
+  background:rgba(255,255,255,.95);
+  border:1px solid rgba(35,75,93,.08);
+  box-shadow:0 7px 18px rgba(20,50,60,.07);
+  text-align:center;
+}
+
+.stat .label{
+  display:block;
+  font-size:10px;
+  font-weight:800;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.5px;
+}
+
+.stat strong{
+  display:block;
+  margin-top:2px;
+  font-size:15px;
+}
+
+.progress-track{
+  height:10px;
+  border-radius:999px;
+  overflow:hidden;
+  margin-bottom:12px;
+  background:rgba(255,255,255,.90);
+  border:1px solid rgba(35,75,93,.07);
+}
+
+.progress-bar{
+  height:100%;
+  width:0;
+  border-radius:inherit;
+  background:linear-gradient(90deg,var(--green),var(--amber),var(--teal));
+  transition:width .28s ease;
+}
+
+.quiz-card{
+  flex:1;
+  min-height:0;
+  width:100%;
+  margin:auto;
+  padding:clamp(16px,2.5vw,28px);
+  border-radius:26px;
+  background:rgba(255,255,255,.97);
+  border:1px solid rgba(255,255,255,.92);
+  box-shadow:var(--shadow);
+  display:flex;
+  flex-direction:column;
+  position:relative;
+  overflow:hidden;
+}
+
+.quiz-card:before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:6px;
+  background:linear-gradient(90deg,var(--green),var(--amber),var(--teal));
+}
+
+.q-topline{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin:2px 0 10px;
+}
+
+.q-tag{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:7px 10px;
+  border-radius:999px;
+  background:#edf6f4;
+  color:var(--teal);
+  font-size:12px;
+  font-weight:800;
+}
+
+.attempts{
+  color:var(--muted);
+  font-size:12px;
+  font-weight:800;
+}
+
+.question{
+  margin:4px 0 16px;
+  font-size:clamp(19px,2.25vw,26px);
+  line-height:1.43;
+  font-weight:800;
+  letter-spacing:-.2px;
+  white-space:pre-line;
+}
+
+.data-table{
+  width:min(560px,100%);
+  margin:8px 0 16px;
+  border-collapse:collapse;
+  overflow:hidden;
+  border-radius:12px;
+  background:#fbfcfa;
+  font-size:14px;
+}
+
+.data-table th,
+.data-table td{
+  border:1px solid #e0e5df;
+  padding:8px 10px;
+  text-align:left;
+}
+
+.data-table th{
+  background:#edf3ec;
+  color:var(--navy);
+}
+
+.options{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
 .option{
-    display:block;
-    margin:12px auto;
-    padding:14px;
-    width:80%;
-    max-width:550px;
-    background:#f7f3e9;
-    border:2px solid #6b4f3a;
-    border-radius:12px;
-    font-size:18px;
-    cursor:pointer;
-    transition:0.3s;
+  position:relative;
+  width:100%;
+  min-height:66px;
+  padding:13px 14px 13px 50px;
+  border:1.5px solid var(--line);
+  border-radius:17px;
+  background:#fff;
+  color:var(--ink);
+  text-align:left;
+  cursor:pointer;
+  line-height:1.35;
+  font-size:15px;
+  font-weight:700;
+  box-shadow:0 7px 16px rgba(35,75,93,.06);
+  transition:.16s transform,.16s border-color,.16s box-shadow,.16s background;
 }
 
-.option:hover{
-    transform:scale(1.03);
-    background:#fff;
+.option:hover:not(:disabled){
+  transform:translateY(-1px);
+  border-color:#9fc8c4;
+  box-shadow:0 10px 20px rgba(35,75,93,.09);
 }
 
-/* Correct / Wrong */
-.correct{
-    background:#b6f7b6 !important;
-    border-color:green;
+.option:disabled{cursor:default}
+
+.option .letter{
+  position:absolute;
+  left:12px;
+  top:50%;
+  transform:translateY(-50%);
+  width:29px;
+  height:29px;
+  border-radius:10px;
+  display:grid;
+  place-items:center;
+  background:#edf6f4;
+  color:var(--teal);
+  font-size:13px;
+  font-weight:900;
 }
 
-.wrong{
-    background:#f7b6b6 !important;
-    border-color:red;
+.option.correct{
+  background:var(--good);
+  border-color:var(--good-line);
+  color:#1f653d;
 }
 
-/* Confetti */
-.confetti {
-    position: fixed;
-    width: 10px;
-    height: 10px;
-    background: gold;
-    top: -10px;
-    animation: fall 3s linear forwards;
+.option.correct .letter{
+  background:var(--good-line);
+  color:#fff;
+}
+
+.option.wrong{
+  background:var(--bad);
+  border-color:var(--bad-line);
+  animation:shake .28s linear;
+}
+
+.option.wrong .letter{
+  background:var(--bad-line);
+  color:#fff;
+}
+
+@keyframes shake{
+  25%{transform:translateX(-5px)}
+  50%{transform:translateX(5px)}
+  75%{transform:translateX(-3px)}
+}
+
+.feedback{
+  min-height:50px;
+  margin-top:auto;
+  padding-top:12px;
+  display:flex;
+  align-items:center;
+}
+
+.feedback-box{
+  width:100%;
+  padding:10px 12px;
+  border-radius:15px;
+  background:#f7f9f8;
+  border:1px dashed #ccd9d6;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.35;
+}
+
+.feedback-box.good{
+  background:var(--good);
+  border-style:solid;
+  border-color:#b9ddc4;
+  color:#286842;
+}
+
+.feedback-box.bad{
+  background:var(--bad);
+  border-style:solid;
+  border-color:#efc1bd;
+  color:#8b3f3a;
+}
+
+.sound-btn{
+  position:fixed;
+  right:16px;
+  bottom:16px;
+  z-index:30;
+  width:46px;
+  height:46px;
+  border:0;
+  border-radius:15px;
+  background:#fff;
+  color:var(--navy);
+  cursor:pointer;
+  box-shadow:0 8px 22px rgba(0,0,0,.14);
+  font-size:20px;
+}
+
+/* ---------- RESULT ---------- */
+#result{
+  align-items:center;
+  justify-content:center;
+}
+
+.result-card{
+  width:min(630px,calc(100% - 24px));
+  margin:auto;
+  padding:clamp(28px,5vw,52px);
+  border-radius:30px;
+  text-align:center;
+  background:rgba(255,255,255,.98);
+  border:1px solid rgba(255,255,255,.92);
+  box-shadow:var(--shadow);
+}
+
+.result-icon{
+  font-size:72px;
+  line-height:1;
+}
+
+.result-card h2{
+  margin:12px 0 6px;
+  font-size:clamp(28px,5vw,46px);
+  color:var(--navy);
+}
+
+.result-score{
+  margin:14px 0 8px;
+  font-size:clamp(44px,8vw,72px);
+  line-height:1;
+  font-weight:900;
+  color:var(--teal);
+}
+
+.result-card p{
+  max-width:450px;
+  margin:0 auto 22px;
+  color:var(--muted);
+  line-height:1.55;
+  font-size:16px;
+}
+
+/* ---------- CONFETTI ---------- */
+.confetti-layer{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:12000;
+  overflow:hidden;
+}
+
+.confetti{
+  position:absolute;
+  top:-18px;
+  width:9px;
+  height:14px;
+  border-radius:2px;
+  animation:fall 1.9s linear forwards;
 }
 
 @keyframes fall{
-    to{
-        transform:translateY(100vh) rotate(360deg);
-        opacity:0;
-    }
+  to{
+    transform:translate3d(var(--drift),105vh,0) rotate(680deg);
+    opacity:.15;
+  }
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width:900px){
+  .intro-grid{
+    grid-template-columns:1fr;
+  }
+
+  .intro-visual{
+    min-height:430px;
+  }
+}
+
+@media (max-width:700px){
+  .shell{padding:10px}
+
+  .intro-card{border-radius:22px}
+
+  .intro-copy{padding:24px 20px}
+
+  .rules{grid-template-columns:1fr}
+
+  .intro-visual{
+    min-height:410px;
+    padding:18px;
+  }
+
+  .sector-card{
+    padding:13px;
+  }
+
+  .sector-icon{
+    width:52px;
+    height:52px;
+    font-size:27px;
+  }
+
+  .sector-card h3{
+    font-size:15px;
+  }
+
+  .sector-card p{
+    font-size:11px;
+  }
+
+  .game-shell{padding:9px}
+
+  .topbar{
+    grid-template-columns:1fr;
+    gap:9px;
+  }
+
+  .stats{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    justify-content:stretch;
+  }
+
+  .stat{
+    min-width:0;
+    padding:7px 8px;
+  }
+
+  .chapter strong{
+    font-size:18px;
+  }
+
+  .chapter-icon{
+    width:38px;
+    height:38px;
+    border-radius:12px;
+    font-size:19px;
+  }
+
+  .quiz-card{
+    padding:14px;
+    border-radius:20px;
+  }
+
+  .question{
+    font-size:18px;
+    margin-bottom:12px;
+  }
+
+  .options{
+    grid-template-columns:1fr;
+    gap:8px;
+  }
+
+  .option{
+    min-height:56px;
+    padding:11px 12px 11px 47px;
+    border-radius:15px;
+    font-size:14px;
+  }
+
+  .feedback{padding-top:9px}
+
+  .sound-btn{
+    right:10px;
+    bottom:10px;
+    width:42px;
+    height:42px;
+    border-radius:13px;
+  }
+}
+
+@media (max-height:690px) and (min-width:701px){
+  .game-shell{padding:8px 14px}
+  .topbar{margin-bottom:7px}
+  .progress-track{margin-bottom:8px}
+  .quiz-card{padding:15px}
+  .question{font-size:18px;margin:2px 0 10px}
+
+  .option{
+    min-height:52px;
+    padding-top:10px;
+    padding-bottom:10px;
+    font-size:13px;
+  }
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,
+  *:before,
+  *:after{
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
+    transition:none!important;
+    scroll-behavior:auto!important;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<!-- SPLASH with Innovine logo -->
+<!-- WHITE SPLASH: Innovine logo only -->
 <div id="splash">
-    <img src="assets/logo.png" alt="Innovine Logo">
+  <img src="assets/logo.png" alt="Innovine logo">
 </div>
+
+<!-- INTRO -->
+<section id="intro" class="screen">
+  <div class="econ-bg">
+    <div class="shell" style="display:flex;min-height:100svh;align-items:center">
+
+      <div class="intro-card">
+        <div class="intro-grid">
+
+          <div class="intro-copy">
+
+            <div class="kicker">Grade 6 • Chapter 14 • CBQ Challenge</div>
+
+            <h1>Economic Activities Around Us</h1>
+
+            <p>
+              Follow how natural resources, production and services connect to one another through the primary, secondary and tertiary sectors.
+            </p>
+
+            <div class="rules">
+
+              <div class="rule">
+                <div class="icon">🎯</div>
+                <div><b>12 questions</b>Complete every challenge.</div>
+              </div>
+
+              <div class="rule">
+                <div class="icon">✌️</div>
+                <div><b>2 attempts</b>Try once more after a mistake.</div>
+              </div>
+
+              <div class="rule">
+                <div class="icon">⏱️</div>
+                <div><b>60 seconds</b>For each question.</div>
+              </div>
+
+              <div class="rule">
+                <div class="icon">🏆</div>
+                <div><b>Final score</b>See your result at the end.</div>
+              </div>
+
+            </div>
+
+            <button class="primary" id="startBtn">Start Economic Flow Challenge</button>
+
+          </div>
+
+          <div class="intro-visual" aria-hidden="true">
+
+            <div class="econ-deco e1">🌾</div>
+            <div class="econ-deco e2">⚙️</div>
+
+            <div class="flow-wrap">
+
+              <div class="flow-title">How economic activities connect</div>
+
+              <div class="sector-card primary-sector">
+                <div class="sector-icon">🌱</div>
+                <div>
+                  <h3>Primary Sector</h3>
+                  <p>Farming, fishing and mining use natural resources directly.</p>
+                </div>
+              </div>
+
+              <div class="flow-arrow">↓</div>
+
+              <div class="sector-card secondary-sector">
+                <div class="sector-icon">🏭</div>
+                <div>
+                  <h3>Secondary Sector</h3>
+                  <p>Factories and workers turn raw materials into useful goods.</p>
+                </div>
+              </div>
+
+              <div class="flow-arrow">↓</div>
+
+              <div class="sector-card tertiary-sector">
+                <div class="sector-icon">🛍️</div>
+                <div>
+                  <h3>Tertiary Sector</h3>
+                  <p>Shops, transport, healthcare and other services support people and businesses.</p>
+                </div>
+              </div>
+
+              <div class="interdependence">
+                🔗 Each sector depends on the others to move goods and services through the economy.
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
 
 <!-- GAME -->
-<div id="game">
-    <div id="header">Grade 6 - Chapter 14: Economic Activities Around Us</div>
-    <div id="score">Score: 0</div>
+<section id="game" class="screen">
+  <div class="econ-bg">
+    <div class="game-shell">
 
-    <div class="question-box" id="question">Loading...</div>
-    <div id="options"></div>
-</div>
+      <div class="topbar">
 
-<!-- AUDIO -->
-<audio id="correctSound" src="assets/correct.mp3"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3"></audio>
-<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+        <div class="title-wrap">
+
+          <div class="chapter-icon">🔗</div>
+
+          <div class="chapter">
+            <small>Grade 6 • Chapter 14</small>
+            <strong>Economic Activities Around Us</strong>
+          </div>
+
+        </div>
+
+        <div class="stats">
+
+          <div class="stat">
+            <span class="label">Question</span>
+            <strong id="qStat">1 / 12</strong>
+          </div>
+
+          <div class="stat">
+            <span class="label">Score</span>
+            <strong id="scoreStat">0</strong>
+          </div>
+
+          <div class="stat">
+            <span class="label">Time</span>
+            <strong id="timeStat">60s</strong>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="progress-track">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+
+      <main class="quiz-card">
+
+        <div class="q-topline">
+          <div class="q-tag">📊 Economic Activity Challenge</div>
+          <div class="attempts" id="attemptText">Attempt 1 of 2</div>
+        </div>
+
+        <div class="question" id="question">Loading...</div>
+
+        <div id="dataArea"></div>
+
+        <div class="options" id="options"></div>
+
+        <div class="feedback">
+          <div class="feedback-box" id="feedbackBox">Choose the best answer.</div>
+        </div>
+
+      </main>
+
+    </div>
+  </div>
+</section>
+
+<!-- RESULT -->
+<section id="result" class="screen">
+  <div class="econ-bg" style="display:flex;align-items:center">
+
+    <div class="result-card">
+
+      <div class="result-icon">🏆</div>
+
+      <h2>Challenge Complete!</h2>
+
+      <div class="result-score" id="finalScore">0 / 12</div>
+
+      <p id="finalRemark">Great effort!</p>
+
+      <button class="primary" id="restartBtn">Play Again</button>
+
+    </div>
+
+  </div>
+</section>
+
+<button class="sound-btn" id="soundBtn" aria-label="Mute or unmute sounds">🔊</button>
+
+<div class="confetti-layer" id="confettiLayer"></div>
+
+<audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
 
 <script>
-// QUESTIONS (shuffled once at start)
-let questions = [
+const baseQuestions = [
 {
     q:"Ravi helps his mother arrange books in their shop after school. Customers buy the books and pay money. Why is this an economic activity?",
     o:[
@@ -184,7 +1085,15 @@ let questions = [
     a:2
 },
 {
-    q:"Person / Job\nAman – Farmer\nRitu – Factory Worker\nKaran – Taxi Driver\nSeema – Miner\n\nWho works in the tertiary sector?",
+    q:"Person / Job",
+    table:[
+      ["Person","Job"],
+      ["Aman","Farmer"],
+      ["Ritu","Factory Worker"],
+      ["Karan","Taxi Driver"],
+      ["Seema","Miner"]
+    ],
+    tail:"Who works in the tertiary sector?",
     o:[
         "Aman",
         "Ritu",
@@ -265,69 +1174,430 @@ let questions = [
 }
 ];
 
-let current = 0;
-let score = 0;
+const els = {
+  splash:document.getElementById("splash"),
+  intro:document.getElementById("intro"),
+  game:document.getElementById("game"),
+  result:document.getElementById("result"),
 
-// Fisher–Yates shuffle to randomise question order
-function shuffleQuestions(arr){
-    for(let i = arr.length - 1; i > 0; i--){
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
+  startBtn:document.getElementById("startBtn"),
+  restartBtn:document.getElementById("restartBtn"),
+  soundBtn:document.getElementById("soundBtn"),
+
+  question:document.getElementById("question"),
+  dataArea:document.getElementById("dataArea"),
+  options:document.getElementById("options"),
+  feedback:document.getElementById("feedbackBox"),
+
+  qStat:document.getElementById("qStat"),
+  scoreStat:document.getElementById("scoreStat"),
+  timeStat:document.getElementById("timeStat"),
+  attemptText:document.getElementById("attemptText"),
+  progressBar:document.getElementById("progressBar"),
+
+  finalScore:document.getElementById("finalScore"),
+  finalRemark:document.getElementById("finalRemark"),
+
+  correctSound:document.getElementById("correctSound"),
+  wrongSound:document.getElementById("wrongSound"),
+  clapSound:document.getElementById("clapSound"),
+
+  confettiLayer:document.getElementById("confettiLayer")
+};
+
+let questions=[];
+let current=0;
+let score=0;
+let attempts=1;
+let timeLeft=60;
+let timerId=null;
+let locked=false;
+let muted=false;
+
+function showScreen(target){
+  [els.intro,els.game,els.result].forEach(x=>x.classList.remove("active"));
+  target.classList.add("active");
 }
 
-setTimeout(()=>{
-    document.getElementById("splash").style.display="none";
-    document.getElementById("game").style.display="block";
-    shuffleQuestions(questions);
-    loadQuestion();
-},3000);
+function shuffle(arr){
+  const copy=[...arr];
 
-function loadQuestion(){
-    if(current >= questions.length){
-        document.getElementById("question").innerHTML = "🎉 Game Completed!";
-        document.getElementById("options").innerHTML = "";
-        document.getElementById("clapSound").play();
-        return;
-    }
+  for(let i=copy.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [copy[i],copy[j]]=[copy[j],copy[i]];
+  }
 
-    let q = questions[current];
-    document.getElementById("question").innerHTML = q.q.replace(/\n/g,"<br>");
+  return copy;
+}
 
-    let optHTML = "";
-    q.o.forEach((opt,i)=>{
-        optHTML += `<div class='option' onclick='checkAnswer(this,${i})'>${opt}</div>`;
+function prepareQuestions(){
+
+  questions=shuffle(baseQuestions).map(item=>{
+
+    const indexed=item.o.map((text,index)=>({text,index}));
+    const shuffled=shuffle(indexed);
+
+    return{
+      ...item,
+      choices:shuffled.map(x=>x.text),
+      correctIndex:shuffled.findIndex(x=>x.index===item.a)
+    };
+
+  });
+
+}
+
+function play(audio){
+
+  if(muted) return;
+
+  try{
+    audio.currentTime=0;
+    audio.play().catch(()=>{});
+  }catch(e){}
+
+}
+
+function startGame(){
+
+  prepareQuestions();
+
+  current=0;
+  score=0;
+
+  showScreen(els.game);
+
+  loadQuestion();
+
+}
+
+function renderTable(rows){
+
+  if(!rows) return "";
+
+  let html='<table class="data-table" aria-label="Question data">';
+  html+='<thead><tr>';
+
+  rows[0].forEach(cell=>{
+    html+='<th>'+escapeHTML(cell)+'</th>';
+  });
+
+  html+='</tr></thead><tbody>';
+
+  rows.slice(1).forEach(row=>{
+
+    html+='<tr>';
+
+    row.forEach(cell=>{
+      html+='<td>'+escapeHTML(cell)+'</td>';
     });
 
-    document.getElementById("options").innerHTML = optHTML;
+    html+='</tr>';
+
+  });
+
+  html+='</tbody></table>';
+
+  return html;
 }
 
-function checkAnswer(el,i){
-    let q = questions[current];
+function loadQuestion(){
 
-    if(i === q.a){
-        el.classList.add("correct");
-        document.getElementById("correctSound").play();
-        score++;
-        document.getElementById("score").innerText = "Score: " + score;
-        createConfetti();
-        setTimeout(()=>{ current++; loadQuestion(); },1200);
+  clearInterval(timerId);
+
+  locked=false;
+  attempts=1;
+  timeLeft=60;
+
+  if(current>=questions.length){
+    endGame();
+    return;
+  }
+
+  const q=questions[current];
+
+  els.qStat.textContent=(current+1)+" / "+questions.length;
+  els.scoreStat.textContent=score;
+  els.timeStat.textContent=timeLeft+"s";
+  els.attemptText.textContent="Attempt 1 of 2";
+
+  els.progressBar.style.width=((current/questions.length)*100)+"%";
+
+  els.question.textContent=q.q;
+
+  let tableHTML=renderTable(q.table);
+
+  if(q.tail){
+    tableHTML+='<div class="question" style="font-size:clamp(17px,2vw,22px);margin-top:6px">'+escapeHTML(q.tail)+'</div>';
+  }
+
+  els.dataArea.innerHTML=tableHTML;
+
+  els.feedback.className="feedback-box";
+  els.feedback.textContent="Choose the best answer.";
+
+  els.options.innerHTML="";
+
+  q.choices.forEach((choice,i)=>{
+
+    const btn=document.createElement("button");
+
+    btn.className="option";
+    btn.type="button";
+
+    btn.innerHTML=
+      '<span class="letter">'+String.fromCharCode(65+i)+'</span>'+
+      '<span>'+escapeHTML(choice)+'</span>';
+
+    btn.addEventListener("click",()=>checkAnswer(btn,i));
+
+    els.options.appendChild(btn);
+
+  });
+
+  timerId=setInterval(()=>{
+
+    timeLeft--;
+
+    els.timeStat.textContent=timeLeft+"s";
+
+    if(timeLeft<=0){
+
+      clearInterval(timerId);
+
+      handleTimeout();
+
+    }
+
+  },1000);
+
+}
+
+function escapeHTML(str){
+
+  return String(str).replace(/[&<>"']/g,ch=>({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#039;"
+  }[ch]));
+
+}
+
+function disableOptions(){
+
+  [...els.options.querySelectorAll(".option")].forEach(btn=>{
+    btn.disabled=true;
+  });
+
+}
+
+function markCorrect(){
+
+  const q=questions[current];
+  const btn=els.options.children[q.correctIndex];
+
+  if(btn){
+    btn.classList.add("correct");
+  }
+
+}
+
+function checkAnswer(btn,index){
+
+  if(locked || btn.disabled) return;
+
+  const q=questions[current];
+
+  if(index===q.correctIndex){
+
+    locked=true;
+
+    clearInterval(timerId);
+
+    btn.classList.add("correct");
+
+    disableOptions();
+
+    score++;
+
+    els.scoreStat.textContent=score;
+
+    els.feedback.className="feedback-box good";
+    els.feedback.textContent="Correct! Good job.";
+
+    play(els.correctSound);
+
+    createConfetti(22);
+
+    setTimeout(nextQuestion,1200);
+
+  }else{
+
+    btn.classList.add("wrong");
+    btn.disabled=true;
+
+    play(els.wrongSound);
+
+    if(attempts===1){
+
+      attempts=2;
+
+      els.attemptText.textContent="Attempt 2 of 2";
+
+      els.feedback.className="feedback-box bad";
+      els.feedback.textContent="Not quite. Try once more.";
+
     }else{
-        el.classList.add("wrong");
-        document.getElementById("wrongSound").play();
+
+      locked=true;
+
+      clearInterval(timerId);
+
+      disableOptions();
+
+      markCorrect();
+
+      els.feedback.className="feedback-box bad";
+      els.feedback.textContent="The correct answer is highlighted.";
+
+      setTimeout(nextQuestion,1500);
+
     }
+
+  }
+
 }
 
-function createConfetti(){
-    for(let i=0;i<25;i++){
-        let c = document.createElement("div");
-        c.className = "confetti";
-        c.style.left = Math.random()*100 + "vw";
-        c.style.background = ["gold","orange","#fff","#d6b36a"][Math.floor(Math.random()*4)];
-        document.body.appendChild(c);
-        setTimeout(()=>c.remove(),3000);
-    }
+function handleTimeout(){
+
+  if(locked) return;
+
+  locked=true;
+
+  disableOptions();
+
+  markCorrect();
+
+  els.feedback.className="feedback-box bad";
+  els.feedback.textContent="Time is up. The correct answer is highlighted.";
+
+  setTimeout(nextQuestion,1500);
+
 }
+
+function nextQuestion(){
+
+  current++;
+
+  if(current<questions.length){
+
+    loadQuestion();
+
+  }else{
+
+    endGame();
+
+  }
+
+}
+
+function endGame(){
+
+  clearInterval(timerId);
+
+  showScreen(els.result);
+
+  els.finalScore.textContent=score+" / "+questions.length;
+
+  const pct=(score/questions.length)*100;
+
+  let remark="";
+
+  if(pct>=80){
+    remark="Excellent! You understand the primary, secondary and tertiary sectors and how they depend on one another.";
+  }else if(pct>=60){
+    remark="Good job! You understood most of the economic activity concepts.";
+  }else if(pct>=45){
+    remark="Well tried! Review a few sector examples and play again.";
+  }else{
+    remark="Let's revise the chapter ideas and try the challenge again.";
+  }
+
+  els.finalRemark.textContent=remark;
+
+  play(els.clapSound);
+
+  createConfetti(52);
+
+}
+
+function createConfetti(count){
+
+  const palette=[
+    "#234b5d",
+    "#2f7f7a",
+    "#5f8f55",
+    "#e3a93c",
+    "#b7653f"
+  ];
+
+  for(let i=0;i<count;i++){
+
+    const c=document.createElement("span");
+
+    c.className="confetti";
+
+    c.style.left=(Math.random()*100)+"vw";
+
+    c.style.background=
+      palette[Math.floor(Math.random()*palette.length)];
+
+    c.style.setProperty(
+      "--drift",
+      ((Math.random()*160)-80)+"px"
+    );
+
+    c.style.animationDelay=
+      (Math.random()*0.35)+"s";
+
+    c.style.transform=
+      "rotate("+(Math.random()*360)+"deg)";
+
+    els.confettiLayer.appendChild(c);
+
+    setTimeout(()=>c.remove(),2400);
+
+  }
+
+}
+
+els.startBtn.addEventListener("click",startGame);
+
+els.restartBtn.addEventListener("click",startGame);
+
+els.soundBtn.addEventListener("click",()=>{
+
+  muted=!muted;
+
+  els.soundBtn.textContent=muted ? "🔇" : "🔊";
+
+  els.soundBtn.setAttribute(
+    "aria-label",
+    muted ? "Unmute sounds" : "Mute sounds"
+  );
+
+});
+
+setTimeout(()=>{
+
+  els.splash.style.display="none";
+
+  showScreen(els.intro);
+
+},3000);
+
 </script>
 
 </body>
