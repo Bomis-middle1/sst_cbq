@@ -1,148 +1,1118 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>CBQ Interactive - Grade 6 - Chapter 12: Grassroots Democracy – Part 3 (Urban Local Government)</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#16324f" />
+<title>Grade 6 CBQ - Grassroots Democracy – Part 3: Urban Local Government</title>
 
 <style>
-body{
-    margin:0;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg,#e8d9b5,#f7f3e9,#d6b36a);
-    overflow-x:hidden;
+:root{
+  --navy:#16324f;
+  --blue:#1f6f8b;
+  --cyan:#38a3a5;
+  --sky:#75c9c8;
+  --amber:#f2b84b;
+  --coral:#e67e5f;
+  --ink:#1d2f3d;
+  --muted:#697b87;
+  --line:#dbe5ea;
+  --paper:#ffffff;
+  --soft:#f4f8fa;
+  --good:#e8f7ee;
+  --good-line:#4fa870;
+  --bad:#fff0ee;
+  --bad-line:#d96a63;
+  --shadow:0 18px 46px rgba(22,50,79,.14);
 }
 
-/* Splash Screen */
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  width:100%;
+  min-height:100%;
+  font-family:Arial,Helvetica,sans-serif;
+  color:var(--ink);
+  background:#edf4f7;
+  -webkit-tap-highlight-color:transparent;
+}
+
+body{
+  min-height:100svh;
+  overflow-x:hidden;
+}
+
+button{font:inherit}
+
+button:focus-visible{
+  outline:3px solid rgba(242,184,75,.55);
+  outline-offset:3px;
+}
+
+/* ---------- SPLASH ---------- */
 #splash{
-    position:fixed;
-    width:100%;
-    height:100%;
-    background:white;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
-    z-index:10;
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#fff;
 }
 
 #splash img{
-    width:220px;
-    animation:zoom 2s ease-in-out;
+  width:min(240px,52vw);
+  max-height:42vh;
+  object-fit:contain;
+  animation:logoIn 1.5s ease both;
 }
 
-@keyframes zoom{
-    from{transform:scale(0.6); opacity:0;}
-    to{transform:scale(1); opacity:1;}
+@keyframes logoIn{
+  from{opacity:0;transform:scale(.82)}
+  to{opacity:1;transform:scale(1)}
 }
 
-/* Game Container */
-#game{
-    display:none;
-    padding:20px;
-    text-align:center;
+/* ---------- COMMON ---------- */
+.screen{
+  display:none;
+  min-height:100svh;
 }
 
-/* Header (Grade + Chapter) */
-#header{
-    margin-bottom:15px;
-    font-size:22px;
-    font-weight:bold;
-    color:#3b2a1f;
+.screen.active{
+  display:flex;
 }
 
-/* Score */
-#score{
-    font-size:20px;
-    font-weight:bold;
-    margin-bottom:10px;
+.city-bg{
+  width:100%;
+  min-height:100svh;
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 12% 10%,rgba(242,184,75,.18),transparent 24%),
+    radial-gradient(circle at 89% 12%,rgba(56,163,165,.18),transparent 22%),
+    linear-gradient(135deg,#f6f8fa 0%,#edf6f7 48%,#f8f3e8 100%);
 }
 
-/* Question Box */
-.question-box{
-    background:rgba(59,42,31,0.85);
-    color:#fff;
-    padding:20px;
-    border-radius:15px;
-    max-width:800px;
-    margin:auto;
-    box-shadow:0 0 15px rgba(0,0,0,0.3);
-    font-size:22px;
+.city-bg:before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-2;
+  pointer-events:none;
+  opacity:.14;
+  background:
+    linear-gradient(rgba(22,50,79,.09) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(22,50,79,.09) 1px,transparent 1px);
+  background-size:46px 46px;
 }
 
-/* Options */
+.city-bg:after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:82px;
+  z-index:-1;
+  opacity:.12;
+  background:
+    linear-gradient(to top,rgba(22,50,79,.8),rgba(22,50,79,.8)) 0 100%/100% 12px no-repeat,
+    linear-gradient(90deg,
+      transparent 0 3%,
+      var(--navy) 3% 8%, transparent 8% 10%,
+      var(--navy) 10% 14%, transparent 14% 17%,
+      var(--navy) 17% 24%, transparent 24% 27%,
+      var(--navy) 27% 31%, transparent 31% 34%,
+      var(--navy) 34% 40%, transparent 40% 43%,
+      var(--navy) 43% 47%, transparent 47% 49%,
+      var(--navy) 49% 56%, transparent 56% 59%,
+      var(--navy) 59% 64%, transparent 64% 67%,
+      var(--navy) 67% 74%, transparent 74% 76%,
+      var(--navy) 76% 81%, transparent 81% 84%,
+      var(--navy) 84% 91%, transparent 91% 94%,
+      var(--navy) 94% 98%, transparent 98% 100%
+    ) 0 100%/100% 70px no-repeat;
+}
+
+.shell{
+  width:min(1180px,100%);
+  margin:auto;
+  padding:clamp(12px,2vw,24px);
+}
+
+/* ---------- INTRO ---------- */
+.intro-card{
+  width:min(980px,100%);
+  margin:auto;
+  border-radius:30px;
+  overflow:hidden;
+  background:rgba(255,255,255,.96);
+  border:1px solid rgba(255,255,255,.92);
+  box-shadow:var(--shadow);
+}
+
+.intro-grid{
+  display:grid;
+  grid-template-columns:1.06fr .94fr;
+  min-height:min(690px,calc(100svh - 48px));
+}
+
+.intro-copy{
+  padding:clamp(28px,4vw,54px);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+
+.kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  width:max-content;
+  max-width:100%;
+  padding:8px 12px;
+  border-radius:999px;
+  background:#edf6f8;
+  color:var(--blue);
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:.45px;
+  text-transform:uppercase;
+}
+
+h1{
+  margin:16px 0 12px;
+  font-size:clamp(34px,5vw,58px);
+  line-height:1.03;
+  letter-spacing:-1.3px;
+  color:var(--navy);
+}
+
+.intro-copy p{
+  margin:0;
+  color:var(--muted);
+  font-size:clamp(16px,2vw,19px);
+  line-height:1.6;
+}
+
+.rules{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin:24px 0;
+}
+
+.rule{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  padding:12px;
+  border-radius:16px;
+  background:#fafcfd;
+  border:1px solid #e8eef1;
+  font-size:14px;
+  line-height:1.35;
+}
+
+.rule .icon{
+  font-size:21px;
+  line-height:1;
+}
+
+.rule b{
+  display:block;
+  margin-bottom:2px;
+  color:var(--navy);
+}
+
+.primary{
+  min-height:52px;
+  padding:13px 20px;
+  border:0;
+  border-radius:16px;
+  cursor:pointer;
+  color:#fff;
+  font-weight:800;
+  background:linear-gradient(135deg,var(--navy),var(--blue));
+  box-shadow:0 10px 24px rgba(22,50,79,.22);
+  transition:.18s transform,.18s box-shadow;
+}
+
+.primary:hover{
+  transform:translateY(-1px);
+  box-shadow:0 14px 30px rgba(22,50,79,.26);
+}
+
+.primary:active{transform:scale(.99)}
+
+/* city visual */
+.intro-visual{
+  position:relative;
+  min-height:410px;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 70% 18%,rgba(255,255,255,.25),transparent 18%),
+    linear-gradient(160deg,#2d8194 0%,#16324f 78%);
+}
+
+.city-sun{
+  position:absolute;
+  width:86px;
+  height:86px;
+  border-radius:50%;
+  right:38px;
+  top:34px;
+  background:rgba(242,184,75,.95);
+  box-shadow:0 0 0 16px rgba(242,184,75,.10);
+}
+
+.city-cloud{
+  position:absolute;
+  height:24px;
+  width:76px;
+  border-radius:999px;
+  background:rgba(255,255,255,.25);
+}
+.city-cloud:before,
+.city-cloud:after{
+  content:"";
+  position:absolute;
+  border-radius:50%;
+  background:inherit;
+}
+.city-cloud:before{width:30px;height:30px;left:12px;top:-12px}
+.city-cloud:after{width:38px;height:38px;left:30px;top:-17px}
+.cloud1{top:80px;left:36px}
+.cloud2{top:138px;right:70px;transform:scale(.76)}
+
+.city-services{
+  position:absolute;
+  inset:40px 28px auto 28px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  z-index:3;
+}
+
+.service-card{
+  min-height:92px;
+  border-radius:18px;
+  padding:13px;
+  background:rgba(255,255,255,.94);
+  box-shadow:0 12px 26px rgba(0,0,0,.16);
+  display:flex;
+  align-items:center;
+  gap:10px;
+  color:var(--navy);
+  font-size:12px;
+  font-weight:800;
+}
+
+.service-card span{
+  width:44px;
+  height:44px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  flex:none;
+  font-size:24px;
+  background:#edf6f8;
+}
+
+.skyline{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:220px;
+}
+
+.road{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:62px;
+  background:#273b4a;
+  box-shadow:inset 0 8px 0 rgba(255,255,255,.05);
+}
+
+.road:after{
+  content:"";
+  position:absolute;
+  left:5%;
+  right:5%;
+  top:29px;
+  height:4px;
+  background:repeating-linear-gradient(90deg,#f2b84b 0 36px,transparent 36px 72px);
+}
+
+.building{
+  position:absolute;
+  bottom:62px;
+  border-radius:8px 8px 0 0;
+  background:#eef4f6;
+  box-shadow:inset 0 -10px 0 rgba(22,50,79,.06);
+}
+
+.building:after{
+  content:"";
+  position:absolute;
+  inset:14px 10px;
+  background:
+    repeating-linear-gradient(0deg,rgba(31,111,139,.33) 0 8px,transparent 8px 19px),
+    repeating-linear-gradient(90deg,rgba(31,111,139,.33) 0 9px,transparent 9px 21px);
+}
+
+.b1{left:4%;width:72px;height:110px}
+.b2{left:22%;width:94px;height:158px}
+.b3{left:47%;width:78px;height:128px}
+.b4{right:20%;width:102px;height:184px}
+.b5{right:3%;width:70px;height:104px}
+
+.civic-label{
+  position:absolute;
+  left:50%;
+  bottom:76px;
+  transform:translateX(-50%);
+  z-index:5;
+  padding:10px 16px;
+  border-radius:999px;
+  color:#fff;
+  background:rgba(22,50,79,.92);
+  font-size:13px;
+  font-weight:800;
+  box-shadow:0 8px 20px rgba(0,0,0,.20);
+  white-space:nowrap;
+}
+
+/* ---------- GAME ---------- */
+#game{align-items:stretch}
+
+.game-shell{
+  width:min(1180px,100%);
+  min-height:100svh;
+  margin:auto;
+  padding:clamp(10px,1.8vw,20px);
+  display:flex;
+  flex-direction:column;
+}
+
+.topbar{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:12px;
+  align-items:center;
+  margin-bottom:12px;
+}
+
+.title-wrap{
+  min-width:0;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.chapter-icon{
+  width:44px;
+  height:44px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  flex:none;
+  color:#fff;
+  background:linear-gradient(135deg,var(--navy),var(--blue));
+  font-size:22px;
+  box-shadow:0 8px 20px rgba(22,50,79,.18);
+}
+
+.chapter{min-width:0}
+
+.chapter small{
+  display:block;
+  color:var(--blue);
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.45px;
+  text-transform:uppercase;
+}
+
+.chapter strong{
+  display:block;
+  font-size:clamp(18px,2.4vw,24px);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.stats{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+
+.stat{
+  min-width:92px;
+  padding:9px 12px;
+  border-radius:14px;
+  background:rgba(255,255,255,.95);
+  border:1px solid rgba(22,50,79,.08);
+  box-shadow:0 7px 18px rgba(20,50,60,.07);
+  text-align:center;
+}
+
+.stat .label{
+  display:block;
+  font-size:10px;
+  font-weight:800;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.5px;
+}
+
+.stat strong{
+  display:block;
+  margin-top:2px;
+  font-size:15px;
+}
+
+.progress-track{
+  height:10px;
+  border-radius:999px;
+  overflow:hidden;
+  margin-bottom:12px;
+  background:rgba(255,255,255,.90);
+  border:1px solid rgba(22,50,79,.07);
+}
+
+.progress-bar{
+  height:100%;
+  width:0;
+  border-radius:inherit;
+  background:linear-gradient(90deg,var(--coral),var(--amber),var(--cyan));
+  transition:width .28s ease;
+}
+
+.quiz-card{
+  flex:1;
+  min-height:0;
+  width:100%;
+  margin:auto;
+  padding:clamp(16px,2.5vw,28px);
+  border-radius:26px;
+  background:rgba(255,255,255,.97);
+  border:1px solid rgba(255,255,255,.92);
+  box-shadow:var(--shadow);
+  display:flex;
+  flex-direction:column;
+  position:relative;
+  overflow:hidden;
+}
+
+.quiz-card:before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:6px;
+  background:linear-gradient(90deg,var(--navy),var(--cyan),var(--amber));
+}
+
+.q-topline{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin:2px 0 10px;
+}
+
+.q-tag{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:7px 10px;
+  border-radius:999px;
+  background:#edf6f8;
+  color:var(--blue);
+  font-size:12px;
+  font-weight:800;
+}
+
+.attempts{
+  color:var(--muted);
+  font-size:12px;
+  font-weight:800;
+}
+
+.question{
+  margin:4px 0 16px;
+  font-size:clamp(19px,2.25vw,26px);
+  line-height:1.43;
+  font-weight:800;
+  letter-spacing:-.2px;
+  white-space:pre-line;
+}
+
+.data-table{
+  width:min(560px,100%);
+  margin:8px 0 16px;
+  border-collapse:collapse;
+  overflow:hidden;
+  border-radius:12px;
+  background:#fbfcfd;
+  font-size:14px;
+}
+
+.data-table th,
+.data-table td{
+  border:1px solid #e1e6e9;
+  padding:8px 10px;
+  text-align:left;
+}
+
+.data-table th{
+  background:#edf4f7;
+  color:var(--navy);
+}
+
+.options{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
 .option{
-    display:block;
-    margin:12px auto;
-    padding:14px;
-    width:80%;
-    max-width:550px;
-    background:#f7f3e9;
-    border:2px solid #6b4f3a;
-    border-radius:12px;
-    font-size:18px;
-    cursor:pointer;
-    transition:0.3s;
+  position:relative;
+  width:100%;
+  min-height:66px;
+  padding:13px 14px 13px 50px;
+  border:1.5px solid var(--line);
+  border-radius:17px;
+  background:#fff;
+  color:var(--ink);
+  text-align:left;
+  cursor:pointer;
+  line-height:1.35;
+  font-size:15px;
+  font-weight:700;
+  box-shadow:0 7px 16px rgba(28,60,71,.06);
+  transition:.16s transform,.16s border-color,.16s box-shadow,.16s background;
 }
 
-.option:hover{
-    transform:scale(1.03);
-    background:#fff;
+.option:hover:not(:disabled){
+  transform:translateY(-1px);
+  border-color:#9fc8d3;
+  box-shadow:0 10px 20px rgba(28,60,71,.09);
 }
 
-/* Correct / Wrong */
-.correct{
-    background:#b6f7b6 !important;
-    border-color:green;
+.option:disabled{cursor:default}
+
+.option .letter{
+  position:absolute;
+  left:12px;
+  top:50%;
+  transform:translateY(-50%);
+  width:29px;
+  height:29px;
+  border-radius:10px;
+  display:grid;
+  place-items:center;
+  background:#edf4f7;
+  color:var(--blue);
+  font-size:13px;
+  font-weight:900;
 }
 
-.wrong{
-    background:#f7b6b6 !important;
-    border-color:red;
+.option.correct{
+  background:var(--good);
+  border-color:var(--good-line);
+  color:#1f653d;
 }
 
-/* Confetti */
-.confetti {
-    position: fixed;
-    width: 10px;
-    height: 10px;
-    background: gold;
-    top: -10px;
-    animation: fall 3s linear forwards;
+.option.correct .letter{
+  background:var(--good-line);
+  color:#fff;
+}
+
+.option.wrong{
+  background:var(--bad);
+  border-color:var(--bad-line);
+  animation:shake .28s linear;
+}
+
+.option.wrong .letter{
+  background:var(--bad-line);
+  color:#fff;
+}
+
+@keyframes shake{
+  25%{transform:translateX(-5px)}
+  50%{transform:translateX(5px)}
+  75%{transform:translateX(-3px)}
+}
+
+.feedback{
+  min-height:50px;
+  margin-top:auto;
+  padding-top:12px;
+  display:flex;
+  align-items:center;
+}
+
+.feedback-box{
+  width:100%;
+  padding:10px 12px;
+  border-radius:15px;
+  background:#f6f8f9;
+  border:1px dashed #ccd9de;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.35;
+}
+
+.feedback-box.good{
+  background:var(--good);
+  border-style:solid;
+  border-color:#b9ddc4;
+  color:#286842;
+}
+
+.feedback-box.bad{
+  background:var(--bad);
+  border-style:solid;
+  border-color:#efc1bd;
+  color:#8b3f3a;
+}
+
+.sound-btn{
+  position:fixed;
+  right:16px;
+  bottom:16px;
+  z-index:30;
+  width:46px;
+  height:46px;
+  border:0;
+  border-radius:15px;
+  background:#fff;
+  color:var(--navy);
+  cursor:pointer;
+  box-shadow:0 8px 22px rgba(0,0,0,.14);
+  font-size:20px;
+}
+
+/* ---------- RESULT ---------- */
+#result{
+  align-items:center;
+  justify-content:center;
+}
+
+.result-card{
+  width:min(630px,calc(100% - 24px));
+  margin:auto;
+  padding:clamp(28px,5vw,52px);
+  border-radius:30px;
+  text-align:center;
+  background:rgba(255,255,255,.98);
+  border:1px solid rgba(255,255,255,.92);
+  box-shadow:var(--shadow);
+}
+
+.result-icon{
+  font-size:72px;
+  line-height:1;
+}
+
+.result-card h2{
+  margin:12px 0 6px;
+  font-size:clamp(28px,5vw,46px);
+  color:var(--navy);
+}
+
+.result-score{
+  margin:14px 0 8px;
+  font-size:clamp(44px,8vw,72px);
+  line-height:1;
+  font-weight:900;
+  color:var(--blue);
+}
+
+.result-card p{
+  max-width:450px;
+  margin:0 auto 22px;
+  color:var(--muted);
+  line-height:1.55;
+  font-size:16px;
+}
+
+/* ---------- CONFETTI ---------- */
+.confetti-layer{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:12000;
+  overflow:hidden;
+}
+
+.confetti{
+  position:absolute;
+  top:-18px;
+  width:9px;
+  height:14px;
+  border-radius:2px;
+  animation:fall 1.9s linear forwards;
 }
 
 @keyframes fall{
-    to{
-        transform:translateY(100vh) rotate(360deg);
-        opacity:0;
-    }
+  to{
+    transform:translate3d(var(--drift),105vh,0) rotate(680deg);
+    opacity:.15;
+  }
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width:900px){
+  .intro-grid{
+    grid-template-columns:1fr;
+  }
+
+  .intro-visual{
+    min-height:360px;
+  }
+}
+
+@media (max-width:700px){
+  .shell{padding:10px}
+
+  .intro-card{border-radius:22px}
+
+  .intro-copy{padding:24px 20px}
+
+  .rules{grid-template-columns:1fr}
+
+  .intro-visual{
+    min-height:340px;
+  }
+
+  .city-services{
+    inset:24px 18px auto 18px;
+    gap:8px;
+  }
+
+  .service-card{
+    min-height:76px;
+    padding:10px;
+    font-size:11px;
+  }
+
+  .service-card span{
+    width:38px;
+    height:38px;
+    font-size:20px;
+  }
+
+  .city-sun{
+    width:62px;
+    height:62px;
+    right:24px;
+    top:18px;
+  }
+
+  .skyline{
+    height:190px;
+  }
+
+  .game-shell{padding:9px}
+
+  .topbar{
+    grid-template-columns:1fr;
+    gap:9px;
+  }
+
+  .stats{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    justify-content:stretch;
+  }
+
+  .stat{
+    min-width:0;
+    padding:7px 8px;
+  }
+
+  .chapter strong{font-size:18px}
+
+  .chapter-icon{
+    width:38px;
+    height:38px;
+    border-radius:12px;
+    font-size:19px;
+  }
+
+  .quiz-card{
+    padding:14px;
+    border-radius:20px;
+  }
+
+  .question{
+    font-size:18px;
+    margin-bottom:12px;
+  }
+
+  .options{
+    grid-template-columns:1fr;
+    gap:8px;
+  }
+
+  .option{
+    min-height:56px;
+    padding:11px 12px 11px 47px;
+    border-radius:15px;
+    font-size:14px;
+  }
+
+  .feedback{padding-top:9px}
+
+  .sound-btn{
+    right:10px;
+    bottom:10px;
+    width:42px;
+    height:42px;
+    border-radius:13px;
+  }
+}
+
+@media (max-height:690px) and (min-width:701px){
+  .game-shell{padding:8px 14px}
+  .topbar{margin-bottom:7px}
+  .progress-track{margin-bottom:8px}
+  .quiz-card{padding:15px}
+  .question{font-size:18px;margin:2px 0 10px}
+
+  .option{
+    min-height:52px;
+    padding-top:10px;
+    padding-bottom:10px;
+    font-size:13px;
+  }
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,
+  *:before,
+  *:after{
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
+    transition:none!important;
+    scroll-behavior:auto!important;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<!-- SPLASH with Innovine logo -->
+<!-- WHITE SPLASH: Innovine logo only -->
 <div id="splash">
-    <img src="assets/logo.png" alt="Innovine Logo">
+  <img src="assets/logo.png" alt="Innovine logo">
 </div>
+
+<!-- INTRO -->
+<section id="intro" class="screen">
+  <div class="city-bg">
+    <div class="shell" style="display:flex;min-height:100svh;align-items:center">
+
+      <div class="intro-card">
+        <div class="intro-grid">
+
+          <div class="intro-copy">
+
+            <div class="kicker">Grade 6 • Chapter 12 • CBQ Challenge</div>
+
+            <h1>Urban Local Government</h1>
+
+            <p>
+              Grassroots Democracy – Part 3<br>
+              Explore how municipalities, ward committees and citizens work together to manage roads, water, waste, parks and other city services.
+            </p>
+
+            <div class="rules">
+
+              <div class="rule">
+                <div class="icon">🏙️</div>
+                <div><b>12 questions</b>Complete every city challenge.</div>
+              </div>
+
+              <div class="rule">
+                <div class="icon">✌️</div>
+                <div><b>2 attempts</b>Try once more after a mistake.</div>
+              </div>
+
+              <div class="rule">
+                <div class="icon">⏱️</div>
+                <div><b>60 seconds</b>For each question.</div>
+              </div>
+
+              <div class="rule">
+                <div class="icon">🏆</div>
+                <div><b>Final score</b>See your result at the end.</div>
+              </div>
+
+            </div>
+
+            <button class="primary" id="startBtn">Start City Challenge</button>
+
+          </div>
+
+          <div class="intro-visual" aria-hidden="true">
+
+            <div class="city-sun"></div>
+            <div class="city-cloud cloud1"></div>
+            <div class="city-cloud cloud2"></div>
+
+            <div class="city-services">
+
+              <div class="service-card">
+                <span>🗑️</span>
+                Waste & sanitation
+              </div>
+
+              <div class="service-card">
+                <span>💧</span>
+                Water services
+              </div>
+
+              <div class="service-card">
+                <span>💡</span>
+                Streetlights
+              </div>
+
+              <div class="service-card">
+                <span>🌳</span>
+                Parks & public spaces
+              </div>
+
+            </div>
+
+            <div class="skyline">
+              <div class="building b1"></div>
+              <div class="building b2"></div>
+              <div class="building b3"></div>
+              <div class="building b4"></div>
+              <div class="building b5"></div>
+              <div class="civic-label">🏛️ City Services • Citizens • Local Government</div>
+              <div class="road"></div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
 
 <!-- GAME -->
-<div id="game">
-    <div id="header">Grade 6 - Chapter 12: Grassroots Democracy – Part 3 (Local Government in Urban Areas)</div>
-    <div id="score">Score: 0</div>
+<section id="game" class="screen">
+  <div class="city-bg">
+    <div class="game-shell">
 
-    <div class="question-box" id="question">Loading...</div>
-    <div id="options"></div>
-</div>
+      <div class="topbar">
 
-<!-- AUDIO -->
-<audio id="correctSound" src="assets/correct.mp3"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3"></audio>
-<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+        <div class="title-wrap">
+
+          <div class="chapter-icon">🏙️</div>
+
+          <div class="chapter">
+            <small>Grade 6 • Chapter 12</small>
+            <strong>Grassroots Democracy – Part 3: Urban Local Government</strong>
+          </div>
+
+        </div>
+
+        <div class="stats">
+
+          <div class="stat">
+            <span class="label">Question</span>
+            <strong id="qStat">1 / 12</strong>
+          </div>
+
+          <div class="stat">
+            <span class="label">Score</span>
+            <strong id="scoreStat">0</strong>
+          </div>
+
+          <div class="stat">
+            <span class="label">Time</span>
+            <strong id="timeStat">60s</strong>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="progress-track">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+
+      <main class="quiz-card">
+
+        <div class="q-topline">
+          <div class="q-tag">🏙️ City Governance Challenge</div>
+          <div class="attempts" id="attemptText">Attempt 1 of 2</div>
+        </div>
+
+        <div class="question" id="question">Loading...</div>
+
+        <div id="dataArea"></div>
+
+        <div class="options" id="options"></div>
+
+        <div class="feedback">
+          <div class="feedback-box" id="feedbackBox">Choose the best answer.</div>
+        </div>
+
+      </main>
+
+    </div>
+  </div>
+</section>
+
+<!-- RESULT -->
+<section id="result" class="screen">
+  <div class="city-bg" style="display:flex;align-items:center">
+
+    <div class="result-card">
+
+      <div class="result-icon">🏆</div>
+
+      <h2>City Challenge Complete!</h2>
+
+      <div class="result-score" id="finalScore">0 / 12</div>
+
+      <p id="finalRemark">Great effort!</p>
+
+      <button class="primary" id="restartBtn">Play Again</button>
+
+    </div>
+
+  </div>
+</section>
+
+<button class="sound-btn" id="soundBtn" aria-label="Mute or unmute sounds">🔊</button>
+
+<div class="confetti-layer" id="confettiLayer"></div>
+
+<audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
 
 <script>
-// QUESTIONS (shuffled once at start)
-let questions = [
+const baseQuestions = [
 {
     q:"Kamla notices that garbage has not been collected from her street for several days. Which urban local body function will help solve this problem?",
     o:[
@@ -174,7 +1144,15 @@ let questions = [
     a:1
 },
 {
-    q:"A city council received these complaints in one week:\n\nProblem / Number of Complaints\nBroken Streetlights – 45\nGarbage Collection – 80\nWater Leaks – 25\nDamaged Park Equipment – 20\n\nWhich issue should the municipality address first based on the highest number of complaints?",
+    q:"A city council received these complaints in one week:",
+    table:[
+      ["Problem","Number of Complaints"],
+      ["Broken Streetlights","45"],
+      ["Garbage Collection","80"],
+      ["Water Leaks","25"],
+      ["Damaged Park Equipment","20"]
+    ],
+    tail:"Which issue should the municipality address first based on the highest number of complaints?",
     o:[
         "Water Leaks",
         "Broken Streetlights",
@@ -265,69 +1243,430 @@ let questions = [
 }
 ];
 
-let current = 0;
-let score = 0;
+const els = {
+  splash:document.getElementById("splash"),
+  intro:document.getElementById("intro"),
+  game:document.getElementById("game"),
+  result:document.getElementById("result"),
 
-// Fisher–Yates shuffle to randomise question order
-function shuffleQuestions(arr){
-    for(let i = arr.length - 1; i > 0; i--){
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
+  startBtn:document.getElementById("startBtn"),
+  restartBtn:document.getElementById("restartBtn"),
+  soundBtn:document.getElementById("soundBtn"),
+
+  question:document.getElementById("question"),
+  dataArea:document.getElementById("dataArea"),
+  options:document.getElementById("options"),
+  feedback:document.getElementById("feedbackBox"),
+
+  qStat:document.getElementById("qStat"),
+  scoreStat:document.getElementById("scoreStat"),
+  timeStat:document.getElementById("timeStat"),
+  attemptText:document.getElementById("attemptText"),
+  progressBar:document.getElementById("progressBar"),
+
+  finalScore:document.getElementById("finalScore"),
+  finalRemark:document.getElementById("finalRemark"),
+
+  correctSound:document.getElementById("correctSound"),
+  wrongSound:document.getElementById("wrongSound"),
+  clapSound:document.getElementById("clapSound"),
+
+  confettiLayer:document.getElementById("confettiLayer")
+};
+
+let questions=[];
+let current=0;
+let score=0;
+let attempts=1;
+let timeLeft=60;
+let timerId=null;
+let locked=false;
+let muted=false;
+
+function showScreen(target){
+  [els.intro,els.game,els.result].forEach(x=>x.classList.remove("active"));
+  target.classList.add("active");
 }
 
-setTimeout(()=>{
-    document.getElementById("splash").style.display="none";
-    document.getElementById("game").style.display="block";
-    shuffleQuestions(questions);
-    loadQuestion();
-},3000);
+function shuffle(arr){
+  const copy=[...arr];
 
-function loadQuestion(){
-    if(current >= questions.length){
-        document.getElementById("question").innerHTML = "🎉 Game Completed!";
-        document.getElementById("options").innerHTML = "";
-        document.getElementById("clapSound").play();
-        return;
-    }
+  for(let i=copy.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [copy[i],copy[j]]=[copy[j],copy[i]];
+  }
 
-    let q = questions[current];
-    document.getElementById("question").innerHTML = q.q.replace(/\n/g,"<br>");
+  return copy;
+}
 
-    let optHTML = "";
-    q.o.forEach((opt,i)=>{
-        optHTML += `<div class='option' onclick='checkAnswer(this,${i})'>${opt}</div>`;
+function prepareQuestions(){
+
+  questions=shuffle(baseQuestions).map(item=>{
+
+    const indexed=item.o.map((text,index)=>({text,index}));
+    const shuffled=shuffle(indexed);
+
+    return{
+      ...item,
+      choices:shuffled.map(x=>x.text),
+      correctIndex:shuffled.findIndex(x=>x.index===item.a)
+    };
+
+  });
+
+}
+
+function play(audio){
+
+  if(muted) return;
+
+  try{
+    audio.currentTime=0;
+    audio.play().catch(()=>{});
+  }catch(e){}
+
+}
+
+function startGame(){
+
+  prepareQuestions();
+
+  current=0;
+  score=0;
+
+  showScreen(els.game);
+
+  loadQuestion();
+
+}
+
+function renderTable(rows){
+
+  if(!rows) return "";
+
+  let html='<table class="data-table" aria-label="Question data">';
+  html+='<thead><tr>';
+
+  rows[0].forEach(cell=>{
+    html+='<th>'+escapeHTML(cell)+'</th>';
+  });
+
+  html+='</tr></thead><tbody>';
+
+  rows.slice(1).forEach(row=>{
+
+    html+='<tr>';
+
+    row.forEach(cell=>{
+      html+='<td>'+escapeHTML(cell)+'</td>';
     });
 
-    document.getElementById("options").innerHTML = optHTML;
+    html+='</tr>';
+
+  });
+
+  html+='</tbody></table>';
+
+  return html;
 }
 
-function checkAnswer(el,i){
-    let q = questions[current];
+function loadQuestion(){
 
-    if(i === q.a){
-        el.classList.add("correct");
-        document.getElementById("correctSound").play();
-        score++;
-        document.getElementById("score").innerText = "Score: " + score;
-        createConfetti();
-        setTimeout(()=>{ current++; loadQuestion(); },1200);
+  clearInterval(timerId);
+
+  locked=false;
+  attempts=1;
+  timeLeft=60;
+
+  if(current>=questions.length){
+    endGame();
+    return;
+  }
+
+  const q=questions[current];
+
+  els.qStat.textContent=(current+1)+" / "+questions.length;
+  els.scoreStat.textContent=score;
+  els.timeStat.textContent=timeLeft+"s";
+  els.attemptText.textContent="Attempt 1 of 2";
+
+  els.progressBar.style.width=((current/questions.length)*100)+"%";
+
+  els.question.textContent=q.q;
+
+  let tableHTML=renderTable(q.table);
+
+  if(q.tail){
+    tableHTML+='<div class="question" style="font-size:clamp(17px,2vw,22px);margin-top:6px">'+escapeHTML(q.tail)+'</div>';
+  }
+
+  els.dataArea.innerHTML=tableHTML;
+
+  els.feedback.className="feedback-box";
+  els.feedback.textContent="Choose the best answer.";
+
+  els.options.innerHTML="";
+
+  q.choices.forEach((choice,i)=>{
+
+    const btn=document.createElement("button");
+
+    btn.className="option";
+    btn.type="button";
+
+    btn.innerHTML=
+      '<span class="letter">'+String.fromCharCode(65+i)+'</span>'+
+      '<span>'+escapeHTML(choice)+'</span>';
+
+    btn.addEventListener("click",()=>checkAnswer(btn,i));
+
+    els.options.appendChild(btn);
+
+  });
+
+  timerId=setInterval(()=>{
+
+    timeLeft--;
+
+    els.timeStat.textContent=timeLeft+"s";
+
+    if(timeLeft<=0){
+
+      clearInterval(timerId);
+
+      handleTimeout();
+
+    }
+
+  },1000);
+
+}
+
+function escapeHTML(str){
+
+  return String(str).replace(/[&<>"']/g,ch=>({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#039;"
+  }[ch]));
+
+}
+
+function disableOptions(){
+
+  [...els.options.querySelectorAll(".option")].forEach(btn=>{
+    btn.disabled=true;
+  });
+
+}
+
+function markCorrect(){
+
+  const q=questions[current];
+  const btn=els.options.children[q.correctIndex];
+
+  if(btn){
+    btn.classList.add("correct");
+  }
+
+}
+
+function checkAnswer(btn,index){
+
+  if(locked || btn.disabled) return;
+
+  const q=questions[current];
+
+  if(index===q.correctIndex){
+
+    locked=true;
+
+    clearInterval(timerId);
+
+    btn.classList.add("correct");
+
+    disableOptions();
+
+    score++;
+
+    els.scoreStat.textContent=score;
+
+    els.feedback.className="feedback-box good";
+    els.feedback.textContent="Correct! Good job.";
+
+    play(els.correctSound);
+
+    createConfetti(22);
+
+    setTimeout(nextQuestion,1200);
+
+  }else{
+
+    btn.classList.add("wrong");
+    btn.disabled=true;
+
+    play(els.wrongSound);
+
+    if(attempts===1){
+
+      attempts=2;
+
+      els.attemptText.textContent="Attempt 2 of 2";
+
+      els.feedback.className="feedback-box bad";
+      els.feedback.textContent="Not quite. Try once more.";
+
     }else{
-        el.classList.add("wrong");
-        document.getElementById("wrongSound").play();
+
+      locked=true;
+
+      clearInterval(timerId);
+
+      disableOptions();
+
+      markCorrect();
+
+      els.feedback.className="feedback-box bad";
+      els.feedback.textContent="The correct answer is highlighted.";
+
+      setTimeout(nextQuestion,1500);
+
     }
+
+  }
+
 }
 
-function createConfetti(){
-    for(let i=0;i<25;i++){
-        let c = document.createElement("div");
-        c.className = "confetti";
-        c.style.left = Math.random()*100 + "vw";
-        c.style.background = ["gold","orange","#fff","#d6b36a"][Math.floor(Math.random()*4)];
-        document.body.appendChild(c);
-        setTimeout(()=>c.remove(),3000);
-    }
+function handleTimeout(){
+
+  if(locked) return;
+
+  locked=true;
+
+  disableOptions();
+
+  markCorrect();
+
+  els.feedback.className="feedback-box bad";
+  els.feedback.textContent="Time is up. The correct answer is highlighted.";
+
+  setTimeout(nextQuestion,1500);
+
 }
+
+function nextQuestion(){
+
+  current++;
+
+  if(current<questions.length){
+
+    loadQuestion();
+
+  }else{
+
+    endGame();
+
+  }
+
+}
+
+function endGame(){
+
+  clearInterval(timerId);
+
+  showScreen(els.result);
+
+  els.finalScore.textContent=score+" / "+questions.length;
+
+  const pct=(score/questions.length)*100;
+
+  let remark="";
+
+  if(pct>=80){
+    remark="Excellent! You understand urban local government and civic participation very well.";
+  }else if(pct>=60){
+    remark="Good job! You understood most of the key urban governance ideas.";
+  }else if(pct>=45){
+    remark="Well tried! Review a few city governance concepts and play again.";
+  }else{
+    remark="Let's revise the chapter ideas and try the city challenge again.";
+  }
+
+  els.finalRemark.textContent=remark;
+
+  play(els.clapSound);
+
+  createConfetti(52);
+
+}
+
+function createConfetti(count){
+
+  const palette=[
+    "#16324f",
+    "#1f6f8b",
+    "#38a3a5",
+    "#f2b84b",
+    "#e67e5f"
+  ];
+
+  for(let i=0;i<count;i++){
+
+    const c=document.createElement("span");
+
+    c.className="confetti";
+
+    c.style.left=(Math.random()*100)+"vw";
+
+    c.style.background=
+      palette[Math.floor(Math.random()*palette.length)];
+
+    c.style.setProperty(
+      "--drift",
+      ((Math.random()*160)-80)+"px"
+    );
+
+    c.style.animationDelay=
+      (Math.random()*0.35)+"s";
+
+    c.style.transform=
+      "rotate("+(Math.random()*360)+"deg)";
+
+    els.confettiLayer.appendChild(c);
+
+    setTimeout(()=>c.remove(),2400);
+
+  }
+
+}
+
+els.startBtn.addEventListener("click",startGame);
+
+els.restartBtn.addEventListener("click",startGame);
+
+els.soundBtn.addEventListener("click",()=>{
+
+  muted=!muted;
+
+  els.soundBtn.textContent=muted ? "🔇" : "🔊";
+
+  els.soundBtn.setAttribute(
+    "aria-label",
+    muted ? "Unmute sounds" : "Mute sounds"
+  );
+
+});
+
+setTimeout(()=>{
+
+  els.splash.style.display="none";
+
+  showScreen(els.intro);
+
+},3000);
+
 </script>
 
 </body>
