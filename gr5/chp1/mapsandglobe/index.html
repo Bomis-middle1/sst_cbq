@@ -1,604 +1,906 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>Grade 5 CBQ - Maps and Globe</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Grade 5 – Maps and Globe | HOTS Quiz</title>
+
 <style>
 :root{
-  --paper:#f7f0df;
-  --sky:#dceefe;
-  --sea:#4ca7e0;
-  --land:#58b26b;
-  --ink:#17324f;
-  --card:#fffdf7ef;
-  --accent:#2f7fd1;
-  --accent2:#319e63;
-  --shadow:0 18px 42px rgba(31,57,86,.16);
+  --navy:#17324f;
+  --blue:#287fc7;
+  --blue2:#59b8e8;
+  --sky:#e5f6ff;
+  --green:#4ca86a;
+  --green2:#83ce82;
+  --gold:#f4b942;
+  --orange:#ef8d45;
+  --cream:#fffaf0;
+  --white:#fff;
+  --red:#e25b5b;
+  --ink-soft:#60758a;
+  --line:#d7e7f1;
+  --shadow:0 16px 38px rgba(23,50,79,.15);
 }
+
 *{box-sizing:border-box}
+
 html,body{
   margin:0;
-  height:100%;
-  font-family:Arial,Helvetica,sans-serif;
-  color:var(--ink);
+  min-height:100%;
+  font-family:"Trebuchet MS",Arial,sans-serif;
+  color:var(--navy);
+}
+
+body{
   background:
-    radial-gradient(circle at 18% 14%, rgba(255,255,255,.75), transparent 22%),
-    radial-gradient(circle at 78% 10%, rgba(255,255,255,.5), transparent 18%),
-    linear-gradient(135deg,#cfe9ff,#f5f0df);
+    radial-gradient(circle at 8% 9%,rgba(255,255,255,.95),transparent 20%),
+    radial-gradient(circle at 92% 14%,rgba(255,255,255,.82),transparent 22%),
+    linear-gradient(135deg,#cceeff 0%,#eef9ff 50%,#fff3d9 100%);
   overflow-x:hidden;
 }
+
 body:before{
   content:"";
   position:fixed;
   inset:0;
+  pointer-events:none;
+  opacity:.12;
   background:
-    linear-gradient(rgba(61,116,166,.14) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(61,116,166,.14) 1px, transparent 1px);
-  background-size:64px 64px;
-  opacity:.18;
-  pointer-events:none;
-  z-index:0;
+    linear-gradient(rgba(40,127,199,.18) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(40,127,199,.18) 1px,transparent 1px);
+  background-size:56px 56px;
 }
-body:after{
-  content:"";
-  position:fixed;
-  left:-120px;
-  bottom:-120px;
-  width:320px;
-  height:320px;
-  border-radius:50%;
-  background:radial-gradient(circle at 35% 30%, #8fd9ff 0 16%, #5bb7ef 17% 34%, #61c26f 35% 52%, #2f7fd1 53% 100%);
-  box-shadow:0 0 0 18px rgba(255,255,255,.3),0 0 0 42px rgba(47,127,209,.12);
-  opacity:.72;
-  pointer-events:none;
-  z-index:0;
-}
-.cloud,.spark,.pin{
+
+.cloud,.pin,.spark{
   position:fixed;
   pointer-events:none;
   z-index:0;
 }
+
 .cloud{
-  width:130px;
-  height:42px;
-  border-radius:999px;
-  background:rgba(255,255,255,.72);
-  opacity:.36;
-  animation:drift 36s linear infinite;
+  width:125px;
+  height:38px;
+  border-radius:50px;
+  background:#fff;
+  opacity:.48;
+  animation:drift 42s linear infinite;
 }
+
 .cloud:before,.cloud:after{
   content:"";
   position:absolute;
-  background:inherit;
+  background:#fff;
   border-radius:50%;
 }
-.cloud:before{width:48px;height:48px;left:14px;top:-20px}
-.cloud:after{width:58px;height:58px;left:48px;top:-28px}
-.spark{
-  width:5px;height:5px;border-radius:50%;
-  background:#fff;
-  box-shadow:0 0 10px rgba(255,255,255,.9);
-  opacity:.55;
-  animation:twinkle 4s ease-in-out infinite;
-}
-.pin{
-  width:12px;
-  height:12px;
-  border-radius:50% 50% 50% 0;
-  background:#d94d4d;
-  transform:rotate(-45deg);
-  opacity:.16;
-}
-@keyframes drift{from{transform:translateX(-20vw)}to{transform:translateX(120vw)}}
-@keyframes twinkle{50%{transform:scale(1.8);opacity:.16}}
 
-#splash,#intro,#game,#result{
+.cloud:before{width:46px;height:46px;left:14px;top:-20px}
+.cloud:after{width:58px;height:58px;left:49px;top:-29px}
+
+.pin{
+  width:13px;
+  height:13px;
+  border-radius:50% 50% 50% 0;
+  background:var(--red);
+  transform:rotate(-45deg);
+  opacity:.22;
+}
+
+.spark{
+  font-size:20px;
+  opacity:.35;
+  animation:twinkle 3s ease-in-out infinite;
+}
+
+@keyframes drift{
+  from{transform:translateX(-20vw)}
+  to{transform:translateX(120vw)}
+}
+
+@keyframes twinkle{
+  50%{transform:scale(1.35);opacity:.8}
+}
+
+@keyframes float{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-7px)}
+}
+
+@keyframes pulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(244,185,66,.1)}
+  50%{box-shadow:0 0 0 10px rgba(244,185,66,.12)}
+}
+
+.screen{
+  display:none;
+  min-height:100vh;
+  padding:14px;
   position:relative;
   z-index:1;
-  min-height:100vh;
-  display:none;
-  padding:16px;
 }
-#splash.active,#intro.active,#game.active,#result.active{
+
+.screen.active{
   display:flex;
   align-items:center;
   justify-content:center;
 }
-/* Splash screen specific styling for complete white background */
-#splash {
-  background: #ffffff !important;
-  position: fixed !important;
-  inset: 0 !important;
-  z-index: 99999 !important;
-}
-#splash .panel {
-  background: #ffffff !important;
-  backdrop-filter: none !important;
-  border: none !important;
-  box-shadow: none !important;
-}
 
 .panel{
-  width:min(980px,100%);
-  background:var(--card);
-  backdrop-filter:blur(9px);
-  border:1px solid rgba(255,255,255,.72);
-  border-radius:28px;
+  width:min(1050px,100%);
+  background:rgba(255,255,255,.93);
+  border:1px solid rgba(255,255,255,.98);
+  border-radius:30px;
   box-shadow:var(--shadow);
-  padding:18px;
+  padding:20px;
 }
-.splash-box{text-align:center;padding:30px 18px}
+
+.splash{
+  background:#fff!important;
+  border:none!important;
+  box-shadow:none!important;
+  text-align:center;
+  padding:36px 20px;
+}
+
 .logo-wrap{
-  width:172px;height:172px;margin:0 auto 16px;display:grid;place-items:center;
+  width:150px;
+  height:150px;
+  margin:0 auto 18px;
   border-radius:34px;
-  background:linear-gradient(180deg,#fffdf5,#eef7ff);
-  box-shadow:inset 0 0 0 1px rgba(47,127,209,.1),0 16px 36px rgba(47,127,209,.16);
+  display:grid;
+  place-items:center;
+  background:#fff;
 }
-.logo-wrap img{max-width:72%;max-height:72%;object-fit:contain;display:block}
-.brand{font-weight:800;color:var(--accent);letter-spacing:.5px}
-.title{font-size:clamp(26px,4vw,40px);margin:8px 0 10px;line-height:1.15}
-.sub{font-size:clamp(15px,2.1vw,18px);margin:0 auto;max-width:800px;line-height:1.5}
-.btnrow{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+
+.logo-wrap img{
+  max-width:78%;
+  max-height:78%;
+  object-fit:contain;
+}
+
+.brand{
+  font-weight:900;
+  color:var(--blue);
+  letter-spacing:1px;
+}
+
+.title{
+  font-size:clamp(27px,5vw,44px);
+  font-weight:900;
+  line-height:1.08;
+  margin:8px 0 10px;
+}
+
+.subtitle{
+  font-size:clamp(15px,2.4vw,19px);
+  line-height:1.5;
+}
+
+.btnrow{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-top:20px;
+}
+
 .btn{
-  border:none;
-  border-radius:16px;
-  padding:14px 18px;
-  font-weight:700;
-  font-size:16px;
-  cursor:pointer;
-  transition:.2s transform,.2s box-shadow,.2s background;
+  border:0;
+  border-radius:17px;
+  padding:14px 23px;
   color:#fff;
-  background:linear-gradient(135deg,var(--accent),#57a7ff);
-  box-shadow:0 10px 24px rgba(47,127,209,.24);
+  font-size:17px;
+  font-weight:900;
+  cursor:pointer;
+  background:linear-gradient(135deg,#287fc7,#59b8e8);
+  box-shadow:0 10px 22px rgba(40,127,199,.25);
 }
+
 .btn:active{transform:scale(.98)}
 
-.topbar{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  align-items:center;
-  justify-content:space-between;
-  margin-bottom:12px;
+.instructions{
+  text-align:left;
+  background:#f3fbff;
+  border:1px solid #d9edf8;
+  border-radius:20px;
+  padding:15px 18px;
+  line-height:1.55;
 }
+
+.instructions div{margin:7px 0}
+
+/* GAME */
+.game-panel{padding:13px}
+
+.topbar{
+  display:grid;
+  grid-template-columns:repeat(4,auto);
+  gap:8px;
+  align-items:center;
+  margin-bottom:9px;
+}
+
 .chip{
   background:#fff;
-  border:1px solid rgba(22,50,79,.08);
+  border:1px solid var(--line);
   border-radius:999px;
-  padding:10px 14px;
-  font-weight:700;
-  box-shadow:0 8px 20px rgba(0,0,0,.05);
+  padding:8px 12px;
+  font-size:14px;
+  font-weight:900;
+  white-space:nowrap;
+  text-align:center;
 }
+
 .progress{
-  height:12px;
-  border-radius:999px;
-  background:#e8edf3;
+  height:10px;
+  background:#e7eef5;
+  border-radius:99px;
   overflow:hidden;
-  border:1px solid rgba(0,0,0,.06);
+  margin-bottom:11px;
 }
+
 .bar{
   height:100%;
-  width:0%;
-  background:linear-gradient(90deg,var(--accent2),var(--accent));
-  border-radius:inherit;
-  transition:width .25s ease;
+  width:0;
+  background:linear-gradient(90deg,var(--green),var(--blue));
+  transition:.25s;
 }
-.layout{
+
+.game-layout{
   display:grid;
-  grid-template-columns:1.08fr .92fr;
-  gap:16px;
-  align-items:stretch;
+  grid-template-columns:minmax(0,1.08fr) minmax(330px,.92fr);
+  gap:13px;
 }
-.qcard{padding:18px}
+
+.question-card{
+  background:var(--cream);
+  border-radius:23px;
+  padding:18px;
+  border:1px solid #f1dfb8;
+  box-shadow:0 8px 20px rgba(80,60,20,.07);
+}
+
 .qmeta{
   display:flex;
   justify-content:space-between;
-  gap:10px;
+  gap:8px;
   flex-wrap:wrap;
-  margin-bottom:10px;
-  font-weight:700;
-  color:#4c627a;
+  font-weight:900;
+  font-size:13px;
+  color:var(--ink-soft);
+  margin-bottom:9px;
 }
+
+.tag{
+  background:#e8f6ff;
+  color:#23679d;
+  border-radius:999px;
+  padding:6px 9px;
+}
+
+.hots{
+  background:#fff0bb;
+  color:#855e0c;
+  border-radius:999px;
+  padding:6px 9px;
+}
+
 .question{
-  font-size:clamp(18px,2.6vw,24px);
-  line-height:1.42;
-  margin:8px 0 14px;
+  font-size:clamp(18px,2.45vw,24px);
+  font-weight:800;
+  line-height:1.38;
+  margin:7px 0 13px;
 }
-.qhtml{line-height:1.45}
-.stimulus{display:none;margin:10px 0 14px}
-.stimulus img{
-  width:100%;
-  max-height:260px;
-  object-fit:contain;
-  border-radius:18px;
-  background:#f7fbff;
-  border:1px solid rgba(0,0,0,.06);
-  box-shadow:0 10px 24px rgba(0,0,0,.06);
-}
+
 .options{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:12px;
+  gap:10px;
 }
-.opt{
-  border:1px solid rgba(22,50,79,.12);
-  background:#fff;
-  border-radius:18px;
-  padding:14px 14px;
-  text-align:left;
-  min-height:64px;
-  cursor:pointer;
-  font-size:16px;
-  line-height:1.35;
-  box-shadow:0 8px 18px rgba(0,0,0,.05);
-  transition:.18s transform,.18s border-color,.18s box-shadow;
-}
-.opt:hover{transform:translateY(-1px)}
-.opt:disabled{cursor:default;opacity:.88}
-.opt.correct{background:#e8fff0;border-color:#5ccd87}
-.opt.wrong{background:#ffecec;border-color:#ff8b8b}
-.feedback{
-  margin-top:12px;
-  min-height:50px;
-  padding:12px 14px;
-  border-radius:16px;
-  background:#f5f9ff;
-  border:1px dashed rgba(22,50,79,.12);
-  line-height:1.45;
-}
-.feedback.good{background:#ecfff3;border-color:#7ad29a}
-.feedback.bad{background:#fff0f0;border-color:#f2aaaa}
 
-.envart{
-  height:100%;
-  min-height:360px;
-  display:grid;
-  place-items:center;
+.opt{
+  min-height:64px;
+  border:2px solid #dce7ef;
+  border-radius:17px;
+  background:#fff;
+  padding:11px 12px;
+  text-align:left;
+  font-size:16px;
+  font-weight:800;
+  color:var(--navy);
+  cursor:pointer;
+  transition:.18s;
+  box-shadow:0 5px 13px rgba(30,60,90,.06);
+}
+
+.opt:hover{
+  transform:translateY(-2px);
+  border-color:#8bc8eb;
+  box-shadow:0 8px 18px rgba(30,60,90,.10);
+}
+
+.opt:disabled{cursor:default}
+.opt.correct{background:#e8faee;border-color:#4fbd79}
+.opt.wrong{background:#ffeded;border-color:#ed7b7b}
+
+.feedback{
+  min-height:45px;
+  margin-top:10px;
+  padding:10px 12px;
+  border-radius:14px;
+  background:#f2f7fb;
+  border:1px dashed #cbdce9;
+  font-size:14px;
+  line-height:1.4;
+}
+
+.feedback.good{background:#eafff0;border-color:#7bcf99}
+.feedback.bad{background:#fff0f0;border-color:#efa0a0}
+
+/* IMPROVED VISUAL PANEL */
+.visual{
   position:relative;
+  min-height:395px;
+  border-radius:23px;
   overflow:hidden;
   background:
-    radial-gradient(circle at 50% 44%, rgba(255,255,255,.94), rgba(255,255,255,.62)),
-    linear-gradient(180deg, rgba(230,242,255,.9), rgba(247,240,223,.92));
+    radial-gradient(circle at 50% 42%,rgba(255,255,255,.96),transparent 35%),
+    linear-gradient(180deg,#e5f7ff 0%,#f5fbff 56%,#fff5df 100%);
+  border:1px solid #d4eaf5;
 }
-.globe-stand{
-  position:absolute;
-  top:52%;
-  left:50%;
-  transform:translate(-50%,-56%);
-  width:240px;
-  height:280px;
-}
-.globe{
-  position:absolute;
-  left:50%;
-  top:0;
-  transform:translateX(-50%);
-  width:216px;
-  height:216px;
-  border-radius:50%;
-  background:
-    radial-gradient(circle at 36% 28%, rgba(255,255,255,.95) 0 10%, rgba(255,255,255,.35) 11% 13%, transparent 14%),
-    linear-gradient(135deg,#6ed4ff 0%, #3ba6e6 36%, #2c7fd1 58%, #2f9c62 59%, #58b96f 78%, #2d7b49 100%);
-  box-shadow:0 0 0 10px rgba(255,255,255,.38),0 0 0 30px rgba(47,127,209,.10),0 20px 42px rgba(0,0,0,.14);
-  overflow:hidden;
-}
-.globe:before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:
-    radial-gradient(ellipse at 48% 54%, transparent 0 35%, rgba(255,255,255,.2) 36% 38%, transparent 39% 100%),
-    radial-gradient(ellipse at 38% 46%, transparent 0 18%, rgba(20,95,58,.92) 19% 23%, transparent 24% 100%),
-    radial-gradient(ellipse at 62% 63%, transparent 0 18%, rgba(20,95,58,.92) 19% 24%, transparent 25% 100%),
-    radial-gradient(ellipse at 48% 31%, transparent 0 28%, rgba(255,255,255,.16) 29% 31%, transparent 32% 100%);
-  opacity:.9;
-}
-.globe:after{
-  content:"";
+
+
+
+
+
+/* globe */
+.globe-wrap{
   position:absolute;
   left:50%;
-  top:50%;
+  top:48%;
   transform:translate(-50%,-50%);
-  width:250px;
-  height:250px;
-  border-radius:50%;
-  border:2px solid rgba(255,255,255,.2);
-  background:
-    linear-gradient(90deg, transparent 49.4%, rgba(255,255,255,.26) 49.4% 50.6%, transparent 50.6%),
-    linear-gradient(0deg, transparent 49.4%, rgba(255,255,255,.26) 49.4% 50.6%, transparent 50.6%),
-    radial-gradient(circle at center, transparent 0 69%, rgba(255,255,255,.18) 70% 71%, transparent 72%);
-  opacity:.7;
+  width:260px;
+  height:285px;
+  animation:float 5s ease-in-out infinite;
 }
+
+.globe-ring{
+  position:absolute;
+  width:270px;
+  height:105px;
+  left:-5px;
+  top:72px;
+  border:2px solid rgba(40,127,199,.18);
+  border-radius:50%;
+  transform:rotate(-17deg);
+}
+
+.globe-ring2{
+  position:absolute;
+  width:270px;
+  height:105px;
+  left:-5px;
+  top:72px;
+  border:2px solid rgba(40,127,199,.11);
+  border-radius:50%;
+  transform:rotate(17deg);
+}
+
+.globe-sphere{
+  position:absolute;
+  width:218px;
+  height:218px;
+  left:21px;
+  top:10px;
+  border-radius:50%;
+  overflow:hidden;
+  box-shadow:
+    0 0 0 9px rgba(255,255,255,.55),
+    0 18px 35px rgba(29,91,133,.22);
+  background:#48a9dc;
+}
+
+.globe-sphere svg{
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+.globe-highlight{
+  position:absolute;
+  left:52px;
+  top:31px;
+  width:42px;
+  height:26px;
+  border-radius:50%;
+  background:rgba(255,255,255,.4);
+  filter:blur(2px);
+}
+
+.axis{
+  position:absolute;
+  left:129px;
+  top:0;
+  width:3px;
+  height:244px;
+  background:rgba(255,255,255,.72);
+  transform:rotate(-19deg);
+  border-radius:5px;
+}
+
 .stand-neck{
   position:absolute;
-  left:50%;
-  top:198px;
-  transform:translateX(-50%);
+  left:119px;
+  top:220px;
   width:22px;
-  height:58px;
-  border-radius:12px;
-  background:linear-gradient(180deg,#9c6b39,#74491f);
-  box-shadow:0 8px 0 0 #2f3c49;
+  height:39px;
+  border-radius:10px;
+  background:linear-gradient(180deg,#a77542,#74491f);
+  z-index:2;
 }
+
 .stand-base{
   position:absolute;
-  left:50%;
-  top:244px;
-  transform:translateX(-50%);
-  width:122px;
-  height:18px;
-  border-radius:999px;
-  background:linear-gradient(180deg,#5a6470,#39444f);
-  box-shadow:0 8px 16px rgba(0,0,0,.16);
+  left:75px;
+  top:254px;
+  width:110px;
+  height:17px;
+  border-radius:99px;
+  background:linear-gradient(180deg,#697684,#3d4854);
+  box-shadow:0 8px 15px rgba(0,0,0,.16);
+  z-index:2;
 }
-.map-card{
-  position:absolute;
-  left:18px;
-  bottom:20px;
-  width:150px;
-  height:110px;
-  border-radius:18px;
-  background:linear-gradient(135deg,#fff,#f8fbff);
-  border:1px solid rgba(47,127,209,.14);
-  box-shadow:0 12px 28px rgba(0,0,0,.1);
-  overflow:hidden;
-}
-.map-card:before{
-  content:"";
-  position:absolute;
-  inset:10px;
-  border-radius:12px;
-  background:
-    linear-gradient(90deg, rgba(47,127,209,.14) 1px, transparent 1px) 0 0/24px 24px,
-    linear-gradient(rgba(47,127,209,.14) 1px, transparent 1px) 0 0/24px 24px,
-    radial-gradient(circle at 45% 40%, rgba(49,158,99,.9) 0 8%, transparent 9%),
-    radial-gradient(circle at 66% 58%, rgba(49,158,99,.8) 0 10%, transparent 11%),
-    linear-gradient(135deg, transparent 42%, rgba(47,127,209,.78) 42% 45%, transparent 45% 100%);
-}
-.map-card:after{
-  content:"";
-  position:absolute;
-  right:12px;
-  top:12px;
-  width:28px;
-  height:42px;
-  border-radius:50%;
-  background:linear-gradient(180deg,#7ed56f,#36a95d);
-  clip-path:polygon(50% 0, 76% 14%, 92% 36%, 86% 62%, 64% 85%, 50% 100%, 36% 85%, 14% 62%, 8% 36%, 24% 14%);
-}
-.compass{
-  position:absolute;
-  right:16px;
-  top:18px;
-  width:66px;
-  height:66px;
-  border-radius:50%;
-  border:2px solid rgba(47,127,209,.18);
-  background:radial-gradient(circle,#fff,#eef6ff);
-  box-shadow:0 8px 22px rgba(0,0,0,.08);
-}
-.compass:before{
-  content:"";
-  position:absolute;
-  left:50%;top:50%;
-  width:2px;height:42px;
-  background:linear-gradient(180deg,#d94d4d 0 50%, #4d7bd9 50% 100%);
-  transform:translate(-50%,-50%) rotate(18deg);
-}
-.compass:after{
-  content:"N";
-  position:absolute;
-  top:3px;left:50%;
-  transform:translateX(-50%);
-  font-weight:800;
-  color:#d94d4d;
-  font-size:12px;
-}
-.mini-note{display:none}
 
-.final{text-align:center}
-.medal{font-size:72px;line-height:1}
-.scorebig{
-  font-size:clamp(34px,6vw,56px);
-  font-weight:800;
-  margin:8px 0;
-  color:var(--accent);
+/* labels */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* folded map */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* RESULT */
+.result{text-align:center}
+.medal{font-size:70px}
+.score{
+  font-size:clamp(38px,7vw,60px);
+  font-weight:900;
+  color:var(--blue);
+  margin:6px 0;
 }
-.cross,.stars{
+
+.result-box{
+  max-width:560px;
+  margin:12px auto;
+  background:#f3faff;
+  border-radius:18px;
+  padding:14px;
+  line-height:1.5;
+  font-weight:800;
+}
+
+.fx{
   position:fixed;
   inset:0;
   pointer-events:none;
   z-index:9999;
   overflow:hidden;
 }
-.cross span,.stars span{
+
+.fx span{
   position:absolute;
-  animation:pop 850ms ease-out forwards;
+  animation:pop .85s ease-out forwards;
+  font-size:26px;
 }
-.cross span{
-  font-size:34px;
-  color:#d94d4d;
-  text-shadow:0 4px 10px rgba(0,0,0,.15);
-}
-.stars span{
-  font-size:28px;
-  color:#ffd54f;
-  text-shadow:0 4px 10px rgba(0,0,0,.12);
-}
+
 @keyframes pop{
   0%{transform:scale(.4) translateY(0);opacity:1}
-  100%{transform:scale(1.2) translateY(-36px);opacity:0}
+  100%{transform:scale(1.3) translateY(-45px);opacity:0}
 }
-@media (max-width:860px){
-  .layout{grid-template-columns:1fr}
-  .envart{min-height:260px}
-  .options{grid-template-columns:1fr}
-  .panel{padding:14px}
-  .logo-wrap{width:140px;height:140px}
-  .globe-stand{width:210px;height:250px}
-  .globe{width:190px;height:190px}
-  .map-card{width:128px;height:96px}
+
+/* RESPONSIVE */
+@media(max-width:850px){
+  .game-layout{grid-template-columns:1fr}
+  .visual{
+    min-height:225px;
+    max-height:225px;
+  }
+  .globe-wrap{
+    transform:translate(-50%,-50%) scale(.72);
+  }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+}
+
+@media(max-width:600px){
+  .screen{padding:7px}
+  .panel{border-radius:21px;padding:11px}
+  .game-panel{padding:8px}
+  .topbar{grid-template-columns:1fr 1fr;gap:6px}
+  .chip{font-size:12px;padding:7px 8px}
+  .question-card{padding:12px;border-radius:17px}
+  .qmeta{font-size:11px}
+  .question{font-size:17px;line-height:1.34;margin-bottom:10px}
+  .options{grid-template-columns:1fr;gap:7px}
+  .opt{min-height:50px;padding:9px 10px;font-size:14px;border-radius:13px}
+  .feedback{font-size:12px;min-height:38px;padding:8px}
+  .visual{
+    min-height:185px;
+    max-height:185px;
+  }
+  .globe-wrap{transform:translate(-50%,-50%) scale(.57)}
+  
+  
+  
+  
+  
+  
+  
+  .title{font-size:28px}
+}
+
+@media(max-height:680px) and (max-width:600px){
+  .visual{min-height:150px;max-height:150px}
+  .question{font-size:16px}
+  .opt{min-height:44px;padding:7px 9px}
+  .feedback{margin-top:7px;padding:7px}
 }
 </style>
 </head>
+
 <body>
-<div class="cloud" style="top:8%;animation-duration:36s"></div>
-<div class="cloud" style="top:22%;animation-duration:44s;opacity:.24;transform:scale(.85)"></div>
-<div class="cloud" style="top:66%;animation-duration:52s;opacity:.18;transform:scale(.7)"></div>
-<div class="spark" style="top:14%;left:44%"></div>
-<div class="spark" style="top:34%;left:82%"></div>
-<div class="spark" style="top:76%;left:14%"></div>
-<div class="pin" style="top:13%;left:10%"></div>
-<div class="pin" style="top:18%;left:76%"></div>
-<div class="pin" style="top:71%;left:20%"></div>
-<div class="pin" style="top:82%;left:68%"></div>
 
-<div id="splash" class="active">
-  <div class="panel splash-box">
+<div class="cloud" style="top:7%;animation-duration:38s"></div>
+<div class="cloud" style="top:25%;animation-duration:48s;opacity:.3;transform:scale(.8)"></div>
+<div class="cloud" style="top:70%;animation-duration:55s;opacity:.25;transform:scale(.65)"></div>
+<div class="spark" style="top:14%;left:45%">✦</div>
+<div class="spark" style="top:32%;left:84%">✦</div>
+<div class="spark" style="top:78%;left:15%">✦</div>
+<div class="pin" style="top:16%;left:12%"></div>
+<div class="pin" style="top:20%;left:76%"></div>
+
+<section id="splash" class="screen active">
+  <div class="panel splash">
     <div class="logo-wrap">
-      <img src="gr5/chp1/mapsandglobe/assets/logo.png" alt="Innovine logo" onerror="this.style.display='none'" />
+      <img src="gr5/chp1/mapsandglobe/assets/logo.png" alt="Innovine logo"
+           onerror="this.style.display='none'">
     </div>
-    <div class="brand">Innovine</div>
-    <div class="title">Maps and Globe</div>
+    <div class="brand">INNOVINE</div>
+    <div class="title">🌍 Maps & Globe</div>
+    
   </div>
-</div>
+</section>
 
-<div id="intro">
+<section id="intro" class="screen">
   <div class="panel">
-    <div class="title" style="margin-top:0">Quiz Instructions</div>
-    <div class="sub" style="max-width:none;text-align:left">
-      <ul>
-        <li>Read each question carefully and choose the best answer.</li>
-        <li>You get 2 attempts for every question.</li>
-        <li>After the first wrong answer, try once more.</li>
-        <li>After the second wrong answer, the correct answer will be shown.</li>
-      </ul>
+    <div class="title">🧭 Map Explorer Challenge</div>
+    <p class="subtitle">
+      Think carefully, use your geography clues and choose the best answer!
+    </p>
+
+    <div class="instructions">
+      <div>🌟 <b>10 higher-order thinking questions</b></div>
+      <div>🎯 <b>2 attempts</b> for every question</div>
+      <div>⏱️ <b>45 seconds</b> for each question</div>
+      <div>🗺️ Use what you know about maps, globes, directions, scale and map types.</div>
     </div>
-    <div class="btnrow"><button class="btn" id="startBtn">Start Quiz</button></div>
-  </div>
-</div>
 
-<div id="game">
-  <div class="panel">
+    <div class="btnrow">
+      <button class="btn" id="startBtn">🚀 Start Exploring</button>
+    </div>
+  </div>
+</section>
+
+<section id="game" class="screen">
+  <div class="panel game-panel">
+
     <div class="topbar">
-      <div class="chip" id="scoreChip">Score: 0</div>
-      <div class="chip timer" id="timerChip">Time: 45s</div>
-      <div class="chip" id="attemptChip">Attempt: 1/2</div>
-      <div class="chip" id="qChip">Question 1/13</div>
+      <div class="chip" id="scoreChip">⭐ Score: 0</div>
+      <div class="chip" id="timerChip">⏱️ 45s</div>
+      <div class="chip" id="attemptChip">🎯 Attempt: 1/2</div>
+      <div class="chip" id="qChip">🗺️ Question 1/10</div>
     </div>
-    <div class="progress"><div class="bar" id="bar"></div></div>
-    <div class="layout" style="margin-top:14px">
-      <div class="box qcard">
+
+    <div class="progress">
+      <div class="bar" id="bar"></div>
+    </div>
+
+    <div class="game-layout">
+
+      <div class="question-card">
         <div class="qmeta">
-          <span id="topicTag">Chapter 1: Maps and Globe</span>
-          <span id="difficultyTag">Level 1</span>
+          <span class="tag">Chapter 1 • Maps and Globe</span>
+          <span class="hots">💡 THINK!</span>
         </div>
-        <div class="question qhtml" id="questionText"></div>
-        <div class="stimulus" id="stimulusBox"><img id="stimulusImg" alt="Question image" /></div>
+
+        <div class="question" id="questionText"></div>
+
         <div class="options" id="options"></div>
-        <div class="feedback" id="feedback">Choose one answer to begin.</div>
+
+        <div class="feedback" id="feedback">
+          Choose the answer you think is best.
+        </div>
       </div>
-      <div class="box envart">
-        <div class="globe-stand">
-          <div class="globe"></div>
+
+      <!-- Decorative geography visual -->
+      <div class="visual">
+
+        <div class="globe-wrap">
+
+          <div class="globe-ring"></div>
+          <div class="globe-ring2"></div>
+
+          <div class="globe-sphere">
+            <svg viewBox="0 0 220 220" aria-label="Decorative globe illustration">
+              <defs>
+                <clipPath id="globeClip">
+                  <circle cx="110" cy="110" r="109"/>
+                </clipPath>
+                <radialGradient id="ocean" cx="32%" cy="25%">
+                  <stop offset="0%" stop-color="#82ddf7"/>
+                  <stop offset="55%" stop-color="#42acd9"/>
+                  <stop offset="100%" stop-color="#287fc7"/>
+                </radialGradient>
+              </defs>
+
+              <circle cx="110" cy="110" r="109" fill="url(#ocean)"/>
+
+              <g clip-path="url(#globeClip)">
+                <!-- latitude -->
+                <ellipse cx="110" cy="110" rx="108" ry="42"
+                         fill="none" stroke="rgba(255,255,255,.38)" stroke-width="1.5"/>
+                <ellipse cx="110" cy="110" rx="108" ry="72"
+                         fill="none" stroke="rgba(255,255,255,.25)" stroke-width="1.5"/>
+                <ellipse cx="110" cy="110" rx="108" ry="94"
+                         fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.5"/>
+
+                <!-- longitude -->
+                <ellipse cx="110" cy="110" rx="42" ry="109"
+                         fill="none" stroke="rgba(255,255,255,.30)" stroke-width="1.5"/>
+                <ellipse cx="110" cy="110" rx="72" ry="109"
+                         fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.5"/>
+
+                <!-- simplified continents -->
+                <path d="M55 45
+                         C72 30 91 35 96 48
+                         C102 60 91 70 80 72
+                         C70 76 67 91 56 88
+                         C46 83 45 67 55 45Z"
+                      fill="#61b86e"/>
+                <path d="M99 54
+                         C115 46 132 48 142 58
+                         C151 68 145 80 134 84
+                         C126 88 127 98 117 101
+                         C107 99 103 89 105 79
+                         C107 70 96 65 99 54Z"
+                      fill="#74c477"/>
+                <path d="M150 55
+                         C169 51 183 60 188 73
+                         C191 84 180 89 170 88
+                         C161 87 156 96 147 91
+                         C141 84 145 68 150 55Z"
+                      fill="#57ad68"/>
+                <path d="M112 112
+                         C128 105 144 111 148 123
+                         C151 135 141 143 134 151
+                         C128 160 132 174 121 184
+                         C111 177 107 162 111 151
+                         C115 141 104 132 112 112Z"
+                      fill="#58ad68"/>
+                <path d="M164 128
+                         C177 124 187 132 188 143
+                         C189 152 179 157 169 155
+                         C161 151 157 139 164 128Z"
+                      fill="#70bf72"/>
+
+                <!-- equator -->
+                <path d="M0 110 Q110 101 220 110"
+                      fill="none" stroke="rgba(255,255,255,.65)" stroke-width="2.5"/>
+              </g>
+
+              <circle cx="110" cy="110" r="109"
+                      fill="none" stroke="rgba(255,255,255,.55)" stroke-width="3"/>
+            </svg>
+          </div>
+
+          <div class="globe-highlight"></div>
+          <div class="axis"></div>
           <div class="stand-neck"></div>
           <div class="stand-base"></div>
+        </div><div class="map-land"></div>
+          <div class="map-route"></div>
+          <div class="map-pin pin-a"></div>
+          <div class="map-pin pin-b"></div>
         </div>
-        <div class="map-card"></div>
-        <div class="compass"></div>
+
       </div>
     </div>
   </div>
-</div>
+</section>
 
-<div id="result">
-  <div class="panel final" id="finalPanel">
-    <div class="medal">🌍</div>
-    <div class="title">Final Challenge Complete</div>
-    <div class="scorebig" id="finalScore">0/13</div>
-    <p class="sub" id="finalText"></p>
-    <div class="btnrow"><button class="btn" id="restartBtn">Play Again</button></div>
+<section id="result" class="screen">
+  <div class="panel result">
+    <div class="medal">🏆🌍</div>
+    <div class="title">Explorer Mission Complete!</div>
+    <div class="score" id="finalScore">0/10</div>
+    <div class="result-box" id="finalText"></div>
+    <div class="btnrow">
+      <button class="btn" id="restartBtn">🔄 Play Again</button>
+    </div>
   </div>
-</div>
+</section>
 
-<div class="cross" id="crossLayer"></div>
-<div class="stars" id="starsLayer"></div>
-<audio id="correctSound" src="gr5/chp1/mapsandglobe/assets/correct.mp3" preload="auto"></audio>
-<audio id="wrongSound" src="gr5/chp1/mapsandglobe/assets/wrong.mp3" preload="auto"></audio>
-<audio id="clapSound" src="gr5/chp1/mapsandglobe/assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
+<div class="fx" id="fx"></div>
+
+<audio id="correctSound"
+       src="gr5/chp1/mapsandglobe/assets/correct.mp3"
+       preload="auto"></audio>
+
+<audio id="wrongSound"
+       src="gr5/chp1/mapsandglobe/assets/wrong.mp3"
+       preload="auto"></audio>
+
+<audio id="clapSound"
+       src="gr5/chp1/mapsandglobe/assets/freesound_community-claps-44774.mp3"
+       preload="auto"></audio>
 
 <script>
 const questions = [
-{q:`During a geography lesson, the teacher places a globe and a flat world map side by side. She asks the students to observe carefully. Riya notices that on the flat map, countries near the top and bottom look slightly stretched, while the globe looks more natural and round. What should Riya correctly understand from this observation?`,o:['Maps always show the most accurate shape of Earth','Globes are only used for decoration','Both map and globe show incorrect shapes','Globes give a more accurate representation of Earth’s shape'],a:3,e:'A globe shows Earth’s round shape more accurately than a flat map.'},
-{q:`In a classroom discussion, students are planning to show different countries and their boundaries for a project. One group suggests using a physical map, while another suggests a political map. The teacher asks them to think about what information they want to highlight before choosing. What is the BEST decision?`,o:['Use a physical map because it shows mountains and rivers','Use a political map because it shows countries and boundaries clearly','Use a random sketch map','Use only a globe'],a:1,e:'Political maps show countries and boundaries clearly.'},
-{q:`A group of students is studying landforms like mountains, rivers, and plains in India. They first choose a political map, but later realise it does not clearly show natural features. What correction should they make to complete the task properly?`,o:['Continue using the political map','Switch to a physical map','Stop studying landforms','Use a notebook instead'],a:1,e:'Physical maps show natural features like landforms.'},
-{q:`During a geography activity, the teacher explains that globes and maps both help us understand Earth but in different ways. Some students think one tool is better than the other. What is the MOST correct understanding?`,o:['Only maps are useful','Only globes are useful','Both maps and globes are important depending on purpose','Neither maps nor globes are useful'],a:2,e:'Maps and globes are useful for different purposes.'},
-{q:`A student learns that Earth has an imaginary line that divides it into two equal halves. The teacher explains its importance in geography and global location studies. Which line is being discussed?`,o:['Prime Meridian','Axis','Tropic of Cancer','Equator'],a:3,e:'The Equator divides Earth into two equal halves.'},
-{q:`While learning about Earth’s grid system, students are confused why both latitude and longitude lines are needed together. What is the BEST explanation?`,o:['They are only for drawing circles on maps','They help locate exact positions on Earth','They are used for colouring maps','They are not important in geography'],a:1,e:'Latitude and longitude together help locate places exactly.'},
-{q:`A student wants to find the distance between two cities on a map for a school project. She is unsure how to calculate it correctly. What should she use?`,o:['Compass','Map scale','Colours on map','Globe stand'],a:1,e:'Map scale helps measure distance on maps.'},
-{q:`During revision, the teacher asks students to identify which list contains only continents. One student is confused because some names look familiar but do not belong to continents. Which is correct?`,o:['Asia, Africa, Europe','India, China, Nepal','Pacific, Atlantic, Indian','Himalayas, Alps, Andes'],a:0,e:'Asia, Africa, and Europe are continents.'},
-{q:`A student observes a world map where oceans appear extremely large and landmasses look smaller or distorted in some areas. What is the MOST correct conclusion?`,o:['Maps can sometimes distort size and shape','Oceans are physically larger than continents on Earth','Continents are not real','Maps only show water bodies'],a:0,e:'Flat maps can distort size and shape.'},
-{q:`During a geography revision class, the teacher explains that globes are helpful but not always practical for everyday use. She shows how students usually carry maps instead of globes when planning travel or studying in classrooms. One student asks why globes are not commonly used for daily navigation even though they are accurate. What is the MOST appropriate explanation?`,o:['Globes cannot show countries','Globes are heavy, bulky, and not easy to carry everywhere','Globes are made only for decoration','Globes do not show Earth'],a:1,e:'Globes are accurate but not convenient to carry around.'},
-{q:`Look at the picture and answer the following questions: What skill are you mainly developing through this activity?`,img:'gr5/chp1/mapsandglobe/assets/picture1.png',o:['Memorising names of states','Counting classroom objects','Drawing pictures of India','Understanding map reading, physical features, and directions'],a:3,e:'This activity develops map reading and understanding of directions and features.'},
-{q:`During a project, students are given different types of maps. One group receives a physical map, another gets a political map, and another gets a thematic map. Each group notices that their map shows different types of information. What is the MOST important learning from this activity?`,o:['All maps show the same information in different colours','Maps are only useful for exams','Different maps are designed for different purposes','Maps are not useful in real life'],a:2,e:'Different maps are made for different purposes.'},
-{q:`After completing their geography lesson, students discuss why map symbols are widely used instead of writing full words like “river,” “mountain,” or “city” everywhere on a map. One student says, “Symbols make maps shorter and easier to read.” What is the BEST understanding of this idea?`,o:['Symbols replace real geography','Symbols are used only for decoration','Symbols simplify and help quickly understand map information','Symbols make maps harder to read'],a:2,e:'Symbols make map information simple and easy to understand.'}
+  {
+    q:`Riya wants to find the exact distance between two cities before planning a journey. Which map feature would help her most?`,
+    o:[`Legend`,`Scale`,`Direction`,`Symbol`], a:1,
+    e:`Scale helps us measure distances on a map.`
+  },
+  {
+    q:`A student wants to show the mountains, rivers and lakes of India on a map. Which type of map should the student choose?`,
+    o:[`Political map`,`Physical map`,`Thematic map`,`Road map`], a:1,
+    e:`A physical map shows natural features such as mountains, rivers and lakes.`
+  },
+  {
+    q:`Arjun is looking at a globe and wants to locate a place in the Southern Hemisphere. Which information would help him identify it?`,
+    o:[`Its position south of the Equator`,`Its position east of the Prime Meridian`,`Its distance from a city`,`Its position near a road`], a:0,
+    e:`Places south of the Equator are in the Southern Hemisphere.`
+  },
+  {
+    q:`A teacher wants students to compare the distribution of rice-growing areas across India. Which map would be most suitable?`,
+    o:[`Political map`,`Physical map`,`Thematic map`,`Globe`], a:2,
+    e:`A thematic map focuses on a particular topic, such as crop distribution.`
+  },
+  {
+    q:`Meera needs to carry information about several countries while travelling. Which would be more practical than carrying a globe and why?`,
+    o:[`An atlas, because it contains many maps in one book`,`A globe, because it can be folded`,`A physical map, because it shows every road`,`A political map, because it shows climate`], a:0,
+    e:`An atlas contains many maps in one book and is easier to carry than a globe.`
+  },
+  {
+    q:`A map shows a hospital using a small symbol. A student does not understand what the symbol means. Which part of the map should the student check?`,
+    o:[`Scale`,`Grid`,`Legend`,`Equator`], a:2,
+    e:`The legend explains the meaning of symbols and colours used on a map.`
+  },
+  {
+    q:`A student says, A globe and a map show exactly the same information in exactly the same way. Which response best explains why this is incorrect?`,
+    o:[`A globe is 3D, while a map is generally 2D`,`A globe shows only oceans, while a map shows only land`,`A globe has no directions, while a map has directions`,`A map cannot show countries`], a:0,
+    e:`A globe is three-dimensional, while a map is generally a two-dimensional representation.`
+  },
+  {
+    q:`A town is directly to the left of another town on a map. If the map is oriented in the usual way, in which direction is the first town from the second?`,
+    o:[`East`,`West`,`North`,`South`], a:1,
+    e:`On a normally oriented map, left represents west.`
+  },
+  {
+    q:`A student wants to locate New Delhi using approximately 28.6°N, 77.2°E. Why are these coordinates useful?`,
+    o:[`They show the colour of the place on a map`,`They identify the position using latitude and longitude`,`They show the political boundaries of the city`,`They show the distance from the Equator only`], a:1,
+    e:`Latitude and longitude coordinates help identify the position of a place on Earth.`
+  },
+  {
+    q:`A globe is useful for understanding the shape and size of continents, but a map is preferred for planning a road journey. Which explanation best supports this choice?`,
+    o:[`A globe is flat, while a map is spherical`,`A globe shows no countries, while maps do`,`A map can show roads and detailed information more conveniently`,`A globe cannot show directions`], a:2,
+    e:`Maps can conveniently show roads and other detailed information needed for journeys.`
+  }
 ];
 
-let idx=0, score=0, attempt=1, timer=45, t=null, answered=false, grade=5;
-const els = {
-  splash:document.getElementById('splash'),
-  intro:document.getElementById('intro'),
-  game:document.getElementById('game'),
-  result:document.getElementById('result'),
-  finalPanel:document.getElementById('finalPanel'),
-  q:document.getElementById('questionText'),
-  opts:document.getElementById('options'),
-  fb:document.getElementById('feedback'),
-  score:document.getElementById('scoreChip'),
-  timer:document.getElementById('timerChip'),
-  attempt:document.getElementById('attemptChip'),
-  qchip:document.getElementById('qChip'),
-  bar:document.getElementById('bar'),
-  stimBox:document.getElementById('stimulusBox'),
-  stimImg:document.getElementById('stimulusImg'),
-  finalScore:document.getElementById('finalScore'),
-  finalText:document.getElementById('finalText'),
-  cross:document.getElementById('crossLayer'),
-  stars:document.getElementById('starsLayer'),
-  correct:document.getElementById('correctSound'),
-  wrong:document.getElementById('wrongSound'),
-  clap:document.getElementById('clapSound')
-};
+let idx=0;
+let score=0;
+let attempt=1;
+let timer=45;
+let timerId=null;
+let answered=false;
 
-function show(el){
-  ['splash','intro','game','result'].forEach(k=>els[k].classList.remove('active'));
-  el.classList.add('active');
+const $=id=>document.getElementById(id);
+
+const splash=$('splash');
+const intro=$('intro');
+const game=$('game');
+const result=$('result');
+
+const qText=$('questionText');
+const options=$('options');
+const feedback=$('feedback');
+
+const scoreChip=$('scoreChip');
+const timerChip=$('timerChip');
+const attemptChip=$('attemptChip');
+const qChip=$('qChip');
+const bar=$('bar');
+
+const finalScore=$('finalScore');
+const finalText=$('finalText');
+
+const fx=$('fx');
+
+const correctSound=$('correctSound');
+const wrongSound=$('wrongSound');
+const clapSound=$('clapSound');
+
+function show(section){
+  [splash,intro,game,result].forEach(x=>x.classList.remove('active'));
+  section.classList.add('active');
 }
-function play(a){try{a.currentTime=0;a.play()}catch(e){}}
-function burst(layer,sym,count){
+
+function play(audio){
+  try{
+    audio.currentTime=0;
+    audio.play();
+  }catch(e){}
+}
+
+function effects(symbol,count=16){
   for(let i=0;i<count;i++){
     const s=document.createElement('span');
-    s.textContent=sym;
-    s.style.left=Math.random()*100+'vw';
-    s.style.top=Math.random()*100+'vh';
+    s.textContent=symbol;
+    s.style.left=(8+Math.random()*84)+'vw';
+    s.style.top=(20+Math.random()*65)+'vh';
     s.style.animationDelay=(Math.random()*120)+'ms';
-    layer.appendChild(s);
-    setTimeout(()=>s.remove(),900);
+    fx.appendChild(s);
+    setTimeout(()=>s.remove(),1000);
   }
 }
-function confetti(ok){ ok ? burst(els.stars,'★',16) : burst(els.cross,'✖',1); }
 
 function startTimer(){
-  clearInterval(t);
-  timer = grade<=3 ? 60 : 45;
-  els.timer.textContent='Time: '+timer+'s';
-  t=setInterval(()=>{
+  clearInterval(timerId);
+  timer=45;
+  timerChip.textContent='⏱️ '+timer+'s';
+
+  timerId=setInterval(()=>{
     timer--;
-    els.timer.textContent='Time: '+timer+'s';
+    timerChip.textContent='⏱️ '+timer+'s';
+
     if(timer<=0){
-      clearInterval(t);
-      lockAnswer(-1,true);
+      clearInterval(timerId);
+      timeUp();
     }
   },1000);
 }
@@ -606,99 +908,154 @@ function startTimer(){
 function render(){
   answered=false;
   attempt=1;
-  els.attempt.textContent='Attempt: 1/2';
-  els.qchip.textContent='Question '+(idx+1)+'/'+questions.length;
-  els.score.textContent='Score: '+score;
-  els.bar.style.width=((idx)/questions.length*100)+'%';
-  els.fb.className='feedback';
-  els.fb.textContent='Choose one answer to begin.';
+
+  attemptChip.textContent='🎯 Attempt: 1/2';
+  qChip.textContent=`🗺️ Question ${idx+1}/${questions.length}`;
+  scoreChip.textContent=`⭐ Score: ${score}`;
+  bar.style.width=(idx/questions.length*100)+'%';
+
+  feedback.className='feedback';
+  feedback.textContent='Choose the answer you think is best.';
+
   const x=questions[idx];
-  els.q.innerHTML=x.q;
-  els.stimBox.style.display=x.img?'block':'none';
-  if(x.img) els.stimImg.src=x.img;
-  els.opts.innerHTML='';
+
+  qText.textContent=x.q;
+  options.innerHTML='';
+
   x.o.forEach((op,i)=>{
     const b=document.createElement('button');
     b.className='opt';
     b.textContent=String.fromCharCode(65+i)+'. '+op;
-    b.onclick=()=>lockAnswer(i,false);
-    els.opts.appendChild(b);
+    b.onclick=()=>checkAnswer(i);
+    options.appendChild(b);
   });
 }
-function disable(){ [...els.opts.querySelectorAll('button')].forEach(b=>b.disabled=true); }
-function mark(i,cls){ const b=els.opts.children[i]; if(b) b.classList.add(cls); }
-function reveal(){
-  const x=questions[idx];
-  els.fb.className='feedback bad';
-  els.fb.innerHTML='Correct answer: <b>'+String.fromCharCode(65+x.a)+'. '+x.o[x.a]+'</b><br>'+x.e;
-  mark(x.a,'correct');
-  disable();
-  answered=true;
-  setTimeout(next,1800);
+
+function disableOptions(){
+  [...options.querySelectorAll('button')].forEach(b=>b.disabled=true);
 }
-function lockAnswer(i,timeout){
-  if(answered) return;
+
+function mark(i,cls){
+  if(options.children[i]){
+    options.children[i].classList.add(cls);
+  }
+}
+
+function revealAnswer(message=''){
   const x=questions[idx];
 
-  if(timeout){
-    disable();
-    els.fb.className='feedback bad';
-    els.fb.innerHTML='Time is up. Correct answer: <b>'+String.fromCharCode(65+x.a)+'. '+x.o[x.a]+'</b><br>'+x.e;
-    mark(x.a,'correct');
-    answered=true;
-    setTimeout(next,1800);
-    return;
-  }
+  feedback.className='feedback bad';
+  feedback.innerHTML=
+    (message?message+'<br>':'')+
+    `Correct answer: <b>${String.fromCharCode(65+x.a)}. ${x.o[x.a]}</b><br>${x.e}`;
+
+  mark(x.a,'correct');
+  disableOptions();
+  answered=true;
+
+  setTimeout(next,1800);
+}
+
+function timeUp(){
+  if(answered)return;
+  revealAnswer('⏰ Time is up!');
+}
+
+function checkAnswer(i){
+  if(answered)return;
+
+  const x=questions[idx];
 
   if(i===x.a){
     score++;
-    els.score.textContent='Score: '+score;
-    els.fb.className='feedback good';
-    els.fb.textContent='Correct! '+x.e;
+
+    scoreChip.textContent=`⭐ Score: ${score}`;
+
+    feedback.className='feedback good';
+    feedback.textContent='🎉 Correct! '+x.e;
+
     mark(i,'correct');
-    disable();
-    play(els.correct);
-    play(els.clap);
-    confetti(true);
+    disableOptions();
+
+    play(correctSound);
+    play(clapSound);
+    effects('★',18);
+
     answered=true;
-    clearInterval(t);
-    setTimeout(next,1500);
-  } else {
+    clearInterval(timerId);
+
+    setTimeout(next,1400);
+
+  }else{
     mark(i,'wrong');
-    play(els.wrong);
-    confetti(false);
+    play(wrongSound);
+
     if(attempt===1){
       attempt=2;
-      els.attempt.textContent='Attempt: 2/2';
-      els.fb.className='feedback bad';
-      els.fb.textContent='Not quite. Try once more.';
-      els.opts.children[i].disabled=true;
-    } else {
-      clearInterval(t);
-      reveal();
-      play(els.correct);
+      attemptChip.textContent='🎯 Attempt: 2/2';
+
+      feedback.className='feedback bad';
+      feedback.textContent='🤔 Not quite! Think again and try once more.';
+
+      options.children[i].disabled=true;
+
+    }else{
+      clearInterval(timerId);
+      revealAnswer('💡 Let’s learn from this one!');
     }
   }
 }
+
 function next(){
   idx++;
+
   if(idx<questions.length){
-    els.bar.style.width=((idx)/questions.length*100)+'%';
     render();
     startTimer();
-  } else endGame();
+  }else{
+    endGame();
+  }
 }
+
 function endGame(){
-  clearInterval(t);
-  show(els.result);
-  els.finalPanel.style.display='block';
-  els.finalScore.textContent=score+'/'+questions.length;
-  els.finalText.textContent = score>=11 ? 'Excellent map and globe thinking!' : 'Good work. Keep practicing geography.';
+  clearInterval(timerId);
+  show(result);
+
+  finalScore.textContent=`${score}/${questions.length}`;
+
+  if(score===10){
+    finalText.textContent=
+      '🌟 Outstanding! You used strong map and globe thinking throughout the challenge.';
+  }else if(score>=8){
+    finalText.textContent=
+      '👏 Excellent work! Your geography reasoning is strong.';
+  }else if(score>=6){
+    finalText.textContent=
+      '👍 Good work! Keep practising your map-reading and geographical thinking.';
+  }else{
+    finalText.textContent=
+      '🧭 Keep exploring! Revise the chapter and try the challenge again.';
+  }
 }
-document.getElementById('startBtn').onclick=()=>{show(els.game); render(); startTimer()};
-document.getElementById('restartBtn').onclick=()=>location.reload();
-show(els.splash);
-setTimeout(()=>show(els.intro),3000);
+
+$('startBtn').onclick=()=>{
+  idx=0;
+  score=0;
+  show(game);
+  render();
+  startTimer();
+};
+
+$('restartBtn').onclick=()=>{
+  idx=0;
+  score=0;
+  show(game);
+  render();
+  startTimer();
+};
+
+setTimeout(()=>show(intro),3000);
 </script>
+
 </body>
 </html>
